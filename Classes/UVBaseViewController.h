@@ -10,6 +10,12 @@
 
 @class UVActivityIndicator;
 
+// Delegate methods
+@protocol UVBaseViewControllerDelegate
+@optional
+- (void)userVoiceDismissed;
+@end
+
 // Base class for UserVoice content view controllers. Will handle things like
 // the search box, help bar, etc.
 @interface UVBaseViewController : UIViewController {
@@ -17,12 +23,14 @@
 	UIAlertView *errorAlertView;
 	BOOL needsReload;
 	UITableView *tableView;
+    id delegate;
 }
 
 @property (nonatomic, retain) UVActivityIndicator *activityIndicator;
 @property (nonatomic, retain) UIAlertView *errorAlertView;
 @property (assign) BOOL needsReload;
 @property (nonatomic, retain) UITableView *tableView;
+@property (assign) id delegate;
 
 - (void)dismissUserVoice;
 

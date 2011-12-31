@@ -17,13 +17,15 @@
 + (void)presentUserVoiceModalViewControllerForParent:(UIViewController *)viewController 
 											 andSite:(NSString *)site
 											  andKey:(NSString *)key
-										   andSecret:(NSString *)secret;
+										   andSecret:(NSString *)secret
+                                            delegate:(id)delegate;
 
 + (void)presentUserVoiceModalViewControllerForParent:(UIViewController *)viewController 
 											 andSite:(NSString *)site
 											  andKey:(NSString *)key
 										   andSecret:(NSString *)secret
-										 andSsoToken:(NSString *)token;
+										 andSsoToken:(NSString *)token
+                                            delegate:(id)delegate;
 
 + (void)presentUserVoiceModalViewControllerForParent:(UIViewController *)viewController 
 											 andSite:(NSString *)site
@@ -31,7 +33,8 @@
 										   andSecret:(NSString *)secret
 											andEmail:(NSString *)email
 									  andDisplayName:(NSString *)displayName
-											 andGUID:(NSString *)guid;
+											 andGUID:(NSString *)guid
+                                            delegate:(id)delegate;
 
 + (void)showUserVoice:(UIViewController *)rootViewController forController:(UIViewController *)viewController;
 

@@ -18,7 +18,8 @@
 + (void)presentUserVoiceModalViewControllerForParent:(UIViewController *)viewController 
 											 andSite:(NSString *)site
 											  andKey:(NSString *)key
-										   andSecret:(NSString *)secret {
+										   andSecret:(NSString *)secret
+                                            delegate:(id)delegate {
 	[UVSession currentSession].config = [[[UVConfig alloc] initWithSite:site andKey:key andSecret:secret] autorelease];
  	
 	UIViewController *rootViewController;
@@ -30,6 +31,7 @@
 	{
 		rootViewController = [[[UVRootViewController alloc] init] autorelease];
 	}
+    [(UVBaseViewController *)rootViewController setDelegate:delegate];
 	
 	// Capture the launch orientation, then store it in NSDefaults for reference in all other UV view controller classes
 	[UVClientConfig setOrientation];
@@ -41,12 +43,14 @@
 											 andSite:(NSString *)site
 											  andKey:(NSString *)key
 										   andSecret:(NSString *)secret
-										 andSsoToken:(NSString *)token {
+										 andSsoToken:(NSString *)token
+                                            delegate:(id)delegate {
 	[UVSession currentSession].config = [[[UVConfig alloc] initWithSite:site andKey:key andSecret:secret] autorelease];
 	
 	// always use the sso token to ensure details are updated	
 	UIViewController *rootViewController;
     rootViewController = [[[UVRootViewController alloc] initWithSsoToken:token] autorelease];
+    [(UVBaseViewController *)rootViewController setDelegate:delegate];
 	
 	// Capture the launch orientation, then store it in NSDefaults for reference in all other UV view controller classes
 	[UVClientConfig setOrientation];
@@ -60,7 +64,8 @@
 										   andSecret:(NSString *)secret
 											andEmail:(NSString *)email
 									  andDisplayName:(NSString *)displayName
-											 andGUID:(NSString *)guid {
+											 andGUID:(NSString *)guid
+                                            delegate:(id)delegate {
 	[UVSession currentSession].config = [[[UVConfig alloc] initWithSite:site andKey:key andSecret:secret] autorelease];
 	
 	UIViewController *rootViewController;
@@ -74,6 +79,7 @@
 																  andGUID:guid 
 																  andName:displayName] autorelease];
 	}
+    [(UVBaseViewController *)rootViewController setDelegate:delegate];
 	
 	// Capture the launch orientation, then store it in NSDefaults for reference in all other UV view controller classes
 	[UVClientConfig setOrientation];
