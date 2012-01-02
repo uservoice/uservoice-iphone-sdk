@@ -24,12 +24,17 @@
 	errorAlertView;
 @synthesize needsReload;
 @synthesize tableView;
+@synthesize delegate;
 
 - (void)dismissUserVoice {
     if ([UVStreamPoller instance].timerIsRunning)
 		[[UVStreamPoller instance] stopTimer];
 
 	[self dismissModalViewControllerAnimated:YES];
+    
+    if (delegate && [delegate respondsToSelector:@selector(userVoiceDismissed)]) {
+        [delegate userVoiceDismissed];
+    }
 }
 
 - (CGRect)contentFrameWithNavBar:(BOOL)navBarEnabled {
