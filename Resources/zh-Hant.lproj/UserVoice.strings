@@ -142,6 +142,8 @@
 
 "Required" = "必要欄位";
 
+"Required (confidential)" = "必要欄位（保密）";
+
 "Send" = "送出";
 
 "Sign In" = "登入";

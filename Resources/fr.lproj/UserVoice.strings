@@ -142,6 +142,8 @@
 
 "Required" = "Obligatoire";
 
+"Required (confidential)" = "Obligatoire (confidentiel)";
+
 "Send" = "Envoyer";
 
 "Sign In" = "Se connecter";

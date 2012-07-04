@@ -404,9 +404,11 @@
 		D9B1D1DB14ACCBE700D9189F /* UVImageCache.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = UVImageCache.m; sourceTree = "<group>"; };
 		D9B1D1E714ACFCE600D9189F /* NSString+HTMLEntities.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSString+HTMLEntities.h"; sourceTree = "<group>"; };
 		D9B1D1E814ACFCE600D9189F /* NSString+HTMLEntities.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NSString+HTMLEntities.m"; sourceTree = "<group>"; };
-		D9CA8FF114F4110800F98763 /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = en; path = UserVoice.strings; sourceTree = "<group>"; };
-		D9CA8FF414F4110800F98763 /* fr */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = fr; path = UserVoice.strings; sourceTree = "<group>"; };
 		D9F2060314C08A8100F4441E /* UVDelegate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = UVDelegate.h; sourceTree = "<group>"; };
+		EE84866E15A4A4C1003B2554 /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = en; path = en.lproj/UserVoice.strings; sourceTree = "<group>"; };
+		EE84866F15A4A4F7003B2554 /* fr */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = fr; path = fr.lproj/UserVoice.strings; sourceTree = "<group>"; };
+		EE84867015A4A510003B2554 /* it */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = it; path = it.lproj/UserVoice.strings; sourceTree = "<group>"; };
+		EE84867115A4A519003B2554 /* zh-Hant */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = "zh-Hant"; path = "zh-Hant.lproj/UserVoice.strings"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -655,8 +657,7 @@
 		D2620C4B11B586230053EA4C /* Resources */ = {
 			isa = PBXGroup;
 			children = (
-				D9CA8FEF14F4110800F98763 /* en.lproj */,
-				D9CA8FF214F4110800F98763 /* fr.lproj */,
+				EE84866D15A4A4C1003B2554 /* UserVoice.strings */,
 				D2605CFA144662150029F16B /* uv_alert@2x.png */,
 				D92767FF1559B0E900E17EF1 /* uv_article@2x.png */,
 				D2605D03144662150029F16B /* uv_default_avatar@2x.png */,
@@ -785,22 +786,6 @@
 				D9819240156D302B00E6F66D /* NSString+Base64.m */,
 			);
 			path = Categories;
-			sourceTree = "<group>";
-		};
-		D9CA8FEF14F4110800F98763 /* en.lproj */ = {
-			isa = PBXGroup;
-			children = (
-				D9CA8FF014F4110800F98763 /* UserVoice.strings */,
-			);
-			path = en.lproj;
-			sourceTree = "<group>";
-		};
-		D9CA8FF214F4110800F98763 /* fr.lproj */ = {
-			isa = PBXGroup;
-			children = (
-				D9CA8FF314F4110800F98763 /* UserVoice.strings */,
-			);
-			path = fr.lproj;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -945,6 +930,8 @@
 				German,
 				en,
 				fr,
+				it,
+				"zh-Hant",
 			);
 			mainGroup = 0867D691FE84028FC02AAC07 /* UserVoice */;
 			productRefGroup = 034768DFFF38A50411DB9C8B /* Products */;
@@ -1051,18 +1038,13 @@
 /* End PBXSourcesBuildPhase section */
 
 /* Begin PBXVariantGroup section */
-		D9CA8FF014F4110800F98763 /* UserVoice.strings */ = {
+		EE84866D15A4A4C1003B2554 /* UserVoice.strings */ = {
 			isa = PBXVariantGroup;
 			children = (
-				D9CA8FF114F4110800F98763 /* en */,
-			);
-			name = UserVoice.strings;
-			sourceTree = "<group>";
-		};
-		D9CA8FF314F4110800F98763 /* UserVoice.strings */ = {
-			isa = PBXVariantGroup;
-			children = (
-				D9CA8FF414F4110800F98763 /* fr */,
+				EE84866E15A4A4C1003B2554 /* en */,
+				EE84866F15A4A4F7003B2554 /* fr */,
+				EE84867015A4A510003B2554 /* it */,
+				EE84867115A4A519003B2554 /* zh-Hant */,
 			);
 			name = UserVoice.strings;
 			sourceTree = "<group>";

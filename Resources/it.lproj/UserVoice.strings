@@ -142,6 +142,8 @@
 
 "Required" = "Richiesto";
 
+"Required (confidential)" = "Richiesto (riservato)";
+
 "Send" = "Invia";
 
 "Sign In" = "Connettiti";
