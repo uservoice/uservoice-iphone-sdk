@@ -117,8 +117,8 @@
         NSInteger rows = 0;
         if ([UVSession currentSession].clientConfig.ticketsEnabled)
             rows += 1;
-        if ([UVSession currentSession].clientConfig.feedbackEnabled)
-            rows += 1;
+//        if ([UVSession currentSession].clientConfig.feedbackEnabled)
+//            rows += 1;
         return rows;
     } else if (section == 1 && [UVSession currentSession].clientConfig.ticketsEnabled) {
         return [[UVSession currentSession].clientConfig.topArticles count];
