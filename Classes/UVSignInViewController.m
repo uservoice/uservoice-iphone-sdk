@@ -16,6 +16,7 @@
 #import "UVClientConfig.h"
 #import "UVSuggestion.h"
 #import "NSError+UVExtras.h"
+#import "UVConfig.h"
 
 #define UV_SIGNIN_SECTION_DETAILS 0
 #define UV_SIGNIN_SECTION_ACTIONS 1
@@ -148,7 +149,12 @@
     self.user = theUser;
     NSLog(@"Found user");
 
-    if (theUser.suggestionsNeedReload) {
+    // config requires a specific forum?
+    if ([UVSession currentSession].config.forumId) {
+        [UVForum getWithForumId:[UVSession currentSession].config.forumId delegate:self];
+        NSLog(@"Get forum");
+
+    } else if (theUser.suggestionsNeedReload) {
         [UVSuggestion getWithForumAndUser:[UVSession currentSession].clientConfig.forum
                                      user:theUser delegate:self];
         NSLog(@"Get suggestions");
@@ -163,6 +169,11 @@
     }
 }
 
+- (void)didRetrieveForum:(UVForum *)forum {
+    [UVSession currentSession].clientConfig.forum = forum;
+    [UVSuggestion getTopForForum:forum delegate:self];
+}
+
 - (void) didRetrieveUserSuggestions:(NSArray *) theSuggestions {
     [self hideActivityIndicator];
 
@@ -170,6 +181,17 @@
 
     NSArray *viewControllers = [self.navigationController viewControllers];
     UVBaseViewController *prev = (UVBaseViewController *)[viewControllers objectAtIndex:[viewControllers count] - 2];
+    prev.needsReload = YES;
+    [self.navigationController popViewControllerAnimated:YES];
+}
+
+- (void)didRetrieveSuggestions:(NSArray *)suggestions {
+    [UVSession currentSession].clientConfig.topSuggestions = suggestions;
+
+    [self hideActivityIndicator];
+
+    NSArray *viewControllers = [self.navigationController viewControllers];
+    UVBaseViewController *prev = (UVBaseViewController *) [viewControllers objectAtIndex:[viewControllers count] - 2];
     prev.needsReload = YES;
     [self.navigationController popViewControllerAnimated:YES];
 }

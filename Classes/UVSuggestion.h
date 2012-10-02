@@ -69,6 +69,9 @@
 // Retrieves a page (10 items) of suggestions.
 + (id)getWithForum:(UVForum *)forum page:(NSInteger)page delegate:(id)delegate;
 
+// Retrieve the top 3 hottest for a specific forum
++ (id)getTopForForum:(UVForum *)forum delegate:(id)delegate;
+
 // Retrieves all suggestions for a user in a forum
 + (id)getWithForumAndUser:(UVForum *)forum user:(UVUser *)user delegate:(id)delegate;
 
