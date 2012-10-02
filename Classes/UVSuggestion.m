@@ -63,16 +63,6 @@
                 selector:@selector(didRetrieveSuggestions:)];
 }
 
-+ (id)getTopForForum:(UVForum *)forum delegate:(id)delegate {
-    NSString *path = [self apiPath:[NSString stringWithFormat:@"/forums/%d/suggestions.json", forum.forumId]];
-    NSDictionary *params = [NSDictionary dictionaryWithObjectsAndKeys:
-            @"public", @"filter", @"hot", @"sort", @"3", @"per_page", nil];
-    return [self getPath:path
-              withParams:params
-                  target:delegate
-                selector:@selector(didRetrieveSuggestions:)];
-}
-
 + (id)getWithForumAndUser:(UVForum *)forum user:(UVUser *)user delegate:(id)delegate {
     NSString *path = [self apiPath:[NSString stringWithFormat:@"/forums/%d/users/%d/suggestions.json", forum.forumId, user.userId]];
 

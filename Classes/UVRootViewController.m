@@ -123,11 +123,6 @@
 
 - (void)didRetrieveForum:(UVForum *)forum {
     [UVSession currentSession].clientConfig.forum = forum;
-    [UVSuggestion getTopForForum:forum delegate:self];
-}
-
-- (void)didRetrieveSuggestions:(NSArray *)suggestions {
-    [UVSession currentSession].clientConfig.topSuggestions = suggestions;
     [self pushNextView];
 }
 
