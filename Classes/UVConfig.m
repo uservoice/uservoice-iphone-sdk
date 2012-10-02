@@ -19,6 +19,7 @@
 @synthesize displayName;
 @synthesize guid;
 @synthesize customFields;
+@synthesize forumId;
 
 + (UVConfig *)configWithSite:(NSString *)site andKey:(NSString *)key andSecret:(NSString *)secret {
     return [[[UVConfig alloc] initWithSite:site andKey:key andSecret:secret] autorelease];
@@ -81,6 +82,7 @@
     self.email = nil;
     self.displayName = nil;
     self.guid = nil;
+    self.forumId = nil;
     [super dealloc];
 }
 

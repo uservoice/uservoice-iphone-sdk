@@ -44,6 +44,11 @@
     return self;
 }
 
++ (id)getWithForumId:(NSString *)_forumId delegate:(id)delegate {
+    id path = [NSString stringWithFormat:@"/forums/%@.json", _forumId];
+    return [self getPath:[self apiPath:path] withParams:nil target:delegate selector:@selector(didRetrieveForum:)];
+}
+
 - (NSString *)description {
     return [NSString stringWithFormat:@"forumId: %d\nname: %@", self.forumId, self.name];
 }
