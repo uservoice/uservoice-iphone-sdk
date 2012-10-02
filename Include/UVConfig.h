@@ -16,7 +16,6 @@
     NSString *displayName;
     NSString *email;
     NSString *guid;
-    NSString *forumId;
 }
 
 + (UVConfig *)configWithSite:(NSString *)site andKey:(NSString *)key andSecret:(NSString *)secret;
@@ -31,7 +30,6 @@
 @property (nonatomic, retain) NSString *email;
 @property (nonatomic, retain) NSString *guid;
 @property (nonatomic, retain) NSDictionary *customFields;
-@property (nonatomic, retain) NSString *forumId;
 
 - (id)initWithSite:(NSString *)theSite andKey:(NSString *)theKey andSecret:(NSString *)theSecret;
 - (id)initWithSite:(NSString *)theSite andKey:(NSString *)theKey andSecret:(NSString *)theSecret andSSOToken:(NSString *)theToken;

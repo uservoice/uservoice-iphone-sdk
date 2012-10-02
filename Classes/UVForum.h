@@ -28,6 +28,4 @@
 - (NSString *)prompt;
 - (NSString *)example;
 
-+ (id)getWithForumId:(NSString *)_forumId delegate:(id)delegate;
-
 @end

@@ -114,15 +114,6 @@
 }
 
 - (void)didRetrieveClientConfig:(UVClientConfig *)clientConfig {
-    if ([UVSession currentSession].config.forumId) {
-        [UVForum getWithForumId:[UVSession currentSession].config.forumId delegate:self];
-    } else {
-        [self pushNextView];
-    }
-}
-
-- (void)didRetrieveForum:(UVForum *)forum {
-    [UVSession currentSession].clientConfig.forum = forum;
     [self pushNextView];
 }
 
