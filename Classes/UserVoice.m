@@ -28,6 +28,26 @@
     [parentViewController presentModalViewController:navigationController animated:YES];
 }
 
++ (UINavigationController *) getUserVoiceInterfaceForConfig : (UVConfig *)config
+{
+    UIViewController *viewController;
+    if ([[UVSession currentSession] clientConfig])
+        viewController = [[[UVWelcomeViewController alloc] init] autorelease];
+    else
+        viewController = [[[UVRootViewController alloc] init] autorelease];
+    
+    [UVSession currentSession].config = config;
+    [UVSession currentSession].isModal = NO;
+    // Capture the launch orientation, then store it in NSDefaults for reference in all other UV view controller classes
+    [UVClientConfig setOrientation];
+    
+    UINavigationController *navigationController = [[[UINavigationController alloc] init] autorelease];
+    navigationController.navigationBar.tintColor = [UVStyleSheet navigationBarTintColor];
+    navigationController.viewControllers = [NSArray arrayWithObject:viewController];
+    
+    return navigationController;
+}
+
 + (void) presentUserVoiceController:(UIViewController *)viewController forParentViewController:(UIViewController *)parentViewController withConfig:(UVConfig *)config {
     [self presentUserVoiceControllers:[NSArray arrayWithObject:viewController] forParentViewController:parentViewController withConfig:config];
 }
