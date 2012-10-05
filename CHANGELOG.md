@@ -1,11 +1,24 @@
 ## master ##
 
+## 1.2.4 ##
+
+* Add support for setting custom fields programmatically
+* Add support for armv7s (iPhone 5)
+
+## 1.2.3 ##
+
+* Fix a bug that would cause sign-in to fail when connected to a private forum
+* Remove some dead code
+
+## 1.2.2 ##
+
 * Fix a bug with table headers on iOS 4.3
 * Fix a bug with table borders on iPad / iOS 4.3
 * Show correct version number on about screen
 * Simplify loading sequence
 * Fix a bug with customizing the color of table view section headers
 * Add Traditional Chinese translation (thanks to @zetachang)
+* Fix a bug where API calls were being made with malformed URLs
 
 ## 1.2.1 ##
 

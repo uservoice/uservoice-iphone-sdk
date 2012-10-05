@@ -19,7 +19,6 @@
 #import "UVUser.h"
 #import "UVTextEditor.h"
 #import "UVCellViewWithIndex.h"
-#import "UVStreamPoller.h"
 #import "UVSuggestionButton.h"
 
 #define SUGGESTIONS_PAGE_SIZE 10
@@ -38,8 +37,8 @@
 
 - (id)initWithForum:(UVForum *)theForum {
     if ((self = [super init])) {
-        if (theForum.currentTopic.suggestions) {
-            self = [self initWithForum:theForum andSuggestions:theForum.currentTopic.suggestions];
+        if (theForum.suggestions) {
+            self = [self initWithForum:theForum andSuggestions:theForum.suggestions];
         } else {
             self.forum = theForum;
         }
@@ -72,8 +71,8 @@
 // suggestions, but this can be overridden in subclasses (e.g. for profile idea view).
 - (void)populateSuggestions {
     self.suggestions = [NSMutableArray arrayWithCapacity:10];
-    [UVSession currentSession].clientConfig.forum.currentTopic.suggestions = [NSMutableArray arrayWithCapacity:10];
-    [UVSession currentSession].clientConfig.forum.currentTopic.suggestionsNeedReload = NO;
+    [UVSession currentSession].clientConfig.forum.suggestions = [NSMutableArray arrayWithCapacity:10];
+    [UVSession currentSession].clientConfig.forum.suggestionsNeedReload = NO;
     [self retrieveMoreSuggestions];
 }
 
@@ -85,7 +84,7 @@
         //NSLog(@"Stored Suggestions: %@", self.suggestions);
     }
 
-    [[UVSession currentSession].clientConfig.forum.currentTopic.suggestions addObjectsFromArray:theSuggestions];
+    [[UVSession currentSession].clientConfig.forum.suggestions addObjectsFromArray:theSuggestions];
     [self.tableView reloadData];
 }
 
@@ -262,7 +261,7 @@
 - (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section {
     NSInteger rows = 0;
     NSInteger loadedCount = [self.suggestions count];
-    NSInteger suggestionsCount = [UVSession currentSession].clientConfig.forum.currentTopic.suggestionsCount;
+    NSInteger suggestionsCount = [UVSession currentSession].clientConfig.forum.suggestionsCount;
 
     if (_searching) {
         NSLog(@"Adding extra row for 'add'");
@@ -338,7 +337,7 @@
     _textEditor.text = @"";
 
     [self.suggestions removeAllObjects];
-    [self.suggestions addObjectsFromArray:[UVSession currentSession].clientConfig.forum.currentTopic.suggestions];
+    [self.suggestions addObjectsFromArray:[UVSession currentSession].clientConfig.forum.suggestions];
     [self.tableView reloadData];
     [self.navigationItem setLeftBarButtonItem:nil animated:NO];
 }
@@ -426,7 +425,7 @@
 - (void)loadView {
     [super loadView];
 
-    self.navigationItem.title = self.forum.currentTopic.prompt;
+    self.navigationItem.title = self.forum.prompt;
 
     CGRect frame = [self contentFrame];
     CGFloat screenWidth = [UVClientConfig getScreenWidth];
@@ -485,7 +484,7 @@
 
 - (void)reloadTableData {
 //    NSLog(@"UVSuggestionListViewController: reloadTableData");
-    self.suggestions = [UVSession currentSession].clientConfig.forum.currentTopic.suggestions;
+    self.suggestions = [UVSession currentSession].clientConfig.forum.suggestions;
 
     [self.tableView reloadData];
 }
@@ -495,7 +494,7 @@
 
     if (self.forum) {
 //        NSLog(@"UVSuggestionListViewController: reloadSuggestions");
-        if ([UVSession currentSession].clientConfig.forum.currentTopic.suggestionsNeedReload) {
+        if ([UVSession currentSession].clientConfig.forum.suggestionsNeedReload) {
             self.suggestions = nil;
         }
 
@@ -503,27 +502,8 @@
 //            NSLog(@"UVSuggestionListViewController: populateSuggestions");
             [self populateSuggestions];
         }
-
-        if (![UVStreamPoller instance].timerIsRunning) {
-            [[UVStreamPoller instance] startTimer];
-            [UVStreamPoller instance].lastPollTime = [NSDate date];
-        }
     }
     [self.tableView reloadData];
-
-//    NSLog(@"Adding observer");
-    [[NSNotificationCenter defaultCenter] addObserver:self
-                                             selector:@selector(reloadTableData)
-                                                 name:@"TopicSuggestionsUpdated"
-                                               object:nil];
-}
-
-- (void)viewWillDisappear:(BOOL)animated {
-    [super viewWillDisappear:animated];
-//    NSLog(@"Removing observer");
-    [[NSNotificationCenter defaultCenter] removeObserver:self
-                                                    name:@"TopicSuggestionsUpdated"
-                                                  object:nil];
 }
 
 - (void)dealloc {
