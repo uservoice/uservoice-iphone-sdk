@@ -7,7 +7,7 @@
 //
 
 #import "HRFormatJSON.h"
-#import "JSON.h"
+#import "UVJSON.h"
 
 @implementation HRFormatJSON
 + (NSString *)extension {
