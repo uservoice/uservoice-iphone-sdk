@@ -16,11 +16,11 @@
 #import "UVUser.h"
 #import "UVClientConfig.h"
 #import "UVSubdomain.h"
-#import "UVToken.h"
+#import "UVAccessToken.h"
 #import "UVCategorySelectViewController.h"
 #import "UVNewTicketViewController.h"
 #import "UVSignInViewController.h"
-#import "UVTextEditor.h"
+#import "UVTextView.h"
 #import "NSError+UVExtras.h"
 
 #define UV_NEW_SUGGESTION_SECTION_TITLE 0
@@ -55,10 +55,8 @@
 }
 
 - (void)didReceiveError:(NSError *)error {
-    NSLog(@"Got error: %@", [error userInfo]);
     if ([error isNotFoundError]) {
         [self hideActivityIndicator];
-        NSLog(@"No user");
     } else if ([error isUVRecordInvalidForField:@"title" withMessage:@"is not allowed."]) {
         [self hideActivityIndicator];
         [self alertError:NSLocalizedStringFromTable(@"A suggestion with this title already exists. Please change the title.", @"UserVoice", nil)];
@@ -110,7 +108,7 @@
     [UVSession currentSession].user = theUser;
 
     // token should have been loaded by ResponseDelegate
-    [[UVSession currentSession].currentToken persist];
+    [[UVSession currentSession].accessToken persist];
 
     [self createSuggestion];
 }
@@ -125,7 +123,7 @@
     [UVSession currentSession].clientConfig.forum.suggestionsNeedReload = YES;
 
     // update the remaining votes
-    [UVSession currentSession].clientConfig.forum.votesRemaining = theSuggestion.votesRemaining;
+    [UVSession currentSession].user.votesRemaining = theSuggestion.votesRemaining;
 
     // Back out to the welcome screen
     NSMutableArray *viewControllers = [[self.navigationController.viewControllers mutableCopy] autorelease];
@@ -147,7 +145,7 @@
 
 - (void)checkEmail {
     if (self.emailField.text.length > 0) {
-        [self showActivityIndicatorWithText:NSLocalizedStringFromTable(@"Checking...", @"UserVoice", nil)];
+        [self showActivityIndicator];
         [UVUser discoverWithEmail:emailField.text delegate:self];
     }
 }
@@ -187,7 +185,6 @@
 
 - (BOOL)textFieldShouldEndEditing:(UITextField *)textField {
     if (textField==emailField) {
-        NSLog(@"Check email");
         [nameField resignFirstResponder];
         [textEditor resignFirstResponder];
         [self checkEmail];
@@ -202,7 +199,7 @@
 
 #pragma mark ===== UVTextEditorDelegate Methods =====
 
-- (void)textEditorDidBeginEditing:(UVTextEditor *)theTextEditor {
+- (void)textViewDidBeginEditing:(UVTextView *)theTextEditor {
     // Change right bar button to Done, as there's no built-in way to dismiss the
     // text view's keyboard.
     UIBarButtonItem* saveItem = [[[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemDone
@@ -215,12 +212,12 @@
     [self.tableView scrollToRowAtIndexPath:path atScrollPosition:UITableViewScrollPositionTop animated:YES];
 }
 
-- (void)textEditorDidEndEditing:(UVTextEditor *)theTextEditor {
+- (void)textViewDidEndEditing:(UVTextView *)theTextEditor {
     self.text = theTextEditor.text;
     [self.navigationItem setRightBarButtonItem:nil animated:NO];
 }
 
-- (BOOL)textEditorShouldEndEditing:(UVTextEditor *)theTextEditor {
+- (BOOL)textViewShouldEndEditing:(UVTextView *)theTextEditor {
     return YES;
 }
 
@@ -259,13 +256,10 @@
 
 - (void)initCellForText:(UITableViewCell *)cell indexPath:(NSIndexPath *)indexPath {
     CGRect frame = CGRectMake(0, 0, 300, 102);
-    UVTextEditor *aTextEditor = [[UVTextEditor alloc] initWithFrame:frame];
+    UVTextView *aTextEditor = [[UVTextView alloc] initWithFrame:frame];
     aTextEditor.delegate = self;
     aTextEditor.autocorrectionType = UITextAutocorrectionTypeYes;
     aTextEditor.autocapitalizationType = UITextAutocapitalizationTypeSentences;
-    aTextEditor.minNumberOfLines = 4;
-    aTextEditor.maxNumberOfLines = 4;
-    aTextEditor.autoresizesToText = YES;
     aTextEditor.backgroundColor = [UIColor clearColor];
     aTextEditor.placeholder = NSLocalizedStringFromTable(@"Description (optional)", @"UserVoice", nil);
 
@@ -291,7 +285,7 @@
     segments.selectedSegmentIndex = 0;
     NSInteger votesRemaining = 10;
     if ([UVSession currentSession].user)
-        votesRemaining = [UVSession currentSession].clientConfig.forum.votesRemaining;
+        votesRemaining = [UVSession currentSession].user.votesRemaining;
 
     for (int i = 0; i < segments.numberOfSegments; i++) {
         BOOL enabled = (i + 1) <= votesRemaining;
@@ -331,7 +325,7 @@
     [self removeBackgroundFromCell:cell];
     NSInteger votesRemaining = 10;
     if ([UVSession currentSession].user)
-        votesRemaining = [UVSession currentSession].clientConfig.forum.votesRemaining;
+        votesRemaining = [UVSession currentSession].user.votesRemaining;
 
     if (votesRemaining!=0) {
         UIButton *button = [UIButton buttonWithType:UIButtonTypeCustom];
@@ -454,8 +448,8 @@
     self.tableView.sectionFooterHeight = 0.0;
 
     UIView *footer = [[UIView alloc] initWithFrame:CGRectMake(0, 0, frame.size.width, 50)];
-    footer.autoresizingMask = UIViewAutoresizingFlexibleLeftMargin|UIViewAutoresizingFlexibleRightMargin;
     UILabel *label = [[UILabel alloc] initWithFrame:CGRectMake(0, 10, frame.size.width, 15)];
+    label.autoresizingMask = UIViewAutoresizingFlexibleLeftMargin|UIViewAutoresizingFlexibleRightMargin;
     label.text = NSLocalizedStringFromTable(@"Want to send a private message instead?", @"UserVoice", nil);
     label.textAlignment = UITextAlignmentCenter;
     label.textColor = [UVStyleSheet linkTextColor];
@@ -466,6 +460,7 @@
 
     UIButton *button = [UIButton buttonWithType:UIButtonTypeCustom];
     button.frame = CGRectMake(0, 25, frame.size.width, 15);
+    button.autoresizingMask = UIViewAutoresizingFlexibleLeftMargin|UIViewAutoresizingFlexibleRightMargin;
     NSString *buttonTitle = [NSString stringWithFormat:NSLocalizedStringFromTable(@"Contact %@", @"UserVoice", nil), [UVSession currentSession].clientConfig.subdomain.name];
     [button setTitle:buttonTitle forState:UIControlStateNormal];
     [button setTitleColor:[UVStyleSheet linkTextColor] forState:UIControlStateNormal];

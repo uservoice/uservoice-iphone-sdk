@@ -38,6 +38,11 @@
         message == nil ? @"" : message, @"ticket[message]",
         email   == nil ? @"" : email,   @"email",
         nil];
+    
+    for (NSString *scope in [UVSession currentSession].externalIds) {
+        NSString *identifier = [[UVSession currentSession].externalIds valueForKey:scope];
+        [params setObject:identifier forKey:[NSString stringWithFormat:@"created_by[external_ids][%@]", scope]];
+    }
 
     NSDictionary *defaultFields = [UVSession currentSession].config.customFields;
     for (NSString *name in [defaultFields keyEnumerator]) {

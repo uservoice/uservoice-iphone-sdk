@@ -19,8 +19,7 @@
 #import "UVTicket.h"
 #import "UVForum.h"
 #import "UVSubdomain.h"
-#import "UVToken.h"
-#import "UVTextEditor.h"
+#import "UVTextView.h"
 #import "NSError+UVExtras.h"
 #import "UVArticle.h"
 #import "UVSuggestion.h"
@@ -166,11 +165,11 @@
 
 #pragma mark ===== UVTextEditorDelegate Methods =====
 
-- (BOOL)textEditorShouldBeginEditing:(UVTextEditor *)theTextEditor {
+- (BOOL)textViewShouldBeginEditing:(UVTextView *)theTextEditor {
     return YES;
 }
 
-- (void)textEditorDidBeginEditing:(UVTextEditor *)theTextEditor {
+- (void)textViewDidBeginEditing:(UVTextView *)theTextEditor {
     // Change right bar button to Done, as there's no built-in way to dismiss the
     // text view's keyboard.
     [self hideExitButton];
@@ -181,16 +180,16 @@
     self.activeField = theTextEditor;
 }
 
-- (void)textEditorDidEndEditing:(UVTextEditor *)theTextEditor {
+- (void)textViewDidEndEditing:(UVTextView *)theTextEditor {
     [self showExitButton];
     self.activeField = nil;
 }
 
-- (BOOL)textEditorShouldEndEditing:(UVTextEditor *)theTextEditor {
+- (BOOL)textViewShouldEndEditing:(UVTextView *)theTextEditor {
     return YES;
 }
 
-- (void)textEditorDidChange:(UVTextEditor *)theTextEditor {
+- (void)textViewDidChange:(UVTextView *)theTextEditor {
     self.text = theTextEditor.text;
     [self.timer invalidate];
     self.timer = [NSTimer scheduledTimerWithTimeInterval:1.0 target:self selector:@selector(loadInstantAnswers:) userInfo:nil repeats:NO];
@@ -213,13 +212,10 @@
 - (void)initCellForText:(UITableViewCell *)cell indexPath:(NSIndexPath *)indexPath {
     CGFloat screenWidth = [UVClientConfig getScreenWidth];
     CGRect frame = CGRectMake(0, 0, (screenWidth-20), 144);
-    UVTextEditor *aTextEditor = [[UVTextEditor alloc] initWithFrame:frame];
+    UVTextView *aTextEditor = [[UVTextView alloc] initWithFrame:frame];
     aTextEditor.delegate = self;
     aTextEditor.autocorrectionType = UITextAutocorrectionTypeYes;
     aTextEditor.autocapitalizationType = UITextAutocapitalizationTypeSentences;
-    aTextEditor.minNumberOfLines = 6;
-    aTextEditor.maxNumberOfLines = 6;
-    aTextEditor.autoresizesToText = YES;
     aTextEditor.backgroundColor = [UIColor clearColor];
     aTextEditor.placeholder = NSLocalizedStringFromTable(@"Message", @"UserVoice", nil);
     aTextEditor.text = self.text;
@@ -248,13 +244,14 @@
     textField.delegate = self;
     [cell addSubview:textField];
 
-    UILabel *valueLabel = [[[UILabel alloc] initWithFrame:CGRectMake(cell.frame.size.width / 2 + 10, 4, cell.frame.size.width / 2 - (iPad ? 64 : 20), cell.frame.size.height - 10)] autorelease];
+    UILabel *valueLabel = [[[UILabel alloc] initWithFrame:CGRectMake(cell.frame.size.width / 2 - 14, 5, cell.frame.size.width / 2 - (iPad ? 64 : 20), cell.frame.size.height - 10)] autorelease];
     valueLabel.autoresizingMask = UIViewAutoresizingFlexibleWidth|UIViewAutoresizingFlexibleLeftMargin;
     valueLabel.font = [UIFont systemFontOfSize:16];
     valueLabel.tag = UV_CUSTOM_FIELD_CELL_VALUE_LABEL_TAG;
     valueLabel.textColor = [UIColor blackColor];
     valueLabel.backgroundColor = [UIColor clearColor];
     valueLabel.adjustsFontSizeToFitWidth = YES;
+    valueLabel.textAlignment = NSTextAlignmentRight;
     [cell addSubview:valueLabel];
 }
 
@@ -285,7 +282,6 @@
 - (void)initCellForSubmit:(UITableViewCell *)cell indexPath:(NSIndexPath *)indexPath {
     [self removeBackgroundFromCell:cell];
     CGFloat screenWidth = [UVClientConfig getScreenWidth];
-    CGFloat margin = screenWidth > 480 ? 45 : 10;
 
     UIButton *button = [UIButton buttonWithType:UIButtonTypeCustom];
     button.frame = CGRectMake(0, 0, 300, 42);
@@ -296,7 +292,8 @@
     [button setBackgroundImage:[UIImage imageNamed:@"uv_primary_button_green_active.png"] forState:UIControlStateHighlighted];
     [button addTarget:self action:@selector(createButtonTapped) forControlEvents:UIControlEventTouchUpInside];
     [cell.contentView addSubview:button];
-    button.center = CGPointMake(screenWidth/2 - margin, button.center.y);
+    button.center = CGPointMake(screenWidth/2, button.center.y);
+    button.autoresizingMask = UIViewAutoresizingFlexibleLeftMargin|UIViewAutoresizingFlexibleRightMargin;
 }
 
 #pragma mark ===== UITableViewDataSource Methods =====
@@ -464,6 +461,7 @@
     label.textColor = [UVStyleSheet linkTextColor];
     label.backgroundColor = [UIColor clearColor];
     label.font = [UIFont systemFontOfSize:13];
+    label.autoresizingMask = UIViewAutoresizingFlexibleWidth;
     [footer addSubview:label];
     [label release];
 
@@ -477,6 +475,7 @@
     button.titleLabel.font = [UIFont boldSystemFontOfSize:13];
     [button addTarget:self action:@selector(suggestionButtonTapped) forControlEvents:UIControlEventTouchUpInside];
     button.center = CGPointMake(footer.center.x, button.center.y);
+    button.autoresizingMask = UIViewAutoresizingFlexibleLeftMargin|UIViewAutoresizingFlexibleRightMargin;
     [footer addSubview:button];
 
     self.tableView.tableFooterView = footer;

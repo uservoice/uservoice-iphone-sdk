@@ -20,8 +20,6 @@
 + (void) presentUserVoiceControllers:(NSArray *)viewControllers forParentViewController:(UIViewController *)parentViewController withConfig:(UVConfig *)config {
     [UVSession currentSession].config = config;
     [UVSession currentSession].isModal = YES;
-    // Capture the launch orientation, then store it in NSDefaults for reference in all other UV view controller classes
-    [UVClientConfig setOrientation];
     UINavigationController *navigationController = [[[UINavigationController alloc] init] autorelease];
     navigationController.navigationBar.tintColor = [UVStyleSheet navigationBarTintColor];
     navigationController.viewControllers = viewControllers;
@@ -31,7 +29,6 @@
 + (void) presentUserVoiceController:(UIViewController *)viewController forParentViewController:(UIViewController *)parentViewController withConfig:(UVConfig *)config {
     [self presentUserVoiceControllers:[NSArray arrayWithObject:viewController] forParentViewController:parentViewController withConfig:config];
 }
-
 
 + (void)presentUserVoiceModalViewControllerForParent:(UIViewController *)parentViewController andSite:(NSString *)site andKey:(NSString *)key andSecret:(NSString *)secret {
     UVConfig *config = [[[UVConfig alloc] initWithSite:site andKey:key andSecret:secret] autorelease];
@@ -81,6 +78,10 @@
     }
 }
 
++ (void)setExternalId:(NSString *)identifier forScope:(NSString *)scope {
+    [[UVSession currentSession] setExternalId:identifier forScope:scope];
+}
+
 static id<UVDelegate> userVoiceDelegate;
 + (void)setDelegate:(id<UVDelegate>)delegate {
     userVoiceDelegate = delegate;
@@ -91,7 +92,7 @@ static id<UVDelegate> userVoiceDelegate;
 }
 
 + (NSString *)version {
-    return @"1.2.4";
+    return @"1.2.5";
 }
 
 

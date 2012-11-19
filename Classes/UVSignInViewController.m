@@ -10,7 +10,7 @@
 #import "UVStyleSheet.h"
 #import "UVSession.h"
 #import "UVUser.h"
-#import "UVToken.h"
+#import "UVAccessToken.h"
 #import "UVClientConfig.h"
 #import "UVProfileViewController.h"
 #import "UVClientConfig.h"
@@ -71,15 +71,15 @@
 - (void)checkEmail {
     if (self.emailField.text && self.emailField.text.length > 0 && ![self.email isEqualToString:self.emailField.text]) {
         self.email = self.emailField.text;
-        [self showActivityIndicatorWithText:NSLocalizedStringFromTable(@"Checking...", @"UserVoice", nil)];
+        [self showActivityIndicator];
         [UVUser discoverWithEmail:emailField.text delegate:self];
     }
 }
 
 - (void)checkPassword {
     if (self.passwordField.text && self.passwordField.text.length > 0) {
-        [self showActivityIndicatorWithText:NSLocalizedStringFromTable(@"Checking...", @"UserVoice", nil)];
-        [UVToken getAccessTokenWithDelegate:self andEmail:emailField.text andPassword:passwordField.text];
+        [self showActivityIndicator];
+        [UVAccessToken getAccessTokenWithDelegate:self andEmail:emailField.text andPassword:passwordField.text];
     }
 }
 
@@ -113,7 +113,6 @@
 
 - (void)didReceiveError:(NSError *)error {
     [self hideActivityIndicator];
-    NSLog(@"SignIn Error");
     if ([error isNotFoundError]) {
         self.userType = UV_USER_NEW;
         [self hideActivityIndicator];
@@ -129,9 +128,9 @@
     }
 }
 
-- (void)didRetrieveAccessToken:(UVToken *)token {
+- (void)didRetrieveAccessToken:(UVAccessToken *)token {
     [token persist];
-    [UVSession currentSession].currentToken = token;
+    [UVSession currentSession].accessToken = token;
 
     // reload config to get any answers to questions
     [UVClientConfig getWithDelegate:self];
@@ -146,13 +145,10 @@
     // head back to whichever view launched the login section
     [UVSession currentSession].user = theUser;
     self.user = theUser;
-    NSLog(@"Found user");
 
     if (theUser.suggestionsNeedReload) {
         [UVSuggestion getWithForumAndUser:[UVSession currentSession].clientConfig.forum
                                      user:theUser delegate:self];
-        NSLog(@"Get suggestions");
-
     } else {
         [self hideActivityIndicator];
 
@@ -192,7 +188,7 @@
     [UVSession currentSession].user = theUser;
 
     // token should have been loaded by ResponseDelegate
-    [[UVSession currentSession].currentToken persist];
+    [[UVSession currentSession].accessToken persist];
 
     NSArray *viewControllers = [self.navigationController viewControllers];
     UVBaseViewController *prev = (UVBaseViewController *)[viewControllers objectAtIndex:[viewControllers count] - 2];
@@ -330,21 +326,15 @@
 }
 
 - (BOOL)textFieldShouldEndEditing:(UITextField *)textField {
-//    NSLog(@"textFieldShouldEndEditing %@", textField.text);
     if (textField==emailField) {
-        NSLog(@"Check email");
         [self checkEmail];
-
     } else if (textField==passwordField) {
-        NSLog(@"Check password");
         [self checkPassword];
     }
     return YES;
 }
 
 - (BOOL)textFieldShouldReturn:(UITextField *)textField {
-//    NSLog(@"textFieldShouldReturn %@", textField.text);
-
     [textField resignFirstResponder];
     return YES;
 }

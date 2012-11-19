@@ -8,7 +8,8 @@
 
 #import "UVRootViewController.h"
 #import "UVClientConfig.h"
-#import "UVToken.h"
+#import "UVAccessToken.h"
+#import "UVRequestToken.h"
 #import "UVSession.h"
 #import "UVUser.h"
 #import "UVWelcomeViewController.h"
@@ -42,9 +43,10 @@
 
 - (void)didReceiveError:(NSError *)error {
     if ([error isAuthError]) {
-        if ([UVToken exists]) {
-            [[UVSession currentSession].currentToken remove];
-            [UVToken getRequestTokenWithDelegate:self];
+        if ([UVAccessToken exists]) {
+            [[UVSession currentSession].accessToken remove];
+            [UVSession currentSession].accessToken = nil;
+            [UVRequestToken getRequestTokenWithDelegate:self];
         } else {
             [[[[UIAlertView alloc] initWithTitle:NSLocalizedStringFromTable(@"Error", @"UserVoice", nil)
                                          message:NSLocalizedStringFromTable(@"This application didn't configure UserVoice properly", @"UserVoice", nil)
@@ -63,7 +65,7 @@
 
 - (void)pushNextView {
     UVSession *session = [UVSession currentSession];
-    if ((![UVToken exists] || session.user) && session.clientConfig && [self.navigationController.viewControllers count] == 1) {
+    if ((![UVAccessToken exists] || session.user) && session.clientConfig && [self.navigationController.viewControllers count] == 1) {
         CATransition* transition = [CATransition animation];
         transition.duration = 0.3;
         transition.type = kCATransitionFade;
@@ -89,36 +91,36 @@
     }
 }
 
-- (void)didRetrieveRequestToken:(UVToken *)token {
+// Initialization: request token -> client config -> user -> persist the access token -> user's suggestions -> next view
+// If we don't have either a configured user, or a persisted token (which is therefore an access token) then we go straight from the client config to the next view
+- (void)didRetrieveRequestToken:(UVRequestToken *)token {
     // should be storing all tokens and checking on type
-    [UVSession currentSession].currentToken = token;
+    [UVSession currentSession].requestToken = token;
+    [UVClientConfig getWithDelegate:self];
+}
 
+- (void)didRetrieveClientConfig:(UVClientConfig *)clientConfig {
     // check if we have a sso token and if so exchange it for an access token and user
     if ([UVSession currentSession].config.ssoToken != nil) {
         [UVUser findOrCreateWithSsoToken:[UVSession currentSession].config.ssoToken delegate:self];
     } else if ([UVSession currentSession].config.email != nil) {
         [UVUser findOrCreateWithGUID:[UVSession currentSession].config.guid andEmail:[UVSession currentSession].config.email andName:[UVSession currentSession].config.displayName andDelegate:self];
+    } else if ([UVAccessToken exists]) {
+        [UVUser retrieveCurrentUser:self];
     } else {
-        [UVClientConfig getWithDelegate:self];
+        [self pushNextView];
     }
 }
 
 - (void)didCreateUser:(UVUser *)theUser {
-    // set the current user
     [UVSession currentSession].user = theUser;
-
-    // token should have been loaded by ResponseDelegate
-    [[UVSession currentSession].currentToken persist];
-
-    [UVClientConfig getWithDelegate:self];
-}
-
-- (void)didRetrieveClientConfig:(UVClientConfig *)clientConfig {
+    [[UVSession currentSession].accessToken persist];
     [self pushNextView];
 }
 
 - (void)didRetrieveCurrentUser:(UVUser *)theUser {
     [UVSession currentSession].user = theUser;
+    [[UVSession currentSession].accessToken persist];
     [UVSuggestion getWithForumAndUser:[UVSession currentSession].clientConfig.forum
                                  user:theUser delegate:self];
 }
@@ -146,7 +148,7 @@
 //    else
 //        contentView.backgroundColor = [UIColor groupTableViewBackgroundColor];
 
-    UILabel *splashLabel2 = [[UILabel alloc] initWithFrame:CGRectMake(0, frame.size.height/2, screenWidth, 20)];
+    UILabel *splashLabel2 = [[UILabel alloc] initWithFrame:CGRectMake(0, screenHeight/2 - 30, screenWidth, 20)];
     splashLabel2.backgroundColor = [UIColor clearColor];
     splashLabel2.font = [UIFont systemFontOfSize:15];
     splashLabel2.textColor = [UIColor darkGrayColor];
@@ -172,8 +174,6 @@
 }
 
 - (void)viewWillAppear:(BOOL)animated {
-    NSLog(@"View will appear (RootView)");
-
     if (![UVNetworkUtils hasInternetAccess]) {
         UIImageView *serverErrorImage = [[UIImageView alloc] initWithImage:[UIImage imageNamed:@"uv_error_connection.png"]];
         self.navigationController.navigationBarHidden = NO;
@@ -183,23 +183,15 @@
         serverErrorImage.clipsToBounds = YES;
         [self.view addSubview:serverErrorImage];
         [serverErrorImage release];
-    } else if (![UVToken exists]) {
-        NSLog(@"No access token");
-        [UVToken getRequestTokenWithDelegate:self];
+    } else if (![UVAccessToken exists]) {
+        [UVRequestToken getRequestTokenWithDelegate:self];
     } else if (![[UVSession currentSession] clientConfig]) {
-        NSLog(@"No client config");
-        [UVSession currentSession].currentToken = [[[UVToken alloc] initWithExisting] autorelease];
-
-        // get config and current user
+        [UVSession currentSession].accessToken = [[[UVAccessToken alloc] initWithExisting] autorelease];
         [UVClientConfig getWithDelegate:self];
-        [UVUser retrieveCurrentUser:self];
     } else if (![UVSession currentSession].user) {
-        NSLog(@"No user");
-        // just get user
-        [UVSession currentSession].currentToken = [[[UVToken alloc] initWithExisting] autorelease];
+        [UVSession currentSession].accessToken = [[[UVAccessToken alloc] initWithExisting] autorelease];
         [UVUser retrieveCurrentUser:self];
     } else {
-        NSLog(@"Already loaded");
         // We already have a client config, because the user already logged in before during
         // this session. Skip straight to the welcome view.
         [self pushNextView];

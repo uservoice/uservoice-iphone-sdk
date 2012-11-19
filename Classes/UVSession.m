@@ -23,10 +23,12 @@
 @synthesize isModal;
 @synthesize config;
 @synthesize clientConfig;
-@synthesize currentToken;
+@synthesize accessToken;
+@synthesize requestToken;
 @synthesize info;
 @synthesize userCache, startTime;
 @synthesize interactions, interactionSequence, interactionDetails, interactionId;
+@synthesize externalIds;
 
 + (UVSession *)currentSession {
     static UVSession *currentSession;
@@ -49,25 +51,6 @@
     return self.user != nil;
 }
 
-- (UVUser *)user {
-    return user;
-}
-
-- (void)setUser:(UVUser *)theUser {
-    if (theUser != user) {
-        UVUser *oldUser = [user retain];
-
-        [user release];
-        user = [theUser retain];
-
-        // reload the topic because it owns the number of available votes for the current user
-        if (oldUser != nil && clientConfig) {
-            [UVClientConfig getWithDelegate:self];
-        }
-        [oldUser release];
-    }
-}
-
 - (id)init {
     if (self = [super init]) {
         self.userCache = [NSMutableDictionary dictionary];
@@ -77,6 +60,46 @@
 
 - (void)didRetrieveClientConfig:(UVClientConfig *)config {
     // Do nothing. The UVClientConfig already sets the config on the current session.
+}
+
+- (UVUser *)user {
+    return user;
+}
+
+- (void)setUser:(UVUser *)newUser {
+    [newUser retain];
+    [user release];
+    user = newUser;
+    if (user && externalIds) {
+        for (NSString *scope in externalIds) {
+            NSString *identifier = [externalIds valueForKey:scope];
+            [user identify:identifier withScope:scope delegate:self];
+        }
+    }
+}
+
+- (void)setExternalId:(NSString *)identifier forScope:(NSString *)scope {
+    if (externalIds == nil) {
+        self.externalIds = [NSMutableDictionary dictionary];
+    }
+    [externalIds setObject:identifier forKey:scope];
+    if (user) {
+        [user identify:identifier withScope:scope delegate:self];
+    }
+}
+
+- (void)didIdentifyUser:(UVUser *)user {
+}
+
+- (void)didReceiveError:(NSError *)error {
+    // identify failed
+}
+
+// This is used when dismissing UV so that everything gets reloaded
+- (void)clear {
+    self.user = nil;
+    self.clientConfig = nil;
+    self.requestToken = nil;
 }
 
 - (YOAuthConsumer *)yOAuthConsumer {

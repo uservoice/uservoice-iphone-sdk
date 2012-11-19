@@ -16,13 +16,13 @@
     NSString *name;
     NSString *displayName;
     NSString *email;
-    BOOL emailConfirmed;
     BOOL suggestionsNeedReload;
     NSInteger ideaScore;
     NSInteger activityScore;
     NSInteger karmaScore;
     NSInteger supportedSuggestionsCount;
     NSInteger createdSuggestionsCount;
+    NSInteger votesRemaining;
     NSString *url;
     NSString *avatarUrl;
     NSMutableArray *supportedSuggestions;
@@ -34,11 +34,11 @@
 @property (nonatomic, retain) NSString *name;
 @property (nonatomic, retain) NSString *displayName;
 @property (nonatomic, retain) NSString *email;
-@property (assign) BOOL emailConfirmed;
 @property (assign) BOOL suggestionsNeedReload;
 @property (assign) NSInteger ideaScore;
 @property (assign) NSInteger activityScore;
 @property (assign) NSInteger karmaScore;
+@property (assign) NSInteger votesRemaining;
 @property (nonatomic, retain) NSString *url;
 @property (nonatomic, retain) NSString *avatarUrl;
 @property (nonatomic, retain) NSMutableArray *supportedSuggestions;
@@ -67,6 +67,7 @@
 
 // update
 - (id)updateName:(NSString *)newName email:(NSString *)newEmail delegate:(id)delegate;
+- (id)identify:(NSString *)externalId withScope:(NSString *)externalScope delegate:(id)delegate;
 - (void)didSupportSuggestion:(UVSuggestion *)suggestion;
 - (void)didWithdrawSupportForSuggestion:(UVSuggestion *)suggestion;
 - (void)didCreateSuggestion:(UVSuggestion *)suggestion;
@@ -74,10 +75,7 @@
 
 // others
 - (id)forgotPasswordForEmail:(NSString *)anEmail andDelegate:(id)delegate;
-
 - (BOOL)hasEmail;
-- (BOOL)hasConfirmedEmail;
-- (BOOL)hasUnconfirmedEmail;
 
 // Returns the user's name, or "Anonymous" if they don't have one.
 - (NSString *)nameOrAnonymous;

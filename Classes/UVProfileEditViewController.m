@@ -9,7 +9,7 @@
 #import "UVProfileEditViewController.h"
 #import "UVStyleSheet.h"
 #import "UVSession.h"
-#import "UVToken.h"
+#import "UVAccessToken.h"
 #import "UVUser.h"
 #import "UVClientConfig.h"
 #import "UVUserAvatarView.h"
@@ -55,7 +55,7 @@
 
 - (void)logoutButtonTapped {
     [self showActivityIndicator];
-    [[UVSession currentSession].currentToken revoke:self];
+    [[UVSession currentSession].accessToken revoke:self];
 }
 
 - (void)updateButtonTapped {
@@ -110,6 +110,7 @@
     [button setBackgroundImage:[UIImage imageNamed:@"uv_primary_button_green_active.png"] forState:UIControlStateHighlighted];
     [button addTarget:self action:@selector(updateButtonTapped) forControlEvents:UIControlEventTouchUpInside];
     button.center = CGPointMake(screenWidth/2 - margin, button.center.y);
+    button.autoresizingMask = UIViewAutoresizingFlexibleLeftMargin|UIViewAutoresizingFlexibleRightMargin;
     [cell.contentView addSubview:button];
 }
 
@@ -128,6 +129,7 @@
     [button setBackgroundImage:[UIImage imageNamed:@"uv_primary_button_red_active.png"] forState:UIControlStateHighlighted];
     [button addTarget:self action:@selector(logoutButtonTapped) forControlEvents:UIControlEventTouchUpInside];
     button.center = CGPointMake(screenWidth/2 - margin, button.center.y);
+    button.autoresizingMask = UIViewAutoresizingFlexibleLeftMargin|UIViewAutoresizingFlexibleRightMargin;
     [cell.contentView addSubview:button];
 }
 
@@ -234,40 +236,20 @@
 
     if (section == UV_PROFILE_SECTION_DETAILS) {
         UIView *view = [[UIView alloc] initWithFrame:CGRectMake(0, 0, screenWidth, 40)];
-        UILabel *label = [[UILabel alloc] initWithFrame:CGRectMake(18, 7, 284, 30)];
+        UILabel *label = [[UILabel alloc] initWithFrame:CGRectMake(18, 7, 284, 32)];
 
         label.text = NSLocalizedStringFromTable(@"Changing your email address will require it to be confirmed again.", @"UserVoice", nil);
         label.textColor = [UVStyleSheet linkTextColor];
         label.backgroundColor = [UIColor clearColor];
         label.font = [UIFont boldSystemFontOfSize:13];
         label.textAlignment = UITextAlignmentCenter;
+        label.autoresizingMask = UIViewAutoresizingFlexibleLeftMargin|UIViewAutoresizingFlexibleRightMargin;
         label.numberOfLines = 2;
         label.center = CGPointMake(screenWidth/2, label.center.y);
         [view addSubview:label];
         [label release];
 
         return [view autorelease];
-
-    } else if (section == UV_PROFILE_SECTION_LOGOUT) {
-        if ([self.user hasUnconfirmedEmail]) {
-            UIView *view = [[UIView alloc] initWithFrame:CGRectMake(0, 0, screenWidth, 30)];
-            UILabel *label = [[UILabel alloc] initWithFrame:CGRectMake(38, 0, 300, 40)];
-
-            UIImageView *icon = [[UIImageView alloc] initWithImage:[UIImage imageNamed:@"uv_alert.png"]];
-            icon.frame = CGRectMake(18, 10, 18, 18);
-            [view addSubview:icon];
-            [icon release];
-
-            label.text = NSLocalizedStringFromTable(@"Your email has not yet been confirmed", @"UserVoice", nil);
-            label.textColor = [UVStyleSheet alertTextColor];
-            label.backgroundColor = [UIColor clearColor];
-            label.font = [UIFont boldSystemFontOfSize:14];
-            label.textAlignment = UITextAlignmentLeft;
-            [view addSubview:label];
-            [label release];
-
-            return [view autorelease];
-        }
     }
     return nil;
 }

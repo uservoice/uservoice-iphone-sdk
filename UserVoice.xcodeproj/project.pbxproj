@@ -105,12 +105,12 @@
 		D24540C111B095AA00C7E4BA /* UVSubdomain.m in Sources */ = {isa = PBXBuildFile; fileRef = D24540BF11B095AA00C7E4BA /* UVSubdomain.m */; };
 		D24A3491119F351A005BC3F3 /* UVSignInViewController.h in Headers */ = {isa = PBXBuildFile; fileRef = D24A348F119F351A005BC3F3 /* UVSignInViewController.h */; };
 		D24A3492119F351A005BC3F3 /* UVSignInViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = D24A3490119F351A005BC3F3 /* UVSignInViewController.m */; };
-		D24A382111A09121005BC3F3 /* UVToken.h in Headers */ = {isa = PBXBuildFile; fileRef = D24A381F11A09121005BC3F3 /* UVToken.h */; };
-		D24A382211A09121005BC3F3 /* UVToken.m in Sources */ = {isa = PBXBuildFile; fileRef = D24A382011A09121005BC3F3 /* UVToken.m */; };
+		D24A382111A09121005BC3F3 /* UVAccessToken.h in Headers */ = {isa = PBXBuildFile; fileRef = D24A381F11A09121005BC3F3 /* UVAccessToken.h */; };
+		D24A382211A09121005BC3F3 /* UVAccessToken.m in Sources */ = {isa = PBXBuildFile; fileRef = D24A382011A09121005BC3F3 /* UVAccessToken.m */; };
 		D24BDE6211DAE3FA00B26012 /* UVImageView.h in Headers */ = {isa = PBXBuildFile; fileRef = D24BDE6011DAE3FA00B26012 /* UVImageView.h */; };
 		D24BDE6311DAE3FA00B26012 /* UVImageView.m in Sources */ = {isa = PBXBuildFile; fileRef = D24BDE6111DAE3FA00B26012 /* UVImageView.m */; };
-		D24BE09F11DB1B7C00B26012 /* UVTextEditor.h in Headers */ = {isa = PBXBuildFile; fileRef = D24BE09D11DB1B7C00B26012 /* UVTextEditor.h */; };
-		D24BE0A011DB1B7C00B26012 /* UVTextEditor.m in Sources */ = {isa = PBXBuildFile; fileRef = D24BE09E11DB1B7C00B26012 /* UVTextEditor.m */; };
+		D24BE09F11DB1B7C00B26012 /* UVTextView.h in Headers */ = {isa = PBXBuildFile; fileRef = D24BE09D11DB1B7C00B26012 /* UVTextView.h */; };
+		D24BE0A011DB1B7C00B26012 /* UVTextView.m in Sources */ = {isa = PBXBuildFile; fileRef = D24BE09E11DB1B7C00B26012 /* UVTextView.m */; };
 		D25C899511B1CE98000C0B43 /* UVStatus.h in Headers */ = {isa = PBXBuildFile; fileRef = D25C899311B1CE98000C0B43 /* UVStatus.h */; };
 		D25C899611B1CE98000C0B43 /* UVStatus.m in Sources */ = {isa = PBXBuildFile; fileRef = D25C899411B1CE98000C0B43 /* UVStatus.m */; };
 		D2620D2E11B589FE0053EA4C /* SystemConfiguration.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = D2620D2D11B589FE0053EA4C /* SystemConfiguration.framework */; };
@@ -174,6 +174,8 @@
 		D92767FC15597F3800E17EF1 /* UVArticle.m in Sources */ = {isa = PBXBuildFile; fileRef = D92767FA15597F3800E17EF1 /* UVArticle.m */; };
 		D927680C1559CB4000E17EF1 /* UVArticleViewController.h in Headers */ = {isa = PBXBuildFile; fileRef = D927680A1559CB3F00E17EF1 /* UVArticleViewController.h */; };
 		D927680D1559CB4000E17EF1 /* UVArticleViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = D927680B1559CB4000E17EF1 /* UVArticleViewController.m */; };
+		D9522011163726EE00A7081D /* UVRequestToken.h in Headers */ = {isa = PBXBuildFile; fileRef = D952200F163726EE00A7081D /* UVRequestToken.h */; };
+		D9522012163726EE00A7081D /* UVRequestToken.m in Sources */ = {isa = PBXBuildFile; fileRef = D9522010163726EE00A7081D /* UVRequestToken.m */; };
 		D9819241156D302B00E6F66D /* NSString+Base64.h in Headers */ = {isa = PBXBuildFile; fileRef = D981923F156D302B00E6F66D /* NSString+Base64.h */; };
 		D9819242156D302B00E6F66D /* NSString+Base64.m in Sources */ = {isa = PBXBuildFile; fileRef = D9819240156D302B00E6F66D /* NSString+Base64.m */; };
 		D9B1D1DC14ACCBE700D9189F /* UVImageCache.h in Headers */ = {isa = PBXBuildFile; fileRef = D9B1D1DA14ACCBE700D9189F /* UVImageCache.h */; };
@@ -284,15 +286,14 @@
 		D24540BF11B095AA00C7E4BA /* UVSubdomain.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = UVSubdomain.m; sourceTree = "<group>"; };
 		D24A348F119F351A005BC3F3 /* UVSignInViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = UVSignInViewController.h; sourceTree = "<group>"; };
 		D24A3490119F351A005BC3F3 /* UVSignInViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = UVSignInViewController.m; sourceTree = "<group>"; };
-		D24A381F11A09121005BC3F3 /* UVToken.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = UVToken.h; sourceTree = "<group>"; };
-		D24A382011A09121005BC3F3 /* UVToken.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = UVToken.m; sourceTree = "<group>"; };
+		D24A381F11A09121005BC3F3 /* UVAccessToken.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = UVAccessToken.h; sourceTree = "<group>"; };
+		D24A382011A09121005BC3F3 /* UVAccessToken.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = UVAccessToken.m; sourceTree = "<group>"; };
 		D24BDE6011DAE3FA00B26012 /* UVImageView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = UVImageView.h; sourceTree = "<group>"; };
 		D24BDE6111DAE3FA00B26012 /* UVImageView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = UVImageView.m; sourceTree = "<group>"; };
-		D24BE09D11DB1B7C00B26012 /* UVTextEditor.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = UVTextEditor.h; sourceTree = "<group>"; };
-		D24BE09E11DB1B7C00B26012 /* UVTextEditor.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = UVTextEditor.m; sourceTree = "<group>"; };
+		D24BE09D11DB1B7C00B26012 /* UVTextView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = UVTextView.h; sourceTree = "<group>"; };
+		D24BE09E11DB1B7C00B26012 /* UVTextView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = UVTextView.m; sourceTree = "<group>"; };
 		D25C899311B1CE98000C0B43 /* UVStatus.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = UVStatus.h; sourceTree = "<group>"; };
 		D25C899411B1CE98000C0B43 /* UVStatus.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = UVStatus.m; sourceTree = "<group>"; };
-		D2605CFA144662150029F16B /* uv_alert@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "uv_alert@2x.png"; sourceTree = "<group>"; };
 		D2605D03144662150029F16B /* uv_default_avatar@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "uv_default_avatar@2x.png"; sourceTree = "<group>"; };
 		D2605D04144662150029F16B /* uv_error_connection@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "uv_error_connection@2x.png"; sourceTree = "<group>"; };
 		D2605D06144662150029F16B /* uv_karma_star@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "uv_karma_star@2x.png"; sourceTree = "<group>"; };
@@ -305,7 +306,6 @@
 		D2605D0F144662150029F16B /* uv_user_chicklet_light@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "uv_user_chicklet_light@2x.png"; sourceTree = "<group>"; };
 		D2605D11144662150029F16B /* uv_vote_chicklet_empty@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "uv_vote_chicklet_empty@2x.png"; sourceTree = "<group>"; };
 		D2605D12144662150029F16B /* uv_vote_chicklet@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "uv_vote_chicklet@2x.png"; sourceTree = "<group>"; };
-		D2620C4C11B586230053EA4C /* uv_alert.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = uv_alert.png; sourceTree = "<group>"; };
 		D2620C5611B586230053EA4C /* uv_error_connection.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = uv_error_connection.png; sourceTree = "<group>"; };
 		D2620C5811B586230053EA4C /* uv_karma_star.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = uv_karma_star.png; sourceTree = "<group>"; };
 		D2620C5A11B586230053EA4C /* uv_primary_button_green.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = uv_primary_button_green.png; sourceTree = "<group>"; };
@@ -385,19 +385,22 @@
 		D92768011559B0E900E17EF1 /* uv_idea@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "uv_idea@2x.png"; sourceTree = "<group>"; };
 		D927680A1559CB3F00E17EF1 /* UVArticleViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = UVArticleViewController.h; sourceTree = "<group>"; };
 		D927680B1559CB4000E17EF1 /* UVArticleViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = UVArticleViewController.m; sourceTree = "<group>"; };
+		D952200F163726EE00A7081D /* UVRequestToken.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = UVRequestToken.h; sourceTree = "<group>"; };
+		D9522010163726EE00A7081D /* UVRequestToken.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = UVRequestToken.m; sourceTree = "<group>"; };
 		D981923F156D302B00E6F66D /* NSString+Base64.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSString+Base64.h"; sourceTree = "<group>"; };
 		D9819240156D302B00E6F66D /* NSString+Base64.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NSString+Base64.m"; sourceTree = "<group>"; };
+		D986ADED1624C8E5008291AA /* it */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = it; path = UserVoice.strings; sourceTree = "<group>"; };
+		D986ADF01624C8E5008291AA /* nl */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = nl; path = UserVoice.strings; sourceTree = "<group>"; };
+		D986ADF31624C8E5008291AA /* zh-Hant */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = "zh-Hant"; path = UserVoice.strings; sourceTree = "<group>"; };
 		D99902C5152B881F00AED6A7 /* uv_logo.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = uv_logo.png; sourceTree = "<group>"; };
 		D99902C6152B881F00AED6A7 /* uv_logo@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "uv_logo@2x.png"; sourceTree = "<group>"; };
 		D9B1D1DA14ACCBE700D9189F /* UVImageCache.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = UVImageCache.h; sourceTree = "<group>"; };
 		D9B1D1DB14ACCBE700D9189F /* UVImageCache.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = UVImageCache.m; sourceTree = "<group>"; };
 		D9B1D1E714ACFCE600D9189F /* NSString+HTMLEntities.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSString+HTMLEntities.h"; sourceTree = "<group>"; };
 		D9B1D1E814ACFCE600D9189F /* NSString+HTMLEntities.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NSString+HTMLEntities.m"; sourceTree = "<group>"; };
+		D9CA8FF114F4110800F98763 /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = en; path = UserVoice.strings; sourceTree = "<group>"; };
+		D9CA8FF414F4110800F98763 /* fr */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = fr; path = UserVoice.strings; sourceTree = "<group>"; };
 		D9F2060314C08A8100F4441E /* UVDelegate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = UVDelegate.h; sourceTree = "<group>"; };
-		EE84866E15A4A4C1003B2554 /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = en; path = en.lproj/UserVoice.strings; sourceTree = "<group>"; };
-		EE84866F15A4A4F7003B2554 /* fr */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = fr; path = fr.lproj/UserVoice.strings; sourceTree = "<group>"; };
-		EE84867015A4A510003B2554 /* it */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = it; path = it.lproj/UserVoice.strings; sourceTree = "<group>"; };
-		EE84867115A4A519003B2554 /* zh-Hant */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = "zh-Hant"; path = "zh-Hant.lproj/UserVoice.strings"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -518,8 +521,10 @@
 				AC3127E910976ED800000D5F /* UVSuggestion.m */,
 				D2BEEBB71367436D00EBC307 /* UVTicket.h */,
 				D2BEEBB81367436D00EBC307 /* UVTicket.m */,
-				D24A381F11A09121005BC3F3 /* UVToken.h */,
-				D24A382011A09121005BC3F3 /* UVToken.m */,
+				D24A381F11A09121005BC3F3 /* UVAccessToken.h */,
+				D24A382011A09121005BC3F3 /* UVAccessToken.m */,
+				D952200F163726EE00A7081D /* UVRequestToken.h */,
+				D9522010163726EE00A7081D /* UVRequestToken.m */,
 				AC312727109667CE00000D5F /* UVUser.h */,
 				AC312728109667CE00000D5F /* UVUser.m */,
 			);
@@ -625,8 +630,8 @@
 				D20402CA11E03B0C00022C44 /* UVSuggestionButton.m */,
 				AC35307F11014D20006FD1C1 /* UVSuggestionChickletView.h */,
 				AC35308011014D20006FD1C1 /* UVSuggestionChickletView.m */,
-				D24BE09D11DB1B7C00B26012 /* UVTextEditor.h */,
-				D24BE09E11DB1B7C00B26012 /* UVTextEditor.m */,
+				D24BE09D11DB1B7C00B26012 /* UVTextView.h */,
+				D24BE09E11DB1B7C00B26012 /* UVTextView.m */,
 				D21726AB11A20396005487BA /* UVUserAvatarView.h */,
 				D21726AC11A20396005487BA /* UVUserAvatarView.m */,
 				AC91B4FF11349B6600D84566 /* UVUserButton.h */,
@@ -640,8 +645,11 @@
 		D2620C4B11B586230053EA4C /* Resources */ = {
 			isa = PBXGroup;
 			children = (
-				EE84866D15A4A4C1003B2554 /* UserVoice.strings */,
-				D2605CFA144662150029F16B /* uv_alert@2x.png */,
+				D986ADEB1624C8E5008291AA /* it.lproj */,
+				D986ADEE1624C8E5008291AA /* nl.lproj */,
+				D986ADF11624C8E5008291AA /* zh-Hant.lproj */,
+				D9CA8FEF14F4110800F98763 /* en.lproj */,
+				D9CA8FF214F4110800F98763 /* fr.lproj */,
 				D92767FF1559B0E900E17EF1 /* uv_article@2x.png */,
 				D2605D03144662150029F16B /* uv_default_avatar@2x.png */,
 				D2605D04144662150029F16B /* uv_error_connection@2x.png */,
@@ -657,7 +665,6 @@
 				D2605D0F144662150029F16B /* uv_user_chicklet_light@2x.png */,
 				D2605D11144662150029F16B /* uv_vote_chicklet_empty@2x.png */,
 				D2605D12144662150029F16B /* uv_vote_chicklet@2x.png */,
-				D2620C4C11B586230053EA4C /* uv_alert.png */,
 				D92767FE1559B0E800E17EF1 /* uv_article.png */,
 				D91274AA14ABD9E8003ADF5B /* uv_default_avatar.png */,
 				D2620C5611B586230053EA4C /* uv_error_connection.png */,
@@ -771,6 +778,46 @@
 			path = Categories;
 			sourceTree = "<group>";
 		};
+		D986ADEB1624C8E5008291AA /* it.lproj */ = {
+			isa = PBXGroup;
+			children = (
+				D986ADEC1624C8E5008291AA /* UserVoice.strings */,
+			);
+			path = it.lproj;
+			sourceTree = "<group>";
+		};
+		D986ADEE1624C8E5008291AA /* nl.lproj */ = {
+			isa = PBXGroup;
+			children = (
+				D986ADEF1624C8E5008291AA /* UserVoice.strings */,
+			);
+			path = nl.lproj;
+			sourceTree = "<group>";
+		};
+		D986ADF11624C8E5008291AA /* zh-Hant.lproj */ = {
+			isa = PBXGroup;
+			children = (
+				D986ADF21624C8E5008291AA /* UserVoice.strings */,
+			);
+			path = "zh-Hant.lproj";
+			sourceTree = "<group>";
+		};
+		D9CA8FEF14F4110800F98763 /* en.lproj */ = {
+			isa = PBXGroup;
+			children = (
+				D9CA8FF014F4110800F98763 /* UserVoice.strings */,
+			);
+			path = en.lproj;
+			sourceTree = "<group>";
+		};
+		D9CA8FF214F4110800F98763 /* fr.lproj */ = {
+			isa = PBXGroup;
+			children = (
+				D9CA8FF314F4110800F98763 /* UserVoice.strings */,
+			);
+			path = fr.lproj;
+			sourceTree = "<group>";
+		};
 /* End PBXGroup section */
 
 /* Begin PBXHeadersBuildPhase section */
@@ -823,7 +870,7 @@
 				ACBA71211182B6CB000D0A0B /* UVNetworkUtils.h in Headers */,
 				D2D7B23A119D04E1003EDD3A /* UVProfileEditViewController.h in Headers */,
 				D24A3491119F351A005BC3F3 /* UVSignInViewController.h in Headers */,
-				D24A382111A09121005BC3F3 /* UVToken.h in Headers */,
+				D24A382111A09121005BC3F3 /* UVAccessToken.h in Headers */,
 				D21726AD11A20396005487BA /* UVUserAvatarView.h in Headers */,
 				D2453EC611AF2AD900C7E4BA /* UVInfo.h in Headers */,
 				D24540C011B095AA00C7E4BA /* UVSubdomain.h in Headers */,
@@ -844,7 +891,7 @@
 				D2620F2411B597290053EA4C /* UVJsonParser.h in Headers */,
 				D2620F2611B597290053EA4C /* UVJsonWriter.h in Headers */,
 				D24BDE6211DAE3FA00B26012 /* UVImageView.h in Headers */,
-				D24BE09F11DB1B7C00B26012 /* UVTextEditor.h in Headers */,
+				D24BE09F11DB1B7C00B26012 /* UVTextView.h in Headers */,
 				D20402CB11E03B0C00022C44 /* UVSuggestionButton.h in Headers */,
 				D29734D711E50B8F001B8D6E /* NSData+OAuthResponse.h in Headers */,
 				D29734D911E50B8F001B8D6E /* NSDictionary+ParamUtils.h in Headers */,
@@ -868,6 +915,7 @@
 				D92767FB15597F3800E17EF1 /* UVArticle.h in Headers */,
 				D927680C1559CB4000E17EF1 /* UVArticleViewController.h in Headers */,
 				D9819241156D302B00E6F66D /* NSString+Base64.h in Headers */,
+				D9522011163726EE00A7081D /* UVRequestToken.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -912,6 +960,7 @@
 				en,
 				fr,
 				it,
+				nl,
 				"zh-Hant",
 			);
 			mainGroup = 0867D691FE84028FC02AAC07 /* UserVoice */;
@@ -972,7 +1021,7 @@
 				ACBA71221182B6CB000D0A0B /* UVNetworkUtils.m in Sources */,
 				D2D7B23B119D04E1003EDD3A /* UVProfileEditViewController.m in Sources */,
 				D24A3492119F351A005BC3F3 /* UVSignInViewController.m in Sources */,
-				D24A382211A09121005BC3F3 /* UVToken.m in Sources */,
+				D24A382211A09121005BC3F3 /* UVAccessToken.m in Sources */,
 				D21726AE11A20396005487BA /* UVUserAvatarView.m in Sources */,
 				D2453EC711AF2AD900C7E4BA /* UVInfo.m in Sources */,
 				D24540C111B095AA00C7E4BA /* UVSubdomain.m in Sources */,
@@ -988,7 +1037,7 @@
 				D2620F2511B597290053EA4C /* UVJsonParser.m in Sources */,
 				D2620F2711B597290053EA4C /* UVJsonWriter.m in Sources */,
 				D24BDE6311DAE3FA00B26012 /* UVImageView.m in Sources */,
-				D24BE0A011DB1B7C00B26012 /* UVTextEditor.m in Sources */,
+				D24BE0A011DB1B7C00B26012 /* UVTextView.m in Sources */,
 				D20402CC11E03B0C00022C44 /* UVSuggestionButton.m in Sources */,
 				D29734D811E50B8F001B8D6E /* NSData+OAuthResponse.m in Sources */,
 				D29734DA11E50B8F001B8D6E /* NSDictionary+ParamUtils.m in Sources */,
@@ -1010,19 +1059,49 @@
 				D92767FC15597F3800E17EF1 /* UVArticle.m in Sources */,
 				D927680D1559CB4000E17EF1 /* UVArticleViewController.m in Sources */,
 				D9819242156D302B00E6F66D /* NSString+Base64.m in Sources */,
+				D9522012163726EE00A7081D /* UVRequestToken.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXSourcesBuildPhase section */
 
 /* Begin PBXVariantGroup section */
-		EE84866D15A4A4C1003B2554 /* UserVoice.strings */ = {
+		D986ADEC1624C8E5008291AA /* UserVoice.strings */ = {
 			isa = PBXVariantGroup;
 			children = (
-				EE84866E15A4A4C1003B2554 /* en */,
-				EE84866F15A4A4F7003B2554 /* fr */,
-				EE84867015A4A510003B2554 /* it */,
-				EE84867115A4A519003B2554 /* zh-Hant */,
+				D986ADED1624C8E5008291AA /* it */,
+			);
+			name = UserVoice.strings;
+			sourceTree = "<group>";
+		};
+		D986ADEF1624C8E5008291AA /* UserVoice.strings */ = {
+			isa = PBXVariantGroup;
+			children = (
+				D986ADF01624C8E5008291AA /* nl */,
+			);
+			name = UserVoice.strings;
+			sourceTree = "<group>";
+		};
+		D986ADF21624C8E5008291AA /* UserVoice.strings */ = {
+			isa = PBXVariantGroup;
+			children = (
+				D986ADF31624C8E5008291AA /* zh-Hant */,
+			);
+			name = UserVoice.strings;
+			sourceTree = "<group>";
+		};
+		D9CA8FF014F4110800F98763 /* UserVoice.strings */ = {
+			isa = PBXVariantGroup;
+			children = (
+				D9CA8FF114F4110800F98763 /* en */,
+			);
+			name = UserVoice.strings;
+			sourceTree = "<group>";
+		};
+		D9CA8FF314F4110800F98763 /* UserVoice.strings */ = {
+			isa = PBXVariantGroup;
+			children = (
+				D9CA8FF414F4110800F98763 /* fr */,
 			);
 			name = UserVoice.strings;
 			sourceTree = "<group>";

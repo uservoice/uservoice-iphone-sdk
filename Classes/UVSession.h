@@ -11,7 +11,8 @@
 @class UVConfig;
 @class UVClientConfig;
 @class UVUser;
-@class UVToken;
+@class UVAccessToken;
+@class UVRequestToken;
 @class YOAuthConsumer;
 @class UVInfo;
 
@@ -24,13 +25,15 @@
     UVUser *user;
     UVInfo *info;
     YOAuthConsumer *yOAuthConsumer;
-    UVToken *currentToken;
+    UVAccessToken *accessToken;
+    UVRequestToken *requestToken;
     NSMutableDictionary *userCache;
     NSDate *startTime;
     NSMutableDictionary *interactions;
     NSMutableArray *interactionSequence;
     NSMutableArray *interactionDetails;
     NSUInteger interactionId;
+    NSMutableDictionary *externalIds;
 }
 
 @property (assign) BOOL isModal;
@@ -38,12 +41,14 @@
 @property (nonatomic, retain) UVClientConfig *clientConfig;
 @property (nonatomic, retain) UVUser *user;
 @property (nonatomic, retain) UVInfo *info;
-@property (nonatomic, retain) UVToken *currentToken;
+@property (nonatomic, retain) UVAccessToken *accessToken;
+@property (nonatomic, retain) UVRequestToken *requestToken;
 @property (nonatomic, retain) NSMutableDictionary *userCache;
 @property (nonatomic, retain) NSDate *startTime;
 @property (nonatomic, retain) NSMutableDictionary *interactions;
 @property (nonatomic, retain) NSMutableArray *interactionSequence;
 @property (nonatomic, retain) NSMutableArray *interactionDetails;
+@property (nonatomic, retain) NSMutableDictionary *externalIds;
 @property (assign) NSUInteger interactionId;
 
 + (UVSession *)currentSession;
@@ -53,5 +58,7 @@
 - (void)trackInteraction:(NSString *)interaction;
 - (void)trackInteraction:(NSString *)interaction details:(NSDictionary *)details;
 - (void)flushInteractions;
+- (void)setExternalId:(NSString *)identifier forScope:(NSString *)scope;
+- (void)clear;
 
 @end

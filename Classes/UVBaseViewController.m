@@ -30,7 +30,8 @@
 - (void)dismissUserVoice {
     [[UVImageCache sharedInstance] flush];
     [[UVSession currentSession] flushInteractions];
-
+    [[UVSession currentSession] clear];
+    
     [self dismissModalViewControllerAnimated:YES];
     if ([[UserVoice delegate] respondsToSelector:@selector(userVoiceWasDismissed)])
         [[UserVoice delegate] userVoiceWasDismissed];
@@ -42,27 +43,14 @@
         barFrame = self.navigationController.navigationBar.frame;
     }
     CGRect appFrame = [UIScreen mainScreen].applicationFrame;
-//    NSLog(@"appFrame: %@", NSStringFromCGRect(appFrame));
     CGFloat yStart = barFrame.origin.y + barFrame.size.height;
 
-
-//    NSLog(@"%@", [UVSession currentSession].clientConfig);
-
-    //return CGRectMake(0, yStart, appFrame.size.width, appFrame.size.height - barFrame.size.height);
     return CGRectMake(0, yStart, appFrame.size.width, appFrame.size.height - barFrame.size.height);
 }
 
 
 - (CGRect)contentFrame {
     return [self contentFrameWithNavBar:YES];
-}
-
-- (void)showActivityIndicatorWithText: (NSString *)text {
-    if (!self.activityIndicator) {
-        self.activityIndicator = [UVActivityIndicator activityIndicatorWithText:text];
-    }
-
-    [self.activityIndicator show];
 }
 
 - (void)showActivityIndicator {
@@ -163,10 +151,8 @@
     }
 }
 
-- (BOOL)shouldAutorotateToInterfaceOrientation:(UIInterfaceOrientation)interfaceOrientation
-{
-    UIInterfaceOrientation deviceOrientation = [UVClientConfig getOrientation];
-    return (interfaceOrientation == deviceOrientation);
+- (BOOL)shouldAutorotateToInterfaceOrientation:(UIInterfaceOrientation)interfaceOrientation {
+    return YES;
 }
 
 #pragma mark ===== helper methods for table views =====
@@ -209,6 +195,7 @@
     CGFloat screenWidth = [UVClientConfig getScreenWidth];
 
     UIView *highlight = [[UIView alloc] initWithFrame:CGRectMake(0, 0, screenWidth, 1)];
+    highlight.autoresizingMask = UIViewAutoresizingFlexibleWidth;
     highlight.backgroundColor = [UVStyleSheet topSeparatorColor];
     highlight.opaque = YES;
     [cell.contentView addSubview:highlight];
@@ -224,6 +211,10 @@
 
 - (void)registerForKeyboardNotifications {
     [[NSNotificationCenter defaultCenter] addObserver:self
+                                             selector:@selector(keyboardWillShow:)
+                                                 name:UIKeyboardWillShowNotification object:nil];
+
+    [[NSNotificationCenter defaultCenter] addObserver:self
                                              selector:@selector(keyboardDidShow:)
                                                  name:UIKeyboardDidShowNotification object:nil];
 
@@ -233,12 +224,14 @@
 
 }
 
-- (void)keyboardDidShow:(NSNotification*)notification {
+- (void)keyboardWillShow:(NSNotification*)notification {
     NSDictionary* info = [notification userInfo];
     CGRect rect = [[info objectForKey:UIKeyboardFrameBeginUserInfoKey] CGRectValue];
     // Convert from window space to view space to account for orientation
     kbHeight = [self.view convertRect:rect fromView:nil].size.height;
+}
 
+- (void)keyboardDidShow:(NSNotification*)notification {
     UIEdgeInsets contentInsets = UIEdgeInsetsMake(0.0, 0.0, kbHeight, 0.0);
     tableView.contentInset = contentInsets;
     tableView.scrollIndicatorInsets = contentInsets;
