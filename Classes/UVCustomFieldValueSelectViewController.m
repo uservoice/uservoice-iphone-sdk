@@ -29,6 +29,7 @@
 #pragma mark ===== table cells =====
 
 - (void)customizeCellForValue:(UITableViewCell *)cell indexPath:(NSIndexPath *)indexPath {
+    cell.backgroundColor = [UIColor whiteColor];
     NSString *value = (NSString *)[self.customField.values objectAtIndex:indexPath.row];
     cell.textLabel.text = value;
     NSString *selectedValue = [valueDictionary objectForKey:customField.name];
@@ -78,7 +79,6 @@
 // Implement loadView to create a view hierarchy programmatically, without using a nib.
 - (void)loadView {
     [super loadView];
-    [self hideExitButton];
 
     self.navigationItem.title = self.customField.name;
 

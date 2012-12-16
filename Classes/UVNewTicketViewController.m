@@ -28,8 +28,6 @@
 @synthesize fieldsTableView;
 @synthesize nextButton;
 @synthesize sendButton;
-@synthesize shade;
-@synthesize activityIndicatorView;
 
 #define STATE_BEGIN 1000
 #define STATE_IA 1001
@@ -72,19 +70,23 @@
 
     self.instantAnswersView = [[[UIView alloc] initWithFrame:CGRectMake(0, 200, 320, 1000)] autorelease];
     self.instantAnswersView.backgroundColor = [UIColor colorWithRed:0.95f green:0.98f blue:1.00f alpha:1.0f];
+    self.instantAnswersView.layer.shadowColor = [UIColor blackColor].CGColor;
+    self.instantAnswersView.layer.shadowOffset = CGSizeMake(0, 0);
+    self.instantAnswersView.layer.shadowRadius = 2.0;
+    self.instantAnswersView.layer.shadowOpacity = 0.3;
     self.instantAnswersMessage = [[[UIView alloc] initWithFrame:CGRectMake(0, 0, 320, 50)] autorelease];
     self.instantAnswersMessage.autoresizingMask = UIViewAutoresizingFlexibleWidth|UIViewAutoresizingFlexibleBottomMargin;
     [instantAnswersMessage addGestureRecognizer:[[[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(instantAnswersMessageTapped)] autorelease]];
-    UILabel *instantAnswersLabel = [[[UILabel alloc] initWithFrame:CGRectMake(10, 6, 250, 30)] autorelease];
+    UILabel *instantAnswersLabel = [[[UILabel alloc] initWithFrame:CGRectMake(10, 4, 300, 30)] autorelease];
     instantAnswersLabel.autoresizingMask = UIViewAutoresizingFlexibleWidth;
     instantAnswersLabel.tag = TICKET_VIEW_IA_LABEL_TAG;
     instantAnswersLabel.numberOfLines = 2;
-    instantAnswersLabel.textColor = [UIColor grayColor];
-    instantAnswersLabel.font = [UIFont systemFontOfSize:11];
+    instantAnswersLabel.textColor = [UIColor colorWithRed:0.20f green:0.31f blue:0.52f alpha:1.0f];
+    instantAnswersLabel.font = [UIFont systemFontOfSize:15];
     instantAnswersLabel.backgroundColor = [UIColor clearColor];
-    instantAnswersLabel.textAlignment = UITextAlignmentLeft;
+    instantAnswersLabel.textAlignment = UITextAlignmentCenter;
     [instantAnswersMessage addSubview:instantAnswersLabel];
-    [self addSpinnerAndArrowTo:instantAnswersMessage atCenter:CGPointMake(320 - 22, 20)];
+    [self addSpinnerAndXTo:instantAnswersMessage atCenter:CGPointMake(320 - 22, 20)];
     [instantAnswersView addSubview:instantAnswersMessage];
     [self addTopBorder:instantAnswersView];
     self.instantAnswersTableView = [[[UITableView alloc] initWithFrame:CGRectMake(0, 40, 320, 1000) style:UITableViewStyleGrouped] autorelease];
@@ -94,26 +96,6 @@
     self.instantAnswersTableView.dataSource = self;
     self.instantAnswersTableView.delegate = self;
     self.instantAnswersTableView.scrollEnabled = NO;
-
-    // UIView *iaFooter = [[[UIView alloc] initWithFrame:CGRectMake(0, 0, instantAnswersTableView.bounds.size.width, 90)] autorelease];
-    // UILabel *label = [[[UILabel alloc] initWithFrame:CGRectMake(10, 10, instantAnswersTableView.bounds.size.width, 15)] autorelease];
-    // label.text = NSLocalizedStringFromTable(@"Do any of these answer your question?", @"UserVoice", nil);
-    // label.font = [UIFont boldSystemFontOfSize:13];
-    // [iaFooter addSubview:label];
-    // [self addButton:@"Thanks!"
-    //     withCaption:@"I found what I was looking for"
-    //         andRect:CGRectMake(10, 35, 145, 35)
-    //         andMask:UIViewAutoresizingFlexibleWidth|UIViewAutoresizingFlexibleRightMargin
-    //       andAction:@selector(thanksTapped)
-    //          toView:iaFooter];
-    // [self addButton:@"Not helpful"
-    //     withCaption:@"I still need to contact you"
-    //         andRect:CGRectMake(165, 35, 145, 35)
-    //         andMask:UIViewAutoresizingFlexibleWidth|UIViewAutoresizingFlexibleLeftMargin
-    //       andAction:@selector(notInterestedTapped)
-    //          toView:iaFooter];
-    // self.instantAnswersTableView.tableFooterView = iaFooter;
-
     [instantAnswersView addSubview:instantAnswersTableView];
     [self.view addSubview:instantAnswersView];
     
@@ -125,7 +107,6 @@
     self.fieldsTableView.backgroundColor = [UIColor colorWithRed:0.94f green:0.95f blue:0.95f alpha:1.0f];
     fieldsTableView.hidden = YES;
     [self addTopBorder:fieldsTableView];
-    self.fieldsTableView.tableFooterView = [self fieldsTableFooterView];
     [self.view addSubview:fieldsTableView];
 
     self.nextButton = [self barButtonItem:@"Continue" withAction:@selector(nextButtonTapped)];
@@ -136,27 +117,15 @@
     [textView becomeFirstResponder];
     [self updateLayout];
 
-    if (self.text && [self.text length] > 0)
+    if (self.text && [self.text length] > 0) {
+        self.instantAnswersQuery = self.text;
         [self loadInstantAnswers];
-}
-
-- (void)notInterestedTapped {
-    state = STATE_FIELDS_IA;
-    [self updateLayout];
-}
-
-- (void)thanksTapped {
-    self.text = nil;
-    [self.navigationController popViewControllerAnimated:YES];
+    }
 }
 
 - (void)nextButtonTapped {
     if (state == STATE_BEGIN) {
-        if (timer) {
-            [timer fire];
-            [timer invalidate];
-            self.timer = nil;
-        }
+        [self fireInstantAnswersTimer];
         if (loadingInstantAnswers)
             state = STATE_WAITING;
         else
@@ -184,7 +153,7 @@
 }
 
 - (void)willLoadInstantAnswers {
-    [self updateSpinnerAndArrowIn:instantAnswersMessage withToggle:(state == STATE_SHOW_IA) animated:YES];
+    [self updateSpinnerAndXIn:instantAnswersMessage withToggle:(state == STATE_SHOW_IA) animated:YES];
 }
 
 - (void)didLoadInstantAnswers {
@@ -203,7 +172,13 @@
     CGPoint offset = [textField convertPoint:CGPointZero toView:scrollView];
     offset.x = 0;
     offset.y -= 20;
+    offset.y = MIN(offset.y, MAX(0, scrollView.contentSize.height + [UVKeyboardUtils height] - scrollView.bounds.size.height));
     [scrollView setContentOffset:offset animated:YES];
+    return YES;
+}
+
+- (BOOL)textFieldShouldEndEditing:(UITextField *)textField {
+    [scrollView setContentOffset:CGPointZero animated:YES];
     return YES;
 }
 
@@ -213,6 +188,7 @@
     else
         state = STATE_IA;
     [self updateLayout];
+    [scrollView setContentOffset:CGPointZero animated:YES];
 }
 
 - (void)instantAnswersMessageTapped {
@@ -251,7 +227,7 @@
 - (NSInteger)tableView:(UITableView *)theTableView numberOfRowsInSection:(NSInteger)section {
     if (theTableView == fieldsTableView) {
         if (section == SECTION_PROFILE)
-            return [self signedIn] ? 0 : 2;
+            return 2;
         else
             return [[UVSession currentSession].clientConfig.customFields count];
     } else {
@@ -312,17 +288,16 @@
     else
         [textView resignFirstResponder];
 
-    BOOL keyboardHidden = ![UVKeyboardUtils visible];
     CGFloat sH = [UIScreen mainScreen].bounds.size.height;
     CGFloat sW = [UIScreen mainScreen].bounds.size.width;
-    CGFloat kbP = keyboardHidden ? 64 : 280;
-    CGFloat kbL = keyboardHidden ? 64 : 214;
+    CGFloat kbP = 280;
+    CGFloat kbL = 214;
 
     CGRect textViewRect = landscape ?
-        CGRectMake(0, 0, sH, showTextView ? (sW - kbL) : 50) :
-        CGRectMake(0, 0, sW, showTextView ? (sH - kbP) : 60);
+        CGRectMake(0, 0, sH, sW - kbL) :
+        CGRectMake(0, 0, sW, sH - kbP);
 
-    if (showTextView && showIAMessage)
+    if (showIAMessage)
         textViewRect.size.height -= 40;
 
     CGPoint instantAnswersOrigin = CGPointMake(0, textViewRect.size.height);
@@ -348,7 +323,7 @@
 
     scrollView.contentSize = CGSizeMake(scrollView.bounds.size.width, textViewRect.size.height + (showIAMessage ? 40 : 0) + (showIATable ? instantAnswersTableView.contentSize.height : 0) + (showFieldsTable ? fieldsTableView.contentSize.height : 0));
 
-    [self updateSpinnerAndArrowIn:instantAnswersMessage withToggle:(state == STATE_SHOW_IA) animated:YES];
+    [self updateSpinnerAndXIn:instantAnswersMessage withToggle:(state == STATE_SHOW_IA) animated:YES];
     [UIView animateWithDuration:0.3 animations:^{
         messageTextView.frame = textViewRect;
         instantAnswersView.frame = CGRectMake(instantAnswersOrigin.x, instantAnswersOrigin.y, textViewRect.size.width, instantAnswersTableView.frame.origin.y + instantAnswersTableView.frame.size.height);
@@ -360,38 +335,18 @@
             [textView scrollRangeToVisible:NSMakeRange(0, 0)];
         if (!showFieldsTable)
             fieldsTableView.hidden = YES;
-        if (!showIATable)
-            instantAnswersTableView.hidden = YES;
     }];
-}
-
-- (void)showActivityIndicator {
-    if (!shade) {
-        self.shade = [[[UIView alloc] initWithFrame:self.view.bounds] autorelease];
-        self.shade.autoresizingMask = UIViewAutoresizingFlexibleWidth|UIViewAutoresizingFlexibleHeight;
-        self.shade.backgroundColor = [UIColor blackColor];
-        self.shade.alpha = 0.5;
-        [self.view addSubview:shade];
-    }
-    if (!activityIndicatorView) {
-        self.activityIndicatorView = [[[UIActivityIndicatorView alloc] initWithActivityIndicatorStyle:UIActivityIndicatorViewStyleWhiteLarge] autorelease];
-        self.activityIndicatorView.center = CGPointMake(self.view.bounds.size.width/2, self.view.bounds.size.height/4);
-        self.activityIndicatorView.autoresizingMask = UIViewAutoresizingFlexibleLeftMargin|UIViewAutoresizingFlexibleRightMargin|UIViewAutoresizingFlexibleBottomMargin|UIViewAutoresizingFlexibleTopMargin;
-        [self.view addSubview:activityIndicatorView];
-    }
-    shade.hidden = NO;
-    activityIndicatorView.hidden = NO;
-    [activityIndicatorView startAnimating];
-}
-
-- (void)hideActivityIndicator {
-    [activityIndicatorView stopAnimating];
-    activityIndicatorView.hidden = YES;
-    shade.hidden = YES;
 }
 
 - (void)willAnimateRotationToInterfaceOrientation:(UIInterfaceOrientation)interfaceOrientation duration:(NSTimeInterval)duration {
     [self updateLayout];
+}
+
+- (void)viewWillAppear:(BOOL)animated {
+   [super viewWillAppear:animated];
+   scrollView.contentInset = UIEdgeInsetsZero;
+   scrollView.scrollIndicatorInsets = UIEdgeInsetsZero;
+   scrollView.contentOffset = CGPointZero;
 }
 
 - (void)dealloc {
@@ -403,8 +358,6 @@
     self.fieldsTableView = nil;
     self.nextButton = nil;
     self.sendButton = nil;
-    self.shade = nil;
-    self.activityIndicatorView = nil;
     [super dealloc];
 }
 

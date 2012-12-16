@@ -71,7 +71,7 @@
 + (void)presentUserVoiceForumForParentViewController:(UIViewController *)parentViewController andConfig:(UVConfig *)config {
     if ([[UVSession currentSession] clientConfig]) {
         UIViewController *welcomeViewController = [[[UVWelcomeViewController alloc] init] autorelease];
-        UIViewController *suggestionListViewController = [[[UVSuggestionListViewController alloc] initWithForum:[UVSession currentSession].clientConfig.forum] autorelease];
+        UIViewController *suggestionListViewController = [[[UVSuggestionListViewController alloc] init] autorelease];
         NSArray *viewControllers = [NSArray arrayWithObjects:welcomeViewController, suggestionListViewController, nil];
         [self presentUserVoiceControllers:viewControllers forParentViewController:parentViewController withConfig:config];
     } else {
@@ -94,7 +94,7 @@ static id<UVDelegate> userVoiceDelegate;
 }
 
 + (NSString *)version {
-    return @"1.2.5";
+    return @"2.0.0b2";
 }
 
 

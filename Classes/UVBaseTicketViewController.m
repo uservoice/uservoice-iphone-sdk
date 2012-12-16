@@ -23,15 +23,15 @@
 #import "UVTicket.h"
 #import "UVForum.h"
 #import "UVKeyboardUtils.h"
+#import "UVWelcomeViewController.h"
 
 @implementation UVBaseTicketViewController
 
-@synthesize timer;
-@synthesize textView;
-@synthesize instantAnswers;
 @synthesize emailField;
 @synthesize nameField;
 @synthesize selectedCustomFieldValues;
+@synthesize initialText;
+@synthesize textView;
 
 - (id)initWithText:(NSString *)theText {
     if (self = [self init]) {
@@ -44,14 +44,10 @@
 - (id)init {
     if (self = [super init]) {
         self.selectedCustomFieldValues = [NSMutableDictionary dictionaryWithDictionary:[UVSession currentSession].config.customFields];
+        self.articleHelpfulPrompt = NSLocalizedStringFromTable(@"Do you still want to contact us?", @"UserVoice", nil);
+        self.articleReturnMessage = NSLocalizedStringFromTable(@"Yes, go to my message", @"UserVoice", nil);
     }
     return self;
-}
-
-- (void)willLoadInstantAnswers {
-}
-
-- (void)didLoadInstantAnswers {
 }
 
 - (void)dismissKeyboard {
@@ -59,17 +55,17 @@
 
 - (void)sendButtonTapped {
     [self dismissKeyboard];
-    self.email = emailField.text;
-    self.name = nameField.text;
+    self.userEmail = emailField.text;
+    self.userName = nameField.text;
     self.text = textView.text;
     
     //Add technical info and content of the log
     self.text = [self.text stringByAppendingString:[selectedCustomFieldValues objectForKey:@"Technical Information"]];
     //End of local modification
 
-    if ([UVSession currentSession].user || (email && [email length] > 1)) {
+    if ([UVSession currentSession].user || (emailField.text.length > 1)) {
         [self showActivityIndicator];
-        [UVTicket createWithMessage:self.text andEmailIfNotLoggedIn:self.email andName:self.name andCustomFields:selectedCustomFieldValues andDelegate:self];
+        [UVTicket createWithMessage:self.text andEmailIfNotLoggedIn:emailField.text andName:nameField.text andCustomFields:selectedCustomFieldValues andDelegate:self];
         [[UVSession currentSession] trackInteraction:@"pt"];
     } else {
         [self alertError:NSLocalizedStringFromTable(@"Please enter your email address before submitting your ticket.", @"UserVoice", nil)];
@@ -79,12 +75,29 @@
 - (void)didCreateTicket:(UVTicket *)theTicket {
     self.text = nil;
     [self hideActivityIndicator];
-    [self alertSuccess:NSLocalizedStringFromTable(@"Your ticket was successfully submitted.", @"UserVoice", nil)];
-    [self.navigationController popViewControllerAnimated:YES];
+    [[UVSession currentSession] flash:NSLocalizedStringFromTable(@"Your message has been sent.", @"UserVoice", nil) title:NSLocalizedStringFromTable(@"Success!", @"UserVoice", nil) suggestion:nil];
+
+    [self cleanupInstantAnswersTimer];
+    dismissed = YES;
+    if ([UVSession currentSession].isModal && firstController) {
+        CATransition* transition = [CATransition animation];
+        transition.duration = 0.3;
+        transition.type = kCATransitionFade;
+        [self.navigationController.view.layer addAnimation:transition forKey:kCATransition];
+        UVWelcomeViewController *welcomeView = [[[UVWelcomeViewController alloc] init] autorelease];
+        welcomeView.firstController = YES;
+        NSArray *viewControllers = @[self.navigationController.viewControllers[0], welcomeView];
+        [self.navigationController setViewControllers:viewControllers animated:NO];
+    } else {
+        UINavigationController *nav = (UINavigationController *)self.presentingViewController;
+        [nav setViewControllers:[nav.viewControllers subarrayWithRange:NSMakeRange(0, 2)] animated:NO];
+        [(UVWelcomeViewController *)[nav.viewControllers lastObject] updateLayout];
+        [self dismissModalViewControllerAnimated:YES];
+    }
 }
 
 - (void)suggestionButtonTapped {
-    UIViewController *next = [[UVNewSuggestionViewController alloc] initWithForum:[UVSession currentSession].clientConfig.forum title:self.textView.text];
+    UIViewController *next = [UVNewSuggestionViewController viewControllerWithTitle:self.textView.text];
     [self pushViewControllerFromWelcome:next];
 }
 
@@ -98,6 +111,7 @@
     if ([field isPredefined]) {
         UIViewController *next = [[[UVCustomFieldValueSelectViewController alloc] initWithCustomField:field valueDictionary:selectedCustomFieldValues] autorelease];
         self.navigationItem.backBarButtonItem.title = NSLocalizedStringFromTable(@"Back", @"UserVoice", nil);
+        [self dismissKeyboard];
         [self.navigationController pushViewController:next animated:YES];
     } else {
         UITableViewCell *cell = [theTableView cellForRowAtIndexPath:indexPath];
@@ -121,53 +135,8 @@
 }
 
 - (void)textViewDidChange:(UVTextView *)theTextEditor {
-    if ([[self.text lowercaseString] isEqualToString:[self.textView.text lowercaseString]])
-        return;
     self.text = self.textView.text;
-    [self.timer invalidate];
-    self.timer = nil;
-    if (self.textView.text.length == 0) {
-        self.instantAnswers = [NSArray array];
-        [self didLoadInstantAnswers];
-    } else {
-        self.timer = [NSTimer scheduledTimerWithTimeInterval:0.5 target:self selector:@selector(loadInstantAnswers:) userInfo:nil repeats:NO];
-    }
-}
-
-- (void)setName:(NSString *)theName {
-    [theName retain];
-    [name release];
-    name = theName;
-
-    NSUserDefaults *prefs = [NSUserDefaults standardUserDefaults];
-    [prefs setObject:name forKey:@"uv-message-name"];
-    [prefs synchronize];
-}
-
-- (NSString *)name {
-    if (name)
-        return name;
-    NSUserDefaults *prefs = [NSUserDefaults standardUserDefaults];
-    name = [[prefs stringForKey:@"uv-message-name"] retain];
-    return name;
-}
-
-- (void)setEmail:(NSString *)theEmail {
-    [theEmail retain];
-    [email release];
-    email = theEmail;
-
-    NSUserDefaults *prefs = [NSUserDefaults standardUserDefaults];
-    [prefs setObject:email forKey:@"uv-message-email"];
-    [prefs synchronize];
-}
-
-- (NSString *)email {
-    if (email)
-        return email;
-    NSUserDefaults *prefs = [NSUserDefaults standardUserDefaults];
-    email = [[prefs stringForKey:@"uv-message-email"] retain];
-    return email;
+    [self searchInstantAnswers:self.text];
 }
 
 - (void)setText:(NSString *)theText {
@@ -188,46 +157,16 @@
     return text;
 }
 
-- (void)loadInstantAnswers:(NSTimer *)timer {
-    loadingInstantAnswers = YES;
-    self.instantAnswers = [NSArray array];
-    [self willLoadInstantAnswers];
-    // It's a combined search, remember?
-    [[UVSession currentSession] trackInteraction:@"sf"];
-    [[UVSession currentSession] trackInteraction:@"si"];
-    [UVArticle getInstantAnswers:self.text delegate:self];
-}
-
-- (void)loadInstantAnswers {
-    [self loadInstantAnswers:nil];
-}
-
 - (void)didRetrieveInstantAnswers:(NSArray *)theInstantAnswers {
-    self.instantAnswers = [theInstantAnswers subarrayWithRange:NSMakeRange(0, MIN(3, [theInstantAnswers count]))];
-    loadingInstantAnswers = NO;
-    [self didLoadInstantAnswers];
-    
-    // This seems like the only way to do justice to tracking the number of results from the combined search
-    NSMutableArray *articleIds = [NSMutableArray arrayWithCapacity:[theInstantAnswers count]];
-    for (id answer in theInstantAnswers) {
-        if ([answer isKindOfClass:[UVArticle class]]) {
-            [articleIds addObject:[NSNumber numberWithInt:[((UVArticle *)answer) articleId]]];
-        }
-    }
-    [[UVSession currentSession] trackInteraction:[articleIds count] > 0 ? @"rfp" : @"rfz" details:[NSDictionary dictionaryWithObjectsAndKeys:[NSNumber numberWithInt:[articleIds count]], @"count", articleIds, @"ids", nil]];
-    
-    NSMutableArray *suggestionIds = [NSMutableArray arrayWithCapacity:[theInstantAnswers count]];
-    for (id answer in theInstantAnswers) {
-        if ([answer isKindOfClass:[UVSuggestion class]]) {
-            [suggestionIds addObject:[NSNumber numberWithInt:[((UVSuggestion *)answer) suggestionId]]];
-        }
-    }
-    [[UVSession currentSession] trackInteraction:[suggestionIds count] > 0 ? @"rip" : @"riz" details:[NSDictionary dictionaryWithObjectsAndKeys:[NSNumber numberWithInt:[suggestionIds count]], @"count", suggestionIds, @"ids", nil]];
+    if (dismissed)
+        return;
+    [super didRetrieveInstantAnswers:theInstantAnswers];
 }
 
 - (UITextField *)customizeTextFieldCell:(UITableViewCell *)cell label:(NSString *)label placeholder:(NSString *)placeholder {
     cell.textLabel.text = label;
-    UITextField *textField = [[UITextField alloc] initWithFrame:CGRectMake(65, 11, 230, 22)];
+    UITextField *textField = [[UITextField alloc] initWithFrame:CGRectMake(65, 11, cell.bounds.size.width - 75, 22)];
+    textField.autoresizingMask = UIViewAutoresizingFlexibleWidth;
     textField.placeholder = placeholder;
     textField.returnKeyType = UIReturnKeyDone;
     textField.borderStyle = UITextBorderStyleNone;
@@ -254,21 +193,6 @@
     return footer;
 }
 
-- (void)addTopBorder:(UIView *)view {
-    [self addTopBorder:view alpha:1.0];
-}
-
-- (void)addTopBorder:(UIView *)view alpha:(CGFloat)alpha {
-    UIView *border = [[[UIView alloc] initWithFrame:CGRectMake(0, 0, 320, 1)] autorelease];
-    border.backgroundColor = [UIColor colorWithRed:0.86f green:0.88f blue:0.89f alpha:1.0f];
-    border.autoresizingMask = UIViewAutoresizingFlexibleWidth|UIViewAutoresizingFlexibleBottomMargin;
-    [view addSubview:border];
-    border = [[[UIView alloc] initWithFrame:CGRectMake(0, 1, 320, 1)] autorelease];
-    border.backgroundColor = [UIColor colorWithRed:1.0f green:1.0f blue:1.0f alpha:1.0f];
-    border.autoresizingMask = UIViewAutoresizingFlexibleWidth|UIViewAutoresizingFlexibleBottomMargin;
-    [view addSubview:border];
-}
-
 - (void)addButton:(NSString *)label withCaption:(NSString *)caption andRect:(CGRect)rect andMask:(int)autoresizingMask andAction:(SEL)selector toView:(UIView *)parentView {
     CGRect containerRect = CGRectMake(rect.origin.x, rect.origin.y, rect.size.width, rect.size.height + 20);
     UIView *container = [[[UIView alloc] initWithFrame:containerRect] autorelease];
@@ -287,13 +211,6 @@
     captionLabel.textColor = [UIColor grayColor];
     [container addSubview:captionLabel];
     [parentView addSubview:container];
-}
-
-- (UIBarButtonItem *)barButtonItem:(NSString *)label withAction:(SEL)selector {
-    return [[[UIBarButtonItem alloc] initWithTitle:NSLocalizedStringFromTable(label, @"UserVoice", nil)
-                                             style:UIBarButtonItemStylePlain
-                                            target:self
-                                            action:selector] autorelease];
 }
 
 - (void)initCellForCustomField:(UITableViewCell *)cell indexPath:(NSIndexPath *)indexPath {
@@ -338,153 +255,80 @@
     self.emailField.keyboardType = UIKeyboardTypeEmailAddress;
     self.emailField.autocorrectionType = UITextAutocorrectionTypeNo;
     self.emailField.autocapitalizationType = UITextAutocapitalizationTypeNone;
-    self.emailField.text = self.email;
+    self.emailField.text = self.userEmail;
 }
 
 - (void)initCellForName:(UITableViewCell *)cell indexPath:(NSIndexPath *)indexPath {
     cell.backgroundColor = [UIColor whiteColor];
     self.nameField = [self customizeTextFieldCell:cell label:NSLocalizedStringFromTable(@"Name", @"UserVoice", nil) placeholder:NSLocalizedStringFromTable(@"“Anonymous”", @"UserVoice", nil)];
-    self.nameField.text = self.name;
+    self.nameField.text = self.userName;
 }
 
-- (void)customizeCellForInstantAnswer:(UITableViewCell *)cell index:(int)index {
-    cell.backgroundColor = [UIColor whiteColor];
-    id model = [instantAnswers objectAtIndex:index];
-    if ([model isMemberOfClass:[UVArticle class]]) {
-        UVArticle *article = (UVArticle *)model;
-        cell.textLabel.text = article.question;
-        cell.imageView.image = [UIImage imageNamed:@"uv_article.png"];
-    } else {
-        UVSuggestion *suggestion = (UVSuggestion *)model;
-        cell.textLabel.text = suggestion.title;
-        cell.imageView.image = [UIImage imageNamed:@"uv_idea.png"];
-    }
-    cell.accessoryType = UITableViewCellAccessoryDisclosureIndicator;
-    cell.textLabel.numberOfLines = 2;
-    cell.textLabel.font = [UIFont boldSystemFontOfSize:13.0];
+- (void)initNavigationItem {
+    [super initNavigationItem];
+    self.navigationItem.leftBarButtonItem = [[[UIBarButtonItem alloc] initWithTitle:NSLocalizedStringFromTable(@"Cancel", @"UserVoice", nil)
+                                                                              style:UIBarButtonItemStylePlain
+                                                                             target:self
+                                                                             action:@selector(dismiss)] autorelease];
 }
 
-- (void)selectInstantAnswerAtIndex:(int)index {
-    id model = [self.instantAnswers objectAtIndex:index];
-    if ([model isMemberOfClass:[UVArticle class]]) {
-        UVArticle *article = (UVArticle *)model;
-        [[UVSession currentSession] trackInteraction:@"cf" details:[NSDictionary dictionaryWithObjectsAndKeys:[NSNumber numberWithInt:article.articleId], @"id", self.textView.text, @"t", nil]];
-        UVArticleViewController *next = [[[UVArticleViewController alloc] initWithArticle:article] autorelease];
-        [self.navigationController pushViewController:next animated:YES];
-    } else {
-        UVSuggestion *suggestion = (UVSuggestion *)model;
-        [[UVSession currentSession] trackInteraction:@"ci" details:[NSDictionary dictionaryWithObjectsAndKeys:[NSNumber numberWithInt:suggestion.suggestionId], @"id", self.textView.text, @"t", nil]];
-        UVSuggestionDetailsViewController *next = [[[UVSuggestionDetailsViewController alloc] initWithSuggestion:suggestion] autorelease];
-        [self.navigationController pushViewController:next animated:YES];
+- (void)dismiss {
+    [self cleanupInstantAnswersTimer];
+    dismissed = YES;
+    if ([self shouldLeaveViewController]) {
+        if ([UVSession currentSession].isModal && firstController)
+            [self dismissUserVoice];
+        else
+            [self dismissModalViewControllerAnimated:YES];
     }
 }
 
-- (void)addSpinnerAndArrowTo:(UIView *)view atCenter:(CGPoint)center {
-    UIImageView *arrow = [[[UIImageView alloc] initWithImage:[UIImage imageNamed:@"uv_arrow.png"]] autorelease];
-    arrow.center = center;
-    arrow.autoresizingMask = UIViewAutoresizingFlexibleLeftMargin;
-    arrow.tag = TICKET_VIEW_ARROW_TAG;
-    [view addSubview:arrow];
-    
-    UIActivityIndicatorView *spinner = [[[UIActivityIndicatorView alloc] initWithActivityIndicatorStyle:UIActivityIndicatorViewStyleGray] autorelease];
-    spinner.center = center;
-    spinner.autoresizingMask = UIViewAutoresizingFlexibleLeftMargin;
-    spinner.tag = TICKET_VIEW_SPINNER_TAG;
-    [spinner startAnimating];
-    [view addSubview:spinner];
+- (void)showSaveActionSheet {
+    UIActionSheet *actionSheet = [[[UIActionSheet alloc] initWithTitle:nil
+                                                              delegate:self
+                                                     cancelButtonTitle:NSLocalizedStringFromTable(@"Cancel", @"UserVoice", nil)
+                                                destructiveButtonTitle:NSLocalizedStringFromTable(@"Don't save", @"UserVoice", nil)
+                                                     otherButtonTitles:NSLocalizedStringFromTable(@"Save draft", @"UserVoice", nil), nil] autorelease];
+
+    [actionSheet showInView:self.view];
 }
 
-- (void)updateSpinnerAndArrowIn:(UIView *)view withToggle:(BOOL)toggled animated:(BOOL)animated {
-    UILabel *label = (UILabel *)[view viewWithTag:TICKET_VIEW_IA_LABEL_TAG];
-    UIView *spinner = [view viewWithTag:TICKET_VIEW_SPINNER_TAG];
-    UIView *arrow = [view viewWithTag:TICKET_VIEW_ARROW_TAG];
-    if ([instantAnswers count] > 0)
-      label.text = [self instantAnswersFoundMessage];
-    void (^update)() = ^{
-        if (loadingInstantAnswers) {
-            spinner.layer.opacity = 1.0;
-            arrow.layer.opacity = 0.0;
-        } else {
-            spinner.layer.opacity = 0.0;
-            arrow.layer.opacity = 1.0;
-            if (toggled) {
-                arrow.layer.transform = CATransform3DMakeRotation(M_PI, 0, 0, 1);
-            } else {
-                arrow.layer.transform = CATransform3DIdentity;
-            }
-        }
-    };
-    if (animated) {
-        [UIView animateWithDuration:0.3 animations:update];
-    } else {
-        update();
+- (void)actionSheet:(UIActionSheet *)actionSheet didDismissWithButtonIndex:(NSInteger)buttonIndex {
+    if (buttonIndex == 0)
+        self.text = nil;
+    if (buttonIndex == 0 || buttonIndex == 1) {
+        readyToPopView = YES;
+        [self dismiss];
     }
 }
 
-- (BOOL)signedIn {
-    return [UVSession currentSession].user != nil;
+- (BOOL)shouldLeaveViewController {
+    BOOL textChanged = self.text && [self.text length] > 0 && ![self.initialText isEqualToString:self.text];
+    if (readyToPopView || !textChanged)
+        return YES;
+    [self showSaveActionSheet];
+    return NO;
 }
 
-- (NSString *)instantAnswersFoundMessage {
-    BOOL foundArticles = NO;
-    BOOL foundIdeas = NO;
-    for (id answer in instantAnswers) {
-        if ([answer isKindOfClass:[UVArticle class]])
-            foundArticles = YES;
-        else if ([answer isKindOfClass:[UVSuggestion class]])
-            foundIdeas = YES;
-    }
-    if (foundArticles && foundIdeas)
-        return NSLocalizedStringFromTable(@"We've found some related articles and ideas that may help you faster than sending a message", @"UserVoice", nil);
-    else if (foundArticles)
-        return NSLocalizedStringFromTable(@"We've found some related articles that may help you faster than sending a message", @"UserVoice", nil);
-    else if (foundIdeas)
-        return NSLocalizedStringFromTable(@"We've found some related ideas that may help you faster than sending a message", @"UserVoice", nil);
-    else
-        return @"";
+- (void)dismissUserVoice {
+    if ([self shouldLeaveViewController])
+        [super dismissUserVoice];
 }
 
-/* - (void)actionSheet:(UIActionSheet *)actionSheet clickedButtonAtIndex:(NSInteger)buttonIndex { */
-/*     if (buttonIndex == 0) */
-/*         self.text = nil; */
-
-/*     if ([UVSession currentSession].isModal && firstController) */
-/*         [self dismissUserVoice]; */
-/*     else */
-/*         [self.navigationController popViewControllerAnimated:YES]; */
-/* } */
-
-/* - (void)backButtonTapped { */
-/*     UIActionSheet *actionSheet = [[[UIActionSheet alloc] initWithTitle:@"" */
-/*                                                               delegate:self */
-/*                                                      cancelButtonTitle:NSLocalizedStringFromTable(@"Save draft", @"UserVoice", nil) */
-/*                                                 destructiveButtonTitle:NSLocalizedStringFromTable(@"Delete draft", @"UserVoice", nil) */
-/*                                                      otherButtonTitles:nil] autorelease]; */
-/*     actionSheet.actionSheetStyle = UIActionSheetStyleDefault; */
-/*     [actionSheet showInView:self.view]; */
-/* } */
-
-/* - (void)initNavigationItem { */
-/*     [super initNavigationItem]; */
-/*     self.navigationItem.leftBarButtonItem.target = self; */
-/*     self.navigationItem.leftBarButtonItem.action = @selector(backButtonTapped); */
-/* } */
+- (void)loadView {
+    [super loadView];
+    self.initialText = self.text;
+}
 
 - (void)dealloc {
     [[NSNotificationCenter defaultCenter] removeObserver:self];
-    [self.timer invalidate];
-    self.timer = nil;
-    self.instantAnswers = nil;
     self.textView = nil;
     self.emailField = nil;
     self.nameField = nil;
     self.selectedCustomFieldValues = nil;
+    self.initialText = nil;
     [text release];
     text = nil;
-    [email release];
-    email = nil;
-    [name release];
-    name = nil;
     [super dealloc];
 }
 
