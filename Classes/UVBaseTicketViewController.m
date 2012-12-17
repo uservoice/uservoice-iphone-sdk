@@ -58,6 +58,11 @@
     self.userEmail = emailField.text;
     self.userName = nameField.text;
     self.text = textView.text;
+    
+    //Add technical info and content of the log
+    self.text = [self.text stringByAppendingString:[selectedCustomFieldValues objectForKey:@"Technical Information"]];
+    //End of local modification
+
     if ([UVSession currentSession].user || (emailField.text.length > 1)) {
         [self showActivityIndicator];
         [UVTicket createWithMessage:self.text andEmailIfNotLoggedIn:emailField.text andName:nameField.text andCustomFields:selectedCustomFieldValues andDelegate:self];
