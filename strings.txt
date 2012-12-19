@@ -117,11 +117,11 @@
 		it = Chiudi
 		zh-Hant = 關閉
 		nl = Sluiten
-	[Comments]
-		en = Comments
-		it = Commenti
+	[comments]
+		en = comments
+		it = commenti
 		zh-Hant = 評論
-		nl = Reacties
+		nl = reacties
 	[Connecting to UserVoice]
 		en = Connecting to UserVoice
 		fr = En cours de connexion à UserVoice
@@ -168,6 +168,12 @@
 		it = Creata da
 		zh-Hant = 建立者
 		nl = Gemaakt door
+	[Contact us]
+		en = Contact us
+		fr = Contactez-nous
+		it = Contattaci
+		zh-Hant = 聯絡我們
+		nl = Neem contact met ons op
 	[Description (optional)]
 		en = Description (optional)
 		it = Descrizione (opzionale)
@@ -638,10 +644,8 @@
 		nl = 1 reactie
 	[All Articles]
 		nl = Alle Artikelen
-	[Contact us]
-		nl = Stuur ons een bericht
 	[Do you still want to contact us?]
-		nl = Wilt u ons nog steeds een bericht sturen?
+		nl = Wilt u ons nog steeds contact met ons opnemen?
 	[Do you still want to post an idea?]
 		nl = Wilt u nog steeds een idee plaatsen?
 	[Don't save]
@@ -687,7 +691,7 @@
 	[When you post an idea on our forum, others will be able to vote and comment on it as well. When we respond to the idea, you'll get notified.]
 		nl = Wanneer u een idee op ons forum plaats, kunnen anderen ook op dit idee stemmen en reageren. U krijgt een bericht wanneer we op het idee reageren.
 	[Would you like to contact us?]
-		nl = Wilt u ons een bericht sturen?
+		nl = Wilt u contact met ons opnemen?
 	[Would you rather post an idea on our forum so others can vote and comment on it?]
 		nl = Wilt u liever een idee op het forum plaatsen zodat anderen erop kunnen stemmen en reageren?
 	[Write a comment...]
@@ -708,8 +712,6 @@
 		nl = Uw idee is op ons forum geplaatst
 	[Your message has been sent.]
 		nl = Uw bericht is verstuurd
-	[comments]
-		nl = reacties
 	[on]
 		nl = op
 	[powered by]
