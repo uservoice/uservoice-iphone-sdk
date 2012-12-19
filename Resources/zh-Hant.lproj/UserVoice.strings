@@ -48,7 +48,7 @@
 
 "Close" = "關閉";
 
-"Comments" = "評論";
+"comments" = "評論";
 
 "Connecting to UserVoice" = "正在與 UserVoice 連線";
 
@@ -65,6 +65,8 @@
 "Created %d %@" = "建立於 %1$d %2$@";
 
 "Created by" = "建立者";
+
+"Contact us" = "聯絡我們";
 
 "Description (optional)" = "詳細的說明 (非必填)";
 
@@ -215,3 +217,66 @@
 "Your idea \"%@\" was successfully created." = "你的想法已建立。";
 
 "Your ticket was successfully submitted." = "你的意見已上傳。";
+
+
+
+"%d comments" = "%d 評論";
+
+
+"“Anonymous”" = "“Anonymous”";
+
+
+
+
+
+
+
+
+
+
+"Vote" = "投票";
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
