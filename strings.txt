@@ -584,3 +584,135 @@
 		it = Il tuo commento è stato inviato correttamente.
 		zh-Hant = 你的意見已上傳。
 		nl = Uw ticket is succesvol ingediend.
+	[Try again]
+		nl = Probeer opnieuw
+	[Forgot password]
+		nl = Wachtwoord vergeten
+	[%d comments]
+		en = %d comments
+		fr = %d commentaires
+		it = %d commenti
+		zh-Hant = %d 評論
+		nl = %d reacties
+	[Comment]
+		nl = Reageer
+	[“Anonymous”]
+		en = “Anonymous”
+		fr = “Anonyme”
+		it = “Anonimo”
+		nl = “Anoniem”
+	[Feedback Forum]
+		nl = Feedback Forum
+	[Search]
+		nl = Doorzoek
+	[Load more]
+		nl = Laad meer
+	[Posted by]
+		nl = Geplaatst door
+	[ADMIN RESPONSE]
+		nl = REACTIE VAN DE BEHEERDER
+	[(required)]
+	       nl = (verplicht)
+	[Enter your email]
+		nl = Vul uw e-mail adres in
+	[Enter UserVoice password for]
+		nl = Vul uw UserVoice wachtwoord in voor
+	[Done]
+		nl = OK
+	[Vote]
+		en = Vote
+		it = Voto
+		zh-Hant = 投票
+		nl = Stem
+	[Password reset email sent to]
+		nl = Wachtwoord reset e-mail verstuurd naar 
+	[Knowledge Base]
+		nl = Kennisbank
+	[Was this article helpful?]
+		nl = Heeft dit artikel u geholpen?
+	[Yes!]
+		nl = Ja!
+	[No, I'm done]
+		nl = Nee, ik ben klaar	[0 comments]
+	[1 comment]
+		nl = 1 reactie
+	[All Articles]
+		nl = Alle Artikelen
+	[Contact us]
+		nl = Stuur ons een bericht
+	[Do you still want to contact us?]
+		nl = Wilt u ons nog steeds een bericht sturen?
+	[Do you still want to post an idea?]
+		nl = Wilt u nog steeds een idee plaatsen?
+	[Don't save]
+		nl = Niet opslaan
+	[How can we help you today?]
+		nl = Hoe kunnen we u vandaag helpen?
+	[More]
+		nl = Meer
+	[No]
+		nl = Nee
+	[Post]
+		nl = Verstuur
+	[Post Idea]
+		nl = Plaats idee
+	[Post an idea]
+		nl = Plaats een idee
+	[Remove votes]
+		nl = Verwijder stemmen
+	[Save draft]
+		nl = Concept opslaan
+	[Status:]
+		nl = Status:
+	[Success!]
+		nl = Gelukt!
+	[Title:]
+		nl = Titel:
+	[View idea]
+		nl = Bekijk idee	[Articles]
+	[Matching articles]
+		nl = Soortgelijke artikelen
+	[Matching articles and ideas]
+		nl = Soortgelijke artikelen en ideeën
+	[Matching ideas]
+		nl = Soortgelijke ideeën
+	[Title]
+		nl = Titel
+	[View matching articles]
+		nl = Bekijk soortgelijke ideeën
+	[View matching articles and ideas]
+		nl = Bekijk soortgelijke artikelen en ideeën
+	[View matching ideas]
+		nl = Bekijk soortgelijke ideeën
+	[When you post an idea on our forum, others will be able to vote and comment on it as well. When we respond to the idea, you'll get notified.]
+		nl = Wanneer u een idee op ons forum plaats, kunnen anderen ook op dit idee stemmen en reageren. U krijgt een bericht wanneer we op het idee reageren.
+	[Would you like to contact us?]
+		nl = Wilt u ons een bericht sturen?
+	[Would you rather post an idea on our forum so others can vote and comment on it?]
+		nl = Wilt u liever een idee op het forum plaatsen zodat anderen erop kunnen stemmen en reageren?
+	[Write a comment...]
+		nl = Schrijf een reactie...
+	[Yes]
+		nl = Ja
+	[Yes, go to my idea]
+		nl = Ja, ga naar mijn idee
+	[Yes, go to my message]
+		nl = Ja, ga naar mijn bericht
+	[You have]
+		nl = U heeft
+	[You have not posted your idea. Are you sure you want to lose your unsaved data?]
+		nl = U heeft uw idee niet geplaatst. Weet u zeker dat u uw onopgeslagen gegevens wilt verwijderen?
+	[Your idea \"%@\" was successfully created.]
+		nl = Uw idee \"%@\" is succesvol aangemaakt.
+	[Your idea has been posted on our forum.]
+		nl = Uw idee is op ons forum geplaatst
+	[Your message has been sent.]
+		nl = Uw bericht is verstuurd
+	[comments]
+		nl = reacties
+	[on]
+		nl = op
+	[powered by]
+		nl = gerealiseerd door
+	[votes left]
+		nl = stemmen over
