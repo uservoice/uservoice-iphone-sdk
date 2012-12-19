@@ -642,6 +642,8 @@
 		nl = Nee, ik ben klaar	[0 comments]
 	[1 comment]
 		nl = 1 reactie
+	[All]
+		nl = Alle
 	[All Articles]
 		nl = Alle Artikelen
 	[Do you still want to contact us?]
