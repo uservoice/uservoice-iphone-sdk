@@ -48,7 +48,7 @@
 
 "Close" = "Chiudi";
 
-"Comments" = "Commenti";
+"comments" = "commenti";
 
 "Connecting to UserVoice" = "Connettiti a UserVoice";
 
@@ -65,6 +65,8 @@
 "Created %d %@" = "Creata %d %@";
 
 "Created by" = "Creata da";
+
+"Contact us" = "Contattaci";
 
 "Description (optional)" = "Descrizione (opzionale)";
 
@@ -215,3 +217,66 @@
 "Your idea \"%@\" was successfully created." = "La tua idea \"%@\" è stata creata correttamente.";
 
 "Your ticket was successfully submitted." = "Il tuo commento è stato inviato correttamente.";
+
+
+
+"%d comments" = "%d commenti";
+
+
+"“Anonymous”" = "“Anonimo”";
+
+
+
+
+
+
+
+
+
+
+"Vote" = "Voto";
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

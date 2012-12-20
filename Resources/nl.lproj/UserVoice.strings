@@ -48,7 +48,7 @@
 
 "Close" = "Sluiten";
 
-"Comments" = "Reacties";
+"comments" = "reacties";
 
 "Connecting to UserVoice" = "Verbinden met UserVoice";
 
@@ -65,6 +65,8 @@
 "Created %d %@" = "%1$d %2$@ aangemaakt";
 
 "Created by" = "Gemaakt door";
+
+"Contact us" = "Neem contact met ons op";
 
 "Description (optional)" = "Beschrijving (optioneel)";
 
@@ -215,3 +217,123 @@
 "Your idea \"%@\" was successfully created." = "Uw idee \"%@\" is succesvol gecreëerd.";
 
 "Your ticket was successfully submitted." = "Uw ticket is succesvol ingediend.";
+
+"Try again" = "Probeer opnieuw";
+
+"Forgot password" = "Wachtwoord vergeten";
+
+"%d comments" = "%d reacties";
+
+"Comment" = "Reageer";
+
+"“Anonymous”" = "“Anoniem”";
+
+"Feedback Forum" = "Feedback Forum";
+
+"Search" = "Doorzoek";
+
+"Load more" = "Laad meer";
+
+"Posted by" = "Geplaatst door";
+
+"ADMIN RESPONSE" = "REACTIE VAN DE BEHEERDER";
+
+"(required)" = "(verplicht)";
+
+"Enter your email" = "Vul uw e-mail adres in";
+
+"Enter UserVoice password for" = "Vul uw UserVoice wachtwoord in voor";
+
+"Done" = "OK";
+
+"Vote" = "Stem";
+
+"Password reset email sent to" = "Wachtwoord reset e-mail verstuurd naar";
+
+"Knowledge Base" = "Kennisbank";
+
+"Was this article helpful?" = "Heeft dit artikel u geholpen?";
+
+"Yes!" = "Ja!";
+
+"No, I'm done" = "Nee, ik ben klaar	[0 comments]";
+
+"1 comment" = "1 reactie";
+
+"All" = "Alle";
+
+"All Articles" = "Alle Artikelen";
+
+"Do you still want to contact us?" = "Wilt u ons nog steeds contact met ons opnemen?";
+
+"Do you still want to post an idea?" = "Wilt u nog steeds een idee plaatsen?";
+
+"Don't save" = "Niet opslaan";
+
+"How can we help you today?" = "Hoe kunnen we u vandaag helpen?";
+
+"More" = "Meer";
+
+"No" = "Nee";
+
+"Post" = "Verstuur";
+
+"Post Idea" = "Plaats idee";
+
+"Post an idea" = "Plaats een idee";
+
+"Remove votes" = "Verwijder stemmen";
+
+"Save draft" = "Concept opslaan";
+
+"Status:" = "Status:";
+
+"Success!" = "Gelukt!";
+
+"Title:" = "Titel:";
+
+"View idea" = "Bekijk idee	[Articles]";
+
+"Matching articles" = "Soortgelijke artikelen";
+
+"Matching articles and ideas" = "Soortgelijke artikelen en ideeën";
+
+"Matching ideas" = "Soortgelijke ideeën";
+
+"Title" = "Titel";
+
+"View matching articles" = "Bekijk soortgelijke ideeën";
+
+"View matching articles and ideas" = "Bekijk soortgelijke artikelen en ideeën";
+
+"View matching ideas" = "Bekijk soortgelijke ideeën";
+
+"When you post an idea on our forum, others will be able to vote and comment on it as well. When we respond to the idea, you'll get notified." = "Wanneer u een idee op ons forum plaatst, kunnen anderen ook op dit idee stemmen en reageren. U krijgt een bericht wanneer we op het idee reageren.";
+
+"Would you like to contact us?" = "Wilt u contact met ons opnemen?";
+
+"Would you rather post an idea on our forum so others can vote and comment on it?" = "Wilt u liever een idee op het forum plaatsen zodat anderen erop kunnen stemmen en reageren?";
+
+"Write a comment..." = "Schrijf een reactie...";
+
+"Yes" = "Ja";
+
+"Yes, go to my idea" = "Ja, ga naar mijn idee";
+
+"Yes, go to my message" = "Ja, ga naar mijn bericht";
+
+"You have" = "U heeft";
+
+"You have not posted your idea. Are you sure you want to lose your unsaved data?" = "U heeft uw idee niet geplaatst. Weet u zeker dat u uw onopgeslagen gegevens wilt verwijderen?";
+
+"Your idea \\"%@\\" was successfully created." = "Uw idee \\"%@\\" is succesvol aangemaakt.";
+
+"Your idea has been posted on our forum." = "Uw idee is op ons forum geplaatst";
+
+"Your message has been sent." = "Uw bericht is verstuurd";
+
+"on" = "op";
+
+"powered by" = "gerealiseerd door";
+
+"votes left" = "stemmen over";
