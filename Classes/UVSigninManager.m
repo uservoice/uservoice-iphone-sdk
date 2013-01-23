@@ -27,7 +27,9 @@
     self.alertView = [[[UIAlertView alloc] init] autorelease];
     alertView.title = NSLocalizedStringFromTable(@"Enter your email", @"UserVoice", nil);
     alertView.delegate = self;
-    alertView.alertViewStyle = UIAlertViewStylePlainTextInput;
+    if ( [alertView respondsToSelector:@selector(alertViewStyle)] ) {
+        alertView.alertViewStyle = UIAlertViewStylePlainTextInput;
+    }
     [alertView addButtonWithTitle:NSLocalizedStringFromTable(@"Cancel", @"UserVoice", nil)];
     [alertView addButtonWithTitle:NSLocalizedStringFromTable(@"Done", @"UserVoice", nil)];
     UITextField *textField = [alertView textFieldAtIndex:0];
@@ -42,7 +44,9 @@
     self.alertView = [[[UIAlertView alloc] init] autorelease];
     alertView.title = [NSString stringWithFormat:NSLocalizedStringFromTable(@"Enter UserVoice password for %@", @"UserVoice", nil), email];
     alertView.delegate = self;
-    alertView.alertViewStyle = UIAlertViewStyleSecureTextInput;
+    if ( [alertView respondsToSelector:@selector(alertViewStyle)] ) {
+        alertView.alertViewStyle = UIAlertViewStyleSecureTextInput;
+    }
     [alertView addButtonWithTitle:NSLocalizedStringFromTable(@"Cancel", @"UserVoice", nil)];
     [alertView addButtonWithTitle:NSLocalizedStringFromTable(@"Sign in", @"UserVoice", nil)];
     UITextField *textField = [alertView textFieldAtIndex:0];
