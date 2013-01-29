@@ -28,6 +28,7 @@
 @synthesize topArticles;
 @synthesize topSuggestions;
 @synthesize clientId;
+@synthesize whiteLabel;
 
 + (void)initialize {
     [self setDelegate:[[UVResponseDelegate alloc] initWithModelClass:[self class]]];
@@ -45,37 +46,14 @@
     [UVSession currentSession].clientConfig = model;
 }
 
-+ (CGFloat)getScreenWidth
-{
-    CGRect appFrame = [[UIScreen mainScreen] bounds];
-
-    CGFloat screenWidth;
-    if (([UIApplication sharedApplication].statusBarOrientation == UIDeviceOrientationLandscapeLeft) || ([UIApplication sharedApplication].statusBarOrientation == UIDeviceOrientationLandscapeRight))
-    {
-        screenWidth = appFrame.size.height;
-    }
-    else
-    {
-        screenWidth = appFrame.size.width;
-    }
-
-    return screenWidth;
++ (CGFloat)getScreenWidth {
+    UIViewController *root = [[UIApplication sharedApplication] keyWindow].rootViewController;
+    return root.presentedViewController.view.bounds.size.width;
 }
 
-+ (CGFloat)getScreenHeight
-{
-    CGRect appFrame = [[UIScreen mainScreen] bounds];
-    CGFloat screenHeight;
-    if (([UIApplication sharedApplication].statusBarOrientation == UIDeviceOrientationLandscapeLeft) || ([UIApplication sharedApplication].statusBarOrientation == UIDeviceOrientationLandscapeRight))
-    {
-        screenHeight = appFrame.size.width;
-    }
-    else
-    {
-        screenHeight = appFrame.size.height;
-    }
-
-    return screenHeight;
++ (CGFloat)getScreenHeight {
+    UIViewController *root = [[UIApplication sharedApplication] keyWindow].rootViewController;
+    return root.presentedViewController.view.bounds.size.height;
 }
 
 - (id)initWithDictionary:(NSDictionary *)dict {
@@ -85,6 +63,9 @@
         }
         if ([dict objectForKey:@"feedback_enabled"] != [NSNull null]) {
             self.feedbackEnabled = [(NSNumber *)[dict objectForKey:@"feedback_enabled"] boolValue];
+        }
+        if ([dict objectForKey:@"white_label"] != [NSNull null]) {
+            self.whiteLabel = [(NSNumber *)[dict objectForKey:@"white_label"] boolValue];
         }
 
         if (feedbackEnabled) {

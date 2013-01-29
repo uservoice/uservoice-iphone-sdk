@@ -8,8 +8,7 @@ UserVoice for iOS allows you to embed UserVoice directly in your iPhone or iPad 
 You will need to have a UserVoice account (free) for it to connect to. Go to [uservoice.com/ios](http://uservoice.com/ios) to sign up.
 
 Binary builds of the SDK are available for download.
-* Current release: [1.2.6](https://github.com/downloads/uservoice/uservoice-iphone-sdk/UserVoiceSDK-1.2.6.tar.gz)
-* Current beta: [2.0.0b2](https://github.com/downloads/uservoice/uservoice-iphone-sdk/UserVoiceSDK-2.0.0b2.tar.gz)
+* Current release: [2.0.7](https://github.com/uservoice/uservoice-iphone-sdk/raw/master/dist/UserVoiceSDK-2.0.7.tar.gz)
 
 We also have an [example app](https://github.com/uservoice/uservoice-iphone-example) on GitHub that demonstrates how to build and integrate the SDK.
 
@@ -18,6 +17,7 @@ Installation
 
 * Download the latest build.
 * Drag `UVHeaders`, `UVResources`, and `libUserVoice.a` into your project.
+  * When adding the folders, make sure you have "Create groups for any added folders" selected rather than "Create folder references for any added folders".
 * Note that the `.h` files in  `UVHeaders` do not need to be added to your target.
 * Add QuartzCore and SystemConfiguration frameworks to your project.
 * Add `-ObjC` to `Other Linker Flags` in the Build Settings for your target. (There is also an `Other Linker Flags` setting for your entire project, but that's not the one you want.)
@@ -39,7 +39,7 @@ Once you have completed these steps, you are ready to launch the UserVoice UI
 from your code. Import `UserVoice.h` and create a `UVConfig` using one of the
 following options.
 
-#### Configuration
+### Configuration
 
 **1. Standard Login:** This is the most basic option, which will allow users to
 either sign in, or create a UserVoice account, from inside the UserVoice UI.
@@ -81,14 +81,49 @@ also use this to set default values for custom fields on the contact form.
 Note: You must first configure these fields in the UserVoice admin console.
 If you pass fields that are not recognized by the server, they will be ignored.
 
-    config.customFields = [NSDictionary dictionaryWithObjectsAndKeys:@"Value", @"Key", nil];
+    config.customFields = @{@"Key" : @"Value"};
 
+### Specify a help topic (optional)
+
+You can specify a help topic by id, which affects two things:
+
+ 1. That topics articles will be displayed directly on the portal screen.
+ 2. Only artiles in that topic will show up as instant answers.
+
+<pre>
+config.topicId = 123;
+</pre>
+
+### Toggle features
+
+You can turn off certain features of the SDK if you do not want to use them. By
+default, all features are enabled if they are available on your account.
+
+**1. Turn off browsing the forum.** The user will still be able to post ideas, and view ideas that they find by searching.
+
+    config.showForum = NO;
+
+**2. Turn off posting ideas.** The user will still be able to browse and search existing ideas.
+
+    config.showPostIdea = NO;
+
+**3. Turn off the contact form.**
+
+    config.showContactUs = NO;
+
+**4. Turn of the knowledge base.** This only affects the knowledge base browser on the portal screen. Instant answers will still include articles.
+
+    config.showKnowledgeBase = NO;
+
+If you deep-link to an area that is turned off (such as the contact form), it
+will still work. Turning off the feature only prevents it from being accessible
+anywhere in the UserVoice UI.
 
 ### Invocation (Deep Linking)
 
-There are 3 options for how to launch UserVoice from within your app:
+There are 4 options for how to launch UserVoice from within your app:
 
-**1. Standard UserVoice Interface:** This launches the UserVoice for iOS portal page where the user can browse suggestions, contact you or browse the knowledgebase. This is the full experience of everything the SDK can do:
+**1. Standard UserVoice Interface:** This launches the UserVoice for iOS portal page where the user can browse suggestions, contact you or browse the knowledgebase. This is the full experience of everything the SDK can do.
     
     [UserVoice presentUserVoiceInterfaceForParentViewController:self andConfig:config];
 
@@ -99,6 +134,10 @@ There are 3 options for how to launch UserVoice from within your app:
 **3. Direct link to feedback forum:** Launches the user directly into the feedback forum where they can browse, vote on or give their own feedback. Useful for linking from a "Give us your ideas?" prompt from within your app.
 
     [UserVoice presentUserVoiceForumForParentViewController:self andConfig:config];
+
+**4. Direct link to idea form:** Launches user directly into the idea form, with Instant Answers, experience.
+
+    [UserVoice presentUserVoiceNewIdeaFormForParentViewController:self andConfig:config];
 
 ### Customizing Colors
 
@@ -178,7 +217,7 @@ If you want to go the extra mile and test your translations, do the following:
   * `mkdir Resources/YOURLOCALE.lproj`
   * `touch Resources/YOURLOCALE.lproj/UserVoice.strings`
 * Install the `twine` gem
-* Run `./strings.sh` to generate the strings files
+* Run `./update_strings.sh` to generate the strings files
 * Run the example app (or your own app) to see how things look in the UI
 * Make note of any layout issues in your pull request so that we can look at it
   and figure out what to do.
