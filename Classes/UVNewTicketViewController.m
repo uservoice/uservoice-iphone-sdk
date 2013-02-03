@@ -109,8 +109,8 @@
     [self addTopBorder:fieldsTableView];
     [self.view addSubview:fieldsTableView];
 
-    self.nextButton = [self barButtonItem:@"Continue" withAction:@selector(nextButtonTapped)];
-    self.sendButton = [self barButtonItem:@"Send" withAction:@selector(sendButtonTapped)];
+    self.nextButton = [self barButtonItem:NSLocalizedStringFromTable(@"Continue", @"UserVoice", nil) withAction:@selector(nextButtonTapped)];
+    self.sendButton = [self barButtonItem:NSLocalizedStringFromTable(@"Send", @"UserVoice", nil) withAction:@selector(sendButtonTapped)];
     self.sendButton.style = UIBarButtonItemStyleDone;
 
     state = STATE_BEGIN;
@@ -168,13 +168,12 @@
     [self updateLayout];
 }
 
-- (BOOL)textFieldShouldBeginEditing:(UITextField *)textField {
+- (void)textFieldDidBeginEditing:(UITextField *)textField {
     CGPoint offset = [textField convertPoint:CGPointZero toView:scrollView];
     offset.x = 0;
     offset.y -= 20;
     offset.y = MIN(offset.y, MAX(0, scrollView.contentSize.height + [UVKeyboardUtils height] - scrollView.bounds.size.height));
     [scrollView setContentOffset:offset animated:YES];
-    return YES;
 }
 
 - (BOOL)textFieldShouldEndEditing:(UITextField *)textField {
