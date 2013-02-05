@@ -5,6 +5,8 @@ UserVoice for iOS allows you to embed UserVoice directly in your iPhone or iPad 
 
 ![Tour](http://www.uservoice.com/_assets/images/content/UserVoice-iOS-animation-joshua.gif)
 
+[Phonegap/Cordova plugin based on this SDK](http://developerextensions.com/index.php/cordova-phonegap-plugin-uservoice)
+
 You will need to have a UserVoice account (free) for it to connect to. Go to [uservoice.com/ios](http://uservoice.com/ios) to sign up.
 
 Binary builds of the SDK are available for download.
