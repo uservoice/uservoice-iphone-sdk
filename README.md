@@ -11,7 +11,7 @@ Binary builds of the SDK are available for download.
 * Current release: [2.0.7](https://github.com/uservoice/uservoice-iphone-sdk/raw/master/dist/UserVoiceSDK-2.0.7.tar.gz)
 
 We also have an [example app](https://github.com/uservoice/uservoice-iphone-example) on GitHub that demonstrates how to build and integrate the SDK.
-
+Here is [Phonegap/Cordova plugin](http://developerextensions.com/index.php/cordova-phonegap-plugin-uservoice) example
 Installation
 ------------
 
