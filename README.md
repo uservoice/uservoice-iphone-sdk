@@ -3,12 +3,12 @@ Overview
 
 UserVoice for iOS allows you to embed UserVoice directly in your iPhone or iPad app.
 
-![Tour](http://www.uservoice.com/_assets/images/content/UserVoice-iOS-animation-joshua.gif)
+![Tour](https://www.uservoice.com/assets/img/ios/ios-animation.gif)
 
 You will need to have a UserVoice account (free) for it to connect to. Go to [uservoice.com/ios](http://uservoice.com/ios) to sign up.
 
 Binary builds of the SDK are available for download.
-* Current release: [2.0.7](https://github.com/uservoice/uservoice-iphone-sdk/raw/master/dist/UserVoiceSDK-2.0.7.tar.gz)
+* Current release: [2.0.8](https://github.com/uservoice/uservoice-iphone-sdk/raw/master/dist/UserVoiceSDK-2.0.8.tar.gz)
 
 We also have an [example app](https://github.com/uservoice/uservoice-iphone-example) on GitHub that demonstrates how to build and integrate the SDK.
 
@@ -21,6 +21,7 @@ Installation
 * Note that the `.h` files in  `UVHeaders` do not need to be added to your target.
 * Add QuartzCore and SystemConfiguration frameworks to your project.
 * Add `-ObjC` to `Other Linker Flags` in the Build Settings for your target. (There is also an `Other Linker Flags` setting for your entire project, but that's not the one you want.)
+  * Note: make sure that this flag is set for both Release and Debug builds (you can expand the setting by clicking the arrow on the right).
 
 See [DEV.md](https://github.com/uservoice/uservoice-iphone-sdk/blob/master/DEV.md) if you want to build the SDK yourself.
 
@@ -227,6 +228,14 @@ translation is missing for a string that does not appear in the SDK codebase,
 you will need to contribute to the main [UserVoice translation
 site](http://translate.uservoice.com/).
 
+iOS Versions
+------------
+
+* Full support for iOS 5.0+
+* For iOS 4.3 we accept patches, but don't guarantee support
+* Earlier versions of iOS are not supported
+* Builds are provided for armv7--there is no armv6 device that runs a supported version of iOS
+* In general, the plan is to keep in step with public releases of Xcode
 
 License
 -------
