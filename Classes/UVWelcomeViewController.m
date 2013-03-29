@@ -274,9 +274,17 @@
             [flashTable reloadData];
             flashTable.frame = CGRectMake(flashTable.frame.origin.x, flashTable.frame.origin.y, flashTable.contentSize.width, flashTable.contentSize.height);
             buttons.frame = CGRectMake(IPAD ? 30 : 10, flashView.frame.origin.y + flashView.frame.size.height + 20, scrollView.bounds.size.width - (IPAD ? 60 : 20), ([UVSession currentSession].config.showContactUs || [UVSession currentSession].config.showPostIdea) ? 44 : 0);
+            
+            
         } else {
             flashView.hidden = YES;
             buttons.frame = CGRectMake(IPAD ? 30 : 10, searchY + 20, scrollView.bounds.size.width - (IPAD ? 60 : 20), ([UVSession currentSession].config.showContactUs || [UVSession currentSession].config.showPostIdea) ? 44 : 0);
+        }
+        if ([[buttons subviews] count] == 0) {
+            CGRect fr = buttons.frame;
+            fr.size.height = 0;
+            fr.origin.y = 25;
+            buttons.frame = fr;
         }
         tableView.frame = CGRectMake(tableView.frame.origin.x, buttons.frame.origin.y + buttons.frame.size.height + (IPAD ? 0 : 10), tableView.frame.size.width, tableView.contentSize.height);
         scrollView.contentSize = CGSizeMake(scrollView.frame.size.width, tableView.frame.origin.y + tableView.contentSize.height);
