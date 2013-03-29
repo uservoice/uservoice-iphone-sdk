@@ -58,6 +58,13 @@
     self.userEmail = emailField.text;
     self.userName = nameField.text;
     self.text = textView.text;
+    
+    //Append custom text at the end of the message
+    UVConfig *config = [UVSession currentSession].config;
+    if(config.customMessage != nil){
+        self.text = [self.text stringByAppendingString:config.customMessage];
+    }
+    
     if ([UVSession currentSession].user || (emailField.text.length > 1)) {
         [self showActivityIndicator];
         [UVTicket createWithMessage:self.text andEmailIfNotLoggedIn:emailField.text andName:nameField.text andCustomFields:selectedCustomFieldValues andDelegate:self];
