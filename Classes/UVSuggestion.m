@@ -43,10 +43,6 @@
 @synthesize responseCreatedAt;
 @synthesize category;
 
-+ (void)initialize {
-    [self initModel];
-}
-
 + (id)getWithForum:(UVForum *)forum page:(NSInteger)page delegate:(id)delegate {
     NSString *path = [self apiPath:[NSString stringWithFormat:@"/forums/%d/suggestions.json", forum.forumId]];
     NSDictionary *params = [NSDictionary dictionaryWithObjectsAndKeys:
@@ -58,33 +54,8 @@
     return [self getPath:path
               withParams:params
                   target:delegate
-                selector:@selector(didRetrieveSuggestions:)];
-}
-
-+ (id)getWithForumAndUser:(UVForum *)forum user:(UVUser *)user delegate:(id)delegate {
-    NSString *path = [self apiPath:[NSString stringWithFormat:@"/forums/%d/users/%d/suggestions.json", forum.forumId, user.userId]];
-
-    NSDictionary *params = [NSDictionary dictionaryWithObjectsAndKeys:
-                            @"1000", @"per_page",
-                            nil];
-
-    return [self getPath:path
-              withParams:params
-                  target:delegate
-                selector:@selector(didRetrieveUserSuggestions:)];
-}
-
-+ (id)getWithUser:(UVUser *)user delegate:(id)delegate {
-    NSString *path = [self apiPath:[NSString stringWithFormat:@"/users/%d/suggestions.json", user.userId]];
-
-    NSDictionary *params = [NSDictionary dictionaryWithObjectsAndKeys:
-                            @"1000", @"per_page",
-                            nil];
-
-    return [self getPath:path
-              withParams:params
-                  target:delegate
-                selector:@selector(didRetrieveUserSuggestions:)];
+                selector:@selector(didRetrieveSuggestions:)
+                 rootKey:@"suggestions"];
 }
 
 + (id)searchWithForum:(UVForum *)forum query:(NSString *)query delegate:(id)delegate {
@@ -95,7 +66,8 @@
     return [self getPath:path
               withParams:params
                   target:delegate
-                selector:@selector(didSearchSuggestions:)];
+                selector:@selector(didSearchSuggestions:)
+                 rootKey:@"suggestions"];
 }
 
 + (id)createWithForum:(UVForum *)forum
@@ -114,7 +86,8 @@
     return [[self class] postPath:path
                        withParams:params
                            target:delegate
-                         selector:@selector(didCreateSuggestion:)];
+                         selector:@selector(didCreateSuggestion:)
+                          rootKey:@"suggestion"];
 }
 
 - (id)vote:(NSInteger)number delegate:(id)delegate {
@@ -129,20 +102,8 @@
     return [[self class] postPath:path
                        withParams:params
                            target:delegate
-                         selector:@selector(didVoteForSuggestion:)];
-}
-
-- (id)flag:(NSString *)code delegate:(id)delegate {
-    NSString *path = [UVSuggestion apiPath:[NSString stringWithFormat:@"/forums/%d/suggestions/%d/flags",
-                                            self.forumId,
-                                            self.suggestionId]];
-    NSDictionary *params = [NSDictionary dictionaryWithObjectsAndKeys:
-                            code, @"code",
-                            nil];
-    return [[self class] postPath:path
-                       withParams:params
-                           target:delegate
-                         selector:@selector(didFlagSuggestion:)];
+                         selector:@selector(didVoteForSuggestion:)
+                          rootKey:@"suggestion"];
 }
 
 + (void)processModels:(NSArray *)models {
@@ -206,7 +167,7 @@
             NSDictionary *forum = [self objectOrNilForDict:topic key:@"forum"];
             if (forum) {
                 self.forumId = [(NSNumber *)[forum objectForKey:@"id"] integerValue];
-                self.forumName = [self objectOrNilForDict:forum key:@"name"];
+                self.forumName = [[self objectOrNilForDict:forum key:@"name"] stringByDecodingHTMLEntities];
             }
 
             self.votesRemaining = [(NSNumber *)[topic objectForKey:@"votes_remaining"] integerValue];

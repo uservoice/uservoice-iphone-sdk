@@ -16,13 +16,8 @@
 
 @synthesize oauthToken;
 
-+ (void)initialize {
-    [self initModel];
-}
-
-+ (BOOL) exists {
++ (BOOL)exists {
     NSUserDefaults *prefs = [NSUserDefaults standardUserDefaults];
-
     return [prefs stringForKey:@"uv-iphone-k"] != nil;
 }
 
@@ -39,7 +34,8 @@
     id returnValue = [[self class] getPath:path
                                 withParams:nil
                                     target:delegate
-                                  selector:@selector(didRevokeToken:)];
+                                  selector:@selector(didRevokeToken:)
+                                   rootKey:@"token"];
     [self remove];
     [UVSession currentSession].user = nil;
     return returnValue;
@@ -64,7 +60,8 @@
     return [self getPath:path
               withParams:params
                   target:delegate
-                selector:@selector(didRetrieveAccessToken:)];
+                selector:@selector(didRetrieveAccessToken:)
+                 rootKey:@"token"];
 }
 
 - (void)persist {

@@ -14,6 +14,7 @@
 #import "UVConfig.h"
 #import "UVClientConfig.h"
 #import "UVForum.h"
+#import "NSString+HTMLEntities.h"
 
 @implementation UVUser
 
@@ -33,48 +34,14 @@
 @synthesize votesRemaining;
 @synthesize visibleForumsDict;
 
-+ (void)initialize {
-    [self initModel];
-}
-
-+ (id)getWithUserId:(NSInteger)userId delegate:(id)delegate {
-    NSString *key = [NSString stringWithFormat:@"%d", userId];
-    id cachedUser = [[UVSession currentSession].userCache objectForKey:key];
-
-    if (cachedUser && ![[NSNull null] isEqual:cachedUser]) {
-        // gonna fake the call and pass the cached user back to the selector
-        NSMethodSignature *sig = [delegate methodSignatureForSelector:@selector(didRetrieveUser:)];
-        NSInvocation *callback = [NSInvocation invocationWithMethodSignature:sig];
-        [callback setTarget:delegate];
-        [callback setSelector:@selector(didRetrieveUser:)];
-        [callback retainArguments];
-        [UVUser didReturnModel:cachedUser callback:callback];
-        return cachedUser;
-    } else {
-        NSString *path = [self apiPath:[NSString stringWithFormat:@"/users/%d.json", userId]];
-        return [self getPath:path
-                  withParams:nil
-                      target:delegate
-                    selector:@selector(didRetrieveUser:)];
-    }
-}
-
 + (id)discoverWithEmail:(NSString *)email delegate:(id)delegate {
     NSString *path = [self apiPath:@"/users/discover.json"];
     NSDictionary *params = [NSDictionary dictionaryWithObjectsAndKeys: email, @"email", nil];
     return [self getPath:path
               withParams:params
                   target:delegate
-                selector:@selector(didDiscoverUser:)];
-}
-
-+ (id)discoverWithGUID:(NSString *)guid delegate:(id)delegate {
-    NSString *path = [self apiPath:@"/users/discover.json"];
-    NSDictionary *params = [NSDictionary dictionaryWithObjectsAndKeys: guid, @"guid", nil];
-    return [self getPath:path
-              withParams:params
-                  target:delegate
-                selector:@selector(didDiscoverUser:)];
+                selector:@selector(didDiscoverUser:)
+                 rootKey:@"user"];
 }
 
 + (id)retrieveCurrentUser:(id)delegate {
@@ -82,7 +49,8 @@
     return [self getPath:path
               withParams:nil
                   target:delegate
-                selector:@selector(didRetrieveCurrentUser:)];
+                selector:@selector(didRetrieveCurrentUser:)
+                 rootKey:@"user"];
 }
 
 // only called when instigated by the user, creates a global user
@@ -96,7 +64,8 @@
     return [self postPath:path
                withParams:params
                    target:delegate
-                 selector:@selector(didCreateUser:)];
+                 selector:@selector(didCreateUser:)
+                  rootKey:@"user"];
 }
 
 // two methods for creating with the client, create local users
@@ -111,7 +80,9 @@
     return [self postPath:path
               withParams:params
                   target:delegate
-                selector:@selector(didCreateUser:)];
+                selector:@selector(didCreateUser:)
+                 rootKey:@"user"
+                 context:@"local-sso"];
 }
 
 + (id)findOrCreateWithSsoToken:(NSString *)aToken delegate:(id)delegate {
@@ -123,7 +94,9 @@
     return [self postPath:path
                withParams:params
                    target:delegate
-                 selector:@selector(didCreateUser:)];
+                 selector:@selector(didCreateUser:)
+                  rootKey:@"user"
+                  context:@"sso"];
 }
 
 + (id)forgotPassword:(NSString *)email delegate:(id)delegate {
@@ -132,43 +105,8 @@
     return [self getPath:path
               withParams:params
                   target:delegate
-                selector:@selector(didSendForgotPassword:)];
-}
-
-+ (void)processModel:(id)model {
-    // add to the cache
-    UVUser *user = model;
-    NSString *key = [NSString stringWithFormat:@"%d", user.userId];
-
-    if ([[UVSession currentSession].userCache objectForKey:key]==nil) {
-        [[UVSession currentSession].userCache setObject:model forKey:key];
-    }
-}
-
-- (id)forgotPasswordForEmail:(NSString *)anEmail andDelegate:(id)delegate {
-    NSString *path = [UVUser apiPath:@"/users/forgot_password.json"];
-    NSDictionary *params = [NSDictionary dictionaryWithObjectsAndKeys:
-                            anEmail, @"user[email]",
-                            nil];
-
-    return [[self class] getPath:path
-                      withParams:params
-                          target:delegate
-                        selector:@selector(didSendForgotPassword)];
-}
-
-- (id)updateName:(NSString *)newName email:(NSString *)newEmail delegate:(id)delegate {
-    NSString *path = [UVUser apiPath:[NSString stringWithFormat:@"/users/%d.json",
-                                      [UVSession currentSession].user.userId]];
-    NSDictionary *params = [NSDictionary dictionaryWithObjectsAndKeys:
-                            newName == nil ? @"" : newName, @"user[display_name]",
-                            newEmail == nil ? @"" : newEmail, @"user[email]",
-                            nil];
-
-    return [[self class] putPath:path
-                      withParams:params
-                          target:delegate
-                        selector:@selector(didUpdateUser:)];
+                selector:@selector(didSendForgotPassword:)
+                 rootKey:@"user"];
 }
 
 - (id)identify:(NSString *)externalId withScope:(NSString *)externalScope delegate:(id)delegate {
@@ -187,13 +125,14 @@
     return [[self class] putPath:path
                         withJSON:payload
                           target:delegate
-                        selector:@selector(didIdentifyUser:)];
+                        selector:@selector(didIdentifyUser:)
+                         rootKey:@"identifications"];
 }
 
 - (id)initWithDictionary:(NSDictionary *)dict {
     if (self = [super init]) {
         self.userId = [(NSNumber *)[dict objectForKey:@"id"] integerValue];
-        self.name = [self objectOrNilForDict:dict key:@"name"];
+        self.name = [[self objectOrNilForDict:dict key:@"name"] stringByDecodingHTMLEntities];
         self.displayName = [self objectOrNilForDict:dict key:@"name"];
         self.email = [self objectOrNilForDict:dict key:@"email"];
         self.ideaScore = [(NSNumber *)[dict objectForKey:@"idea_score"] integerValue];

@@ -15,10 +15,6 @@
 
 @synthesize oauthToken;
 
-+ (void)initialize {
-    [self initModel];
-}
-
 - (id)initWithDictionary:(NSDictionary *)dict {
     if (self = [super init]) {
         self.oauthToken = [YOAuthToken tokenWithDictionary:dict];
@@ -32,7 +28,9 @@
     return [self getPath:path
               withParams:nil
                   target:delegate
-                selector:@selector(didRetrieveRequestToken:)];
+                selector:@selector(didRetrieveRequestToken:)
+                 rootKey:@"token"
+                 context:@"request-token"];
 }
 
 @end

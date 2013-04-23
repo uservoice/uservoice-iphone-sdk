@@ -113,12 +113,12 @@
         [self.navigationController setViewControllers:viewControllers animated:NO];
     } else {
         UVSuggestionListViewController *list = (UVSuggestionListViewController *)[((UINavigationController *)self.presentingViewController).viewControllers lastObject];
+        [list.navigationController setNavigationBarHidden:NO animated:NO];
         if ([UVSession currentSession].isModal && list.firstController) {
             CATransition* transition = [CATransition animation];
             transition.duration = 0.3;
             transition.type = kCATransitionFade;
             [list.navigationController.view.layer addAnimation:transition forKey:kCATransition];
-            [list.navigationController setNavigationBarHidden:NO animated:NO];
             UVWelcomeViewController *welcomeView = [[[UVWelcomeViewController alloc] init] autorelease];
             welcomeView.firstController = YES;
             NSArray *viewControllers = @[[list.navigationController.viewControllers objectAtIndex:0], welcomeView];
@@ -133,7 +133,9 @@
 
 - (UITextField *)customizeTextFieldCell:(UITableViewCell *)cell label:(NSString *)label placeholder:(NSString *)placeholder {
     cell.textLabel.text = label;
-    UITextField *textField = [[UITextField alloc] initWithFrame:CGRectMake(65, 12, cell.bounds.size.width - 75, 22)];
+    cell.textLabel.font = [UIFont boldSystemFontOfSize:16];
+    NSInteger offset = MAX(65, [label sizeWithFont:cell.textLabel.font].width + 14);
+    UITextField *textField = [[UITextField alloc] initWithFrame:CGRectMake(offset, 12, cell.bounds.size.width - offset - 10, 22)];
     textField.autoresizingMask = UIViewAutoresizingFlexibleWidth;
     textField.placeholder = placeholder;
     textField.returnKeyType = UIReturnKeyDone;

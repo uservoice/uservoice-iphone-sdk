@@ -24,10 +24,6 @@
 @synthesize karmaScore;
 @synthesize createdAt;
 
-+ (void)initialize {
-    [self initModel];
-}
-
 + (id)getWithSuggestion:(UVSuggestion *)suggestion page:(NSInteger)page delegate:(id)delegate {
     NSString *path = [self apiPath:[NSString stringWithFormat:@"/forums/%d/suggestions/%d/comments.json",
                                     suggestion.forumId,
@@ -39,7 +35,8 @@
     return [self getPath:path
               withParams:params
                   target:delegate
-                selector:@selector(didRetrieveComments:)];
+                selector:@selector(didRetrieveComments:)
+                 rootKey:@"comments"];
 }
 
 + (id)createWithSuggestion:(UVSuggestion *)suggestion text:(NSString *)text delegate:(id)delegate {
@@ -52,21 +49,8 @@
     return [[self class] postPath:path
                        withParams:params
                            target:delegate
-                         selector:@selector(didCreateComment:)];
-}
-
-- (id)flag:(NSString *)code suggestion:(UVSuggestion *)suggestion delegate:(id)delegate {
-    NSString *path = [UVComment apiPath:[NSString stringWithFormat:@"/forums/%d/suggestions/%d/comments/%d/flags",
-                                         suggestion.forumId,
-                                         suggestion.suggestionId,
-                                         self.commentId]];
-    NSDictionary *params = [NSDictionary dictionaryWithObjectsAndKeys:
-                            code, @"code",
-                            nil];
-    return [[self class] postPath:path
-                       withParams:params
-                           target:delegate
-                         selector:@selector(didFlagComment:)];
+                         selector:@selector(didCreateComment:)
+                          rootKey:@"comment"];
 }
 
 - (id)initWithDictionary:(NSDictionary *)dict {
@@ -75,7 +59,7 @@
         self.text = [[self objectOrNilForDict:dict key:@"text"] stringByDecodingHTMLEntities];
         NSDictionary *user = [dict objectForKey:@"creator"];
         if (user && ![[NSNull null] isEqual:user]) {
-            self.userName = [user objectForKey:@"name"];
+            self.userName = [[user objectForKey:@"name"] stringByDecodingHTMLEntities];
             self.userId = [(NSNumber *)[user objectForKey:@"id"] integerValue];
             self.avatarUrl = [self objectOrNilForDict:user key:@"avatar_url"];
             self.karmaScore = [(NSNumber *)[user objectForKey:@"karma_score"] integerValue];

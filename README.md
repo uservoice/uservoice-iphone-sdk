@@ -8,7 +8,7 @@ UserVoice for iOS allows you to embed UserVoice directly in your iPhone or iPad 
 You will need to have a UserVoice account (free) for it to connect to. Go to [uservoice.com/ios](http://uservoice.com/ios) to sign up.
 
 Binary builds of the SDK are available for download.
-* Current release: [2.0.8](https://github.com/uservoice/uservoice-iphone-sdk/raw/master/dist/UserVoiceSDK-2.0.8.tar.gz)
+* Current release: [2.0.9](https://github.com/uservoice/uservoice-iphone-sdk/raw/master/dist/UserVoiceSDK-2.0.9.tar.gz)
 
 We also have an [example app](https://github.com/uservoice/uservoice-iphone-example) on GitHub that demonstrates how to build and integrate the SDK.
 
@@ -145,13 +145,13 @@ There are 4 options for how to launch UserVoice from within your app:
 You can also customize the appearance of the UserVoice user interface by
 creating a custom stylesheet.
 
-    #import "UVStylesheet.h"
+    #import "UVStyleSheet.h"
 
-    @interface MyStylesheet : UVStylesheet
+    @interface MyStyleSheet : UVStyleSheet
 
     @end
 
-    @implementation MyStylesheet
+    @implementation MyStyleSheet
     
     - (UIColor *)backgroundColor {
         return [UIColor colorWithRed:0.15f green:0.15f blue:0.15f alpha:1.0f];
@@ -159,7 +159,7 @@ creating a custom stylesheet.
 
     @end
 
-    [UVStylesheet setStylesheet:[[MyStylesheet alloc] init]];
+    [UVStyleSheet setStyleSheet:[[MyStyleSheet alloc] init]];
 
 ### User Language
 
@@ -203,7 +203,7 @@ If you have any other questions please contact support@uservoice.com.
 Translations
 ------------
 
-Currently the UI is available in English, French, Italian, Traditional Chinese, and Dutch.
+Currently the UI is available in English, French, German, Dutch, Italian, and Traditional Chinese.
 We are using [Twine](https://github.com/mobiata/twine) to manage the translations.
 
 To contribute to the translations, follow these steps:
@@ -236,6 +236,18 @@ iOS Versions
 * Earlier versions of iOS are not supported
 * Builds are provided for armv7--there is no armv6 device that runs a supported version of iOS
 * In general, the plan is to keep in step with public releases of Xcode
+
+Contributors
+------------
+
+Special thanks to:
+
+* [netbe](https://github.com/netbe) for the French translation
+* [Piero87](https://github.com/Piero87) for the Italian translation
+* [zetachang](https://github.com/zetachang) for the Traditional Chinese translation
+* [nvh](https://github.com/nvh) for the Dutch translation
+* [vinzenzweber](https://github.com/vinzenzweber) and [Blockhaus Media](http://www.blockhaus-media.com/) for the German translation
+* Everyone else who [reported bugs or made pull requests](https://github.com/uservoice/uservoice-iphone-sdk/issues?state=closed)!
 
 License
 -------

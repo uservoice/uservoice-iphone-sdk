@@ -14,7 +14,6 @@
 @class UVAccessToken;
 @class UVRequestToken;
 @class YOAuthConsumer;
-@class UVInfo;
 @class UVSuggestion;
 
 // Keeps track of data such as the user's login state, app configuration, etc.
@@ -24,12 +23,9 @@
     UVConfig *config;
     UVClientConfig *clientConfig;
     UVUser *user;
-    UVInfo *info;
     YOAuthConsumer *yOAuthConsumer;
     UVAccessToken *accessToken;
     UVRequestToken *requestToken;
-    NSMutableDictionary *userCache;
-    NSDate *startTime;
     NSMutableDictionary *interactions;
     NSMutableArray *interactionSequence;
     NSMutableArray *interactionDetails;
@@ -46,11 +42,8 @@
 @property (nonatomic, retain) UVConfig *config;
 @property (nonatomic, retain) UVClientConfig *clientConfig;
 @property (nonatomic, retain) UVUser *user;
-@property (nonatomic, retain) UVInfo *info;
 @property (nonatomic, retain) UVAccessToken *accessToken;
 @property (nonatomic, retain) UVRequestToken *requestToken;
-@property (nonatomic, retain) NSMutableDictionary *userCache;
-@property (nonatomic, retain) NSDate *startTime;
 @property (nonatomic, retain) NSMutableDictionary *interactions;
 @property (nonatomic, retain) NSMutableArray *interactionSequence;
 @property (nonatomic, retain) NSMutableArray *interactionDetails;
