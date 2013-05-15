@@ -91,8 +91,10 @@
 
 - (void)selectInstantAnswerAtIndex:(int)index {
     NSArray *answers = self.instantAnswers;
-    if (index >= [answers count])
+    if ([answers count] < 1 || index >= [answers count]) {
         return;
+	}
+	
     id model = [answers objectAtIndex:index];
     if ([model isMemberOfClass:[UVArticle class]]) {
         UVArticle *article = (UVArticle *)model;
