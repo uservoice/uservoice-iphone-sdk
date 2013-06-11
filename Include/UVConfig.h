@@ -42,6 +42,7 @@
 @property (nonatomic, assign) BOOL showContactUs;
 @property (nonatomic, assign) BOOL showKnowledgeBase;
 @property (nonatomic, retain) NSString* extraTicketInfo;
+@property (nonatomic, retain) NSArray* attachmentFilePaths;
 
 - (id)initWithSite:(NSString *)theSite andKey:(NSString *)theKey andSecret:(NSString *)theSecret;
 - (id)initWithSite:(NSString *)theSite andKey:(NSString *)theKey andSecret:(NSString *)theSecret andSSOToken:(NSString *)theToken;

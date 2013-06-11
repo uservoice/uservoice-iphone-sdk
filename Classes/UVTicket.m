@@ -20,6 +20,18 @@
 #import "UVCustomField.h"
 #import "UVSession.h"
 #import "UVConfig.h"
+#import "UVJsonWriter.h"
+
+#include "Base64Transcoder.h"
+
+//Required for detecting content type
+#import <MobileCoreServices/MobileCoreServices.h>
+
+@interface UVTicket()
+
++ (NSString*) fileMIMEType:(NSString*) file;
+
+@end
 
 @implementation UVTicket
 
@@ -54,6 +66,47 @@
         [params setObject:messageText forKey:@"ticket[message]"];
     }
 
+    if ([UVSession currentSession].config.attachmentFilePaths != nil) {
+        
+        //Loop over the attachment files so see which exists
+        
+        for(NSString *attachmentFilePath in [UVSession currentSession].config.attachmentFilePaths){
+
+            NSInteger index = 0;
+            
+            if([[NSFileManager defaultManager] fileExistsAtPath:attachmentFilePath]){
+
+                NSData *fileData = [[NSData alloc] initWithContentsOfFile:attachmentFilePath];
+                
+                Byte inputData[[fileData length]];
+                [fileData getBytes:inputData];
+                size_t inputDataSize = (size_t)[fileData length];
+                size_t outputDataSize = UVEstimateBas64EncodedDataSize(inputDataSize);
+                char outputData[outputDataSize];
+                
+                UVBase64EncodeData(inputData, inputDataSize, outputData, &outputDataSize);
+                
+                NSString *base64Data = [[NSString alloc] initWithBytes:outputData length:outputDataSize encoding:NSUTF8StringEncoding];
+
+                UVJsonWriter *jsonWriter = [UVJsonWriter new];
+                
+                [params setObject:[jsonWriter stringWithFragment:[attachmentFilePath lastPathComponent]]
+                           forKey:[NSString stringWithFormat:@"ticket[attachments][%i][name]", index]];
+             
+                [params setObject:[jsonWriter stringWithFragment:base64Data]
+                           forKey:[NSString stringWithFormat:@"ticket[attachments][%i][data]", index]];
+
+                [params setObject:[jsonWriter stringWithFragment:[self fileMIMEType:attachmentFilePath]]
+                           forKey:[NSString stringWithFormat:@"ticket[attachments][%i][content_type]", index]];
+             
+                index++;
+
+            }
+                        
+        }
+        
+    }
+
     return [[self class] postPath:path
                        withParams:params
                            target:delegate
@@ -61,4 +114,10 @@
                           rootKey:@"ticket"];
 }
 
++ (NSString*) fileMIMEType:(NSString*) file {
+    CFStringRef UTI = UTTypeCreatePreferredIdentifierForTag(kUTTagClassFilenameExtension, (CFStringRef)[file pathExtension], NULL);
+    CFStringRef MIMEType = UTTypeCopyPreferredTagWithClass (UTI, kUTTagClassMIMEType);
+    CFRelease(UTI);
+    return [(NSString *)MIMEType autorelease];
+}
 @end
