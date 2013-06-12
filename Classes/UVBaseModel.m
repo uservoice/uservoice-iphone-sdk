@@ -148,6 +148,16 @@
     return [self postPath:path withOptions:opts object:requestContext];
 }
 
++ (id)postPath:(NSString *)path withJSON:(NSDictionary *)payload target:(id)target selector:(SEL)selector rootKey:(NSString *)rootKey {
+    return [self postPath:path withJSON:payload target:target selector:selector rootKey:rootKey context:nil];
+}
+
++ (id)postPath:(NSString *)path withJSON:(NSDictionary *)payload target:(id)target selector:(SEL)selector rootKey:(NSString *)rootKey context:(NSString *)context {
+    UVRequestContext *requestContext = [self requestContextWithTarget:target selector:selector rootKey:rootKey context:context];
+    NSDictionary *opts = [self optionsForPath:path JSON:payload method:@"POST"];
+    return [self postPath:path withOptions:opts object:requestContext];
+}
+
 + (id)putPath:(NSString *)path withParams:(NSDictionary *)params target:(id)target selector:(SEL)selector rootKey:(NSString *)rootKey {
     return [self putPath:path withParams:params target:target selector:selector rootKey:rootKey context:nil];
 }
