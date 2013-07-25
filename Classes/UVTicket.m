@@ -23,8 +23,10 @@
 #import "UVConfig.h"
 #import "UVUtils.h"
 
+#ifdef UV_FILE_UPLOADS
 //Required for detecting content type
 #import <MobileCoreServices/MobileCoreServices.h>
+#endif
 
 @interface UVTicket()
 
@@ -82,7 +84,9 @@
         NSString *messageText = [NSString stringWithFormat:@"%@\n\n%@", message, [UVSession currentSession].config.extraTicketInfo];
         [ticket setObject:messageText forKey:@"message"];
     }
-    
+
+#ifdef UV_FILE_UPLOADS
+
     // Attachments
     
     
@@ -100,9 +104,12 @@
                                 
                 NSString *base64Data = [UVUtils encodeData64:fileData];
                 
+                NSString* mimeType = [self fileMIMEType:attachmentFilePath];
+                if(mimeType == nil) mimeType = @"application/octet-stream";
+
                 [attachments addObject:[NSDictionary dictionaryWithObjectsAndKeys:[attachmentFilePath lastPathComponent], @"name",
                                         base64Data, @"data",
-                                        [self fileMIMEType:attachmentFilePath], @"content_type", nil]];
+                                        mimeType, @"content_type", nil]];
                 
             }
             
@@ -111,7 +118,8 @@
         if([attachments count]>0) [ticket setObject:attachments forKey:@"attachments"];
         
     }
-    
+
+#endif
     
     [jsonRoot setObject:ticket forKey:@"ticket"];
     

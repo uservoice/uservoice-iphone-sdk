@@ -26,7 +26,10 @@
 @synthesize showContactUs;
 @synthesize showKnowledgeBase;
 @synthesize extraTicketInfo;
+
+#ifdef UV_FILE_UPLOADS
 @synthesize attachmentFilePaths;
+#endif
 
 + (UVConfig *)configWithSite:(NSString *)site andKey:(NSString *)key andSecret:(NSString *)secret {
     return [[[UVConfig alloc] initWithSite:site andKey:key andSecret:secret] autorelease];
