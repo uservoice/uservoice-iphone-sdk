@@ -29,6 +29,15 @@
 
 #ifdef UV_FILE_UPLOADS
 @synthesize attachmentFilePaths;
+#else
+-(NSArray*) attachmentFilePaths{
+    NSLog("UserVoice SDK was compiled without support for file uploads.")
+    return nil;
+}
+-(void) setAttachmentFilePaths:(NSArray*) paths{
+    NSLog("UserVoice SDK was compiled without support for file uploads.")
+}
+
 #endif
 
 + (UVConfig *)configWithSite:(NSString *)site andKey:(NSString *)key andSecret:(NSString *)secret {

@@ -42,10 +42,7 @@
 @property (nonatomic, assign) BOOL showContactUs;
 @property (nonatomic, assign) BOOL showKnowledgeBase;
 @property (nonatomic, retain) NSString* extraTicketInfo;
-
-#ifdef UV_FILE_UPLOADS
 @property (nonatomic, retain) NSArray* attachmentFilePaths;
-#endif
 
 - (id)initWithSite:(NSString *)theSite andKey:(NSString *)theKey andSecret:(NSString *)theSecret;
 - (id)initWithSite:(NSString *)theSite andKey:(NSString *)theKey andSecret:(NSString *)theSecret andSSOToken:(NSString *)theToken;
