@@ -15,6 +15,7 @@
 #import "UVNewTicketViewController.h"
 #import "UVSuggestionListViewController.h"
 #import "UVNavigationController.h"
+#import "UVHelpTopic.h"
 
 @implementation UserVoice
 
@@ -70,6 +71,11 @@
 
 + (void)setExternalId:(NSString *)identifier forScope:(NSString *)scope {
     [[UVSession currentSession] setExternalId:identifier forScope:scope];
+}
+
++ (void)presentUserVoiceKnowledgeBaseArticleForParentViewController:(UIViewController *)parentViewController andArticleId:(NSInteger)articleId andConfig:(UVConfig *)config{
+    UIViewController *viewController = [[[UVRootViewController alloc] initWithViewToLoad:[NSString stringWithFormat:@"%i",articleId]] autorelease];
+    [self presentUserVoiceController:viewController forParentViewController:parentViewController withConfig:config];
 }
 
 static id<UVDelegate> userVoiceDelegate;

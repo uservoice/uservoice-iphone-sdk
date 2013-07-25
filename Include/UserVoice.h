@@ -26,6 +26,9 @@
 // Modally present the UserVoice forum view
 + (void)presentUserVoiceForumForParentViewController:(UIViewController *)parentViewController andConfig:(UVConfig *)config;
 
+// Modally present a specific article from the UserVoice knowledge base
++ (void)presentUserVoiceKnowledgeBaseArticleForParentViewController:(UIViewController *)parentViewController andArticleId:(NSInteger)articleId andConfig:(UVConfig *)config;
+
 // Set a <UVDelegate> to receive callbacks
 + (void)setDelegate:(id<UVDelegate>)delegate;
 
