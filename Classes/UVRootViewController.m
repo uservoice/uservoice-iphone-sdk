@@ -114,6 +114,8 @@
 
     if(selectedTopic != nil){
         UVHelpTopicViewController *topicViewController = [[[UVHelpTopicViewController alloc] initWithTopic:selectedTopic] autorelease];
+        [topicViewController loadView];
+        
         [self pushViewsAndAnimate:[NSArray arrayWithObjects:welcomeViewController, topicViewController, articleViewController, nil]];
     }
     else{
