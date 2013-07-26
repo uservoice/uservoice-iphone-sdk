@@ -9,7 +9,7 @@
 #import "UVBaseViewController.h"
 #import "UVArticle.h"
 
-@interface UVArticleViewController : UVBaseViewController<UIActionSheetDelegate> {
+@interface UVArticleViewController : UVBaseViewController<UIActionSheetDelegate, UIWebViewDelegate> {
     UVArticle *article;
     UIWebView *webView;
     NSString *helpfulPrompt;
