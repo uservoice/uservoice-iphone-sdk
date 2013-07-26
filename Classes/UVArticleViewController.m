@@ -145,7 +145,7 @@
         // If this is a link to another article, push that article
         
         NSRegularExpression *regex = [NSRegularExpression
-                                      regularExpressionWithPattern:@"http://[a-z]+\\.uservoice\\.com/knowledgebase/articles/([0-9]+)-.+"
+                                      regularExpressionWithPattern:@"https?://[a-z]+\\.uservoice\\.com/knowledgebase/articles/([0-9]+)-.+"
                                       options:0
                                       error:nil];
         
