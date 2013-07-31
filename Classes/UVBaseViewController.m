@@ -221,8 +221,8 @@
     if (IPAD)
         navigationController.modalPresentationStyle = UIModalPresentationFormSheet;
     [self presentModalViewController:navigationController animated:YES];
-    if (IPAD)
-        navigationController.modalPresentationStyle = UIModalPresentationPageSheet;
+//    if (IPAD)
+//        navigationController.modalPresentationStyle = UIModalPresentationPageSheet;
 }
 
 - (void)setupGroupedTableView {
