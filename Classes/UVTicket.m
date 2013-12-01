@@ -17,9 +17,24 @@
 // ticket[user_agent]    String
 
 #import "UVTicket.h"
+#import "UVBaseModel.h"
 #import "UVCustomField.h"
 #import "UVSession.h"
 #import "UVConfig.h"
+#import "UVUtils.h"
+
+#ifdef UV_FILE_UPLOADS
+//Required for detecting content type
+#import <MobileCoreServices/MobileCoreServices.h>
+
+@interface UVTicket()
+
++ (NSString*) fileMIMEType:(NSString*) file;
+
+@end
+
+#endif
+
 
 @implementation UVTicket
 
@@ -28,37 +43,103 @@
                 andName:(NSString *)name
         andCustomFields:(NSDictionary *)fields
             andDelegate:(id)delegate {
+    
     NSString *path = [self apiPath:@"/tickets.json"];
-    NSMutableDictionary *params = [NSMutableDictionary dictionaryWithObjectsAndKeys:
-        message == nil ? @"" : message, @"ticket[message]",
-        email   == nil ? @"" : email,   @"email",
-        name    == nil ? @"" : name,    @"display_name",
-        nil];
+    
+    // Create the request JSON starting with authentication
+    
+    NSMutableDictionary *jsonRoot = [NSMutableDictionary dictionaryWithObjectsAndKeys:
+                                     email   == nil ? @"" : email,   @"email",
+                                     name    == nil ? @"" : name,    @"display_name",
+                                     nil];
+    
+    NSMutableDictionary *externalIds = [[NSMutableDictionary alloc] init];
     
     for (NSString *scope in [UVSession currentSession].externalIds) {
         NSString *identifier = [[UVSession currentSession].externalIds valueForKey:scope];
-        [params setObject:identifier forKey:[NSString stringWithFormat:@"created_by[external_ids][%@]", scope]];
+        [externalIds setObject:identifier forKey:scope];
     }
-
+    
+    if([externalIds count] > 0){
+        [jsonRoot setObject:[NSDictionary dictionaryWithObject:externalIds forKey:@"external_ids"] forKey:@"created_by"];
+    }
+    
+    // Create the ticket
+    
+    NSMutableDictionary *ticket = [NSMutableDictionary dictionaryWithObject:message == nil ? @"" : message
+                                                                     forKey: @"message"];
+    
     NSDictionary *defaultFields = [UVSession currentSession].config.customFields;
-    for (NSString *key in [defaultFields keyEnumerator]) {
-        [params setObject:[defaultFields objectForKey:key] forKey:[NSString stringWithFormat:@"ticket[custom_field_values][%@]", key]];
+    NSMutableDictionary *customFieldValues = [[NSMutableDictionary alloc] init];
+    
+    for (NSString *name in [defaultFields keyEnumerator]) {
+        [customFieldValues setObject:[defaultFields objectForKey:name] forKey:name];
     }
-
-    for (NSString *key in [fields keyEnumerator]) {
-        [params setObject:[fields objectForKey:key] forKey:[NSString stringWithFormat:@"ticket[custom_field_values][%@]", key]];
+    
+    for (NSString *name in [fields keyEnumerator]) {
+        [customFieldValues setObject:[fields objectForKey:name] forKey:name];
     }
-
+    
+    [ticket setObject:customFieldValues forKey:@"custom_field_values"];
+    
     if ([UVSession currentSession].config.extraTicketInfo != nil) {
         NSString *messageText = [NSString stringWithFormat:@"%@\n\n%@", message, [UVSession currentSession].config.extraTicketInfo];
-        [params setObject:messageText forKey:@"ticket[message]"];
+        [ticket setObject:messageText forKey:@"message"];
     }
 
+#ifdef UV_FILE_UPLOADS
+
+    // Attachments
+    
+    
+    if ([UVSession currentSession].config.attachmentFilePaths != nil) {
+
+        NSMutableArray* attachments = [[NSMutableArray alloc] init];
+
+        //Loop over the attachment files so see which exists
+        
+        for(NSString *attachmentFilePath in [UVSession currentSession].config.attachmentFilePaths){
+            
+            if([[NSFileManager defaultManager] fileExistsAtPath:attachmentFilePath]){
+                
+                NSData *fileData = [[NSData alloc] initWithContentsOfFile:attachmentFilePath];
+                                
+                NSString *base64Data = [UVUtils encodeData64:fileData];
+                
+                NSString* mimeType = [self fileMIMEType:attachmentFilePath];
+                if(mimeType == nil) mimeType = @"application/octet-stream";
+
+                [attachments addObject:[NSDictionary dictionaryWithObjectsAndKeys:[attachmentFilePath lastPathComponent], @"name",
+                                        base64Data, @"data",
+                                        mimeType, @"content_type", nil]];
+                
+            }
+            
+        }
+
+        if([attachments count]>0) [ticket setObject:attachments forKey:@"attachments"];
+        
+    }
+
+#endif
+    
+    [jsonRoot setObject:ticket forKey:@"ticket"];
+    
     return [[self class] postPath:path
-                       withParams:params
+                         withJSON:jsonRoot
                            target:delegate
                          selector:@selector(didCreateTicket:)
                           rootKey:@"ticket"];
+    
 }
+
+#ifdef UV_FILE_UPLOADS
++ (NSString*) fileMIMEType:(NSString*) file {
+    CFStringRef UTI = UTTypeCreatePreferredIdentifierForTag(kUTTagClassFilenameExtension, (CFStringRef)[file pathExtension], NULL);
+    CFStringRef MIMEType = UTTypeCopyPreferredTagWithClass (UTI, kUTTagClassMIMEType);
+    CFRelease(UTI);
+    return [(NSString *)MIMEType autorelease];
+}
+#endif
 
 @end

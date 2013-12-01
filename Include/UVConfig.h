@@ -48,6 +48,7 @@
 @property (nonatomic, assign) BOOL showContactUs;
 @property (nonatomic, assign) BOOL showKnowledgeBase;
 @property (nonatomic, retain) NSString* extraTicketInfo;
+@property (nonatomic, retain) NSArray* attachmentFilePaths;
 @property (nonatomic, retain) NSDictionary *userTraits;
 
 - (void)identifyUserWithEmail:(NSString *)email name:(NSString *)name guid:(NSString *)guid;

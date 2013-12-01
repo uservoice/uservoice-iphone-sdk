@@ -17,12 +17,14 @@
 }
 
 + getInstantAnswers:(NSString *)query delegate:(id)delegate;
++ (id)getArticleWithId:(int)topicId delegate:(id)delegate;
 + (id)getArticlesWithTopicId:(int)topicId delegate:(id)delegate;
 + (id)getArticlesWithDelegate:(id)delegate;
 
 @property (nonatomic, retain) NSString *question;
 @property (nonatomic, retain) NSString *answerHTML;
 @property (assign) NSInteger articleId;
+@property (assign) NSInteger topicId;
 
 - (id)initWithDictionary:(NSDictionary *)dict;
 

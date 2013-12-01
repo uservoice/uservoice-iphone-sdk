@@ -20,6 +20,10 @@
 #import "UVStyleSheet.h"
 #import "UVNewSuggestionViewController.h"
 #import "UVInitialLoadManager.h"
+#import "UVArticle.h"
+#import "UVArticleViewController.h"
+#import "UVHelpTopic.h"
+#import "UVHelpTopicViewController.h"
 
 @implementation UVRootViewController
 
@@ -48,25 +52,77 @@
 - (void)pushNextView {
     UVSession *session = [UVSession currentSession];
     if ((![UVAccessToken exists] || session.user) && session.clientConfig && [self.navigationController.viewControllers count] == 1) {
-        CATransition* transition = [CATransition animation];
-        transition.duration = 0.3;
-        transition.type = kCATransitionFade;
-        [self.navigationController.view.layer addAnimation:transition forKey:kCATransition];
         UVBaseViewController *next = nil;
-        if ([self.viewToLoad isEqualToString:@"welcome"])
-            next = [[[UVWelcomeViewController alloc] init] autorelease];
-        else if ([self.viewToLoad isEqualToString:@"suggestions"])
-            next = [[[UVSuggestionListViewController alloc] init] autorelease];
-        else if ([self.viewToLoad isEqualToString:@"new_suggestion"])
-            next = [UVNewSuggestionViewController viewController];
-        else if ([self.viewToLoad isEqualToString:@"new_ticket"])
-            next = [UVNewTicketViewController viewController];
+        
+        NSInteger articleId = [self.viewToLoad integerValue];
+        
+        // Article ID was not set
+        
+        if(articleId==0){
+            if ([self.viewToLoad isEqualToString:@"welcome"])
+                next = [[[UVWelcomeViewController alloc] init] autorelease];
+            else if ([self.viewToLoad isEqualToString:@"suggestions"])
+                next = [[[UVSuggestionListViewController alloc] init] autorelease];
+            else if ([self.viewToLoad isEqualToString:@"new_suggestion"])
+                next = [UVNewSuggestionViewController viewController];
+            else if ([self.viewToLoad isEqualToString:@"new_ticket"])
+                next = [UVNewTicketViewController viewController];
+         
+            [self pushViewsAndAnimate:[NSArray arrayWithObject:next]];
+        }
 
-        next.firstController = YES;
-        [self.navigationController pushViewController:next animated:NO];
+        // Article ID is set, load article
+        
+        else{
+            [UVArticle getArticleWithId:articleId delegate:self];
+        }
+        
     }
 }
 
+- (void)pushViewsAndAnimate:(NSArray*) viewControllers {
+    CATransition* transition = [CATransition animation];
+    transition.duration = 0.3;
+    transition.type = kCATransitionFade;
+    [self.navigationController.view.layer addAnimation:transition forKey:kCATransition];
+
+    BOOL first = TRUE;
+    
+    for(UVBaseViewController* viewController in viewControllers){
+        viewController.firstController = first;
+        first = FALSE;
+        [self.navigationController pushViewController:viewController animated:NO];
+    }
+}
+
+-(void) didRetrieveArticle:(UVArticle*) article{
+
+    UVArticleViewController *articleViewController = [[[UVArticleViewController alloc] initWithArticle:article helpfulPrompt:nil returnMessage:nil] autorelease];
+        
+    // Construct a view controller array consisting welcome VC and article VC
+    
+     UIViewController *welcomeViewController = [[[UVWelcomeViewController alloc] init] autorelease];
+     
+     UVHelpTopic *selectedTopic = nil;
+
+    for(UVHelpTopic* topic in [UVSession currentSession].topics){
+        if(topic.topicId == article.topicId){
+            selectedTopic = topic;
+            break;
+        }
+    }
+
+    if(selectedTopic != nil){
+        UVHelpTopicViewController *topicViewController = [[[UVHelpTopicViewController alloc] initWithTopic:selectedTopic] autorelease];
+        [topicViewController loadView];
+        
+        [self pushViewsAndAnimate:[NSArray arrayWithObjects:welcomeViewController, topicViewController, articleViewController, nil]];
+    }
+    else{
+        [self pushViewsAndAnimate:[NSArray arrayWithObjects:welcomeViewController, articleViewController, nil]];        
+    }
+
+}
 
 #pragma mark ===== Basic View Methods =====
 

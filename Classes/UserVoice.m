@@ -15,6 +15,7 @@
 #import "UVNewTicketViewController.h"
 #import "UVSuggestionListViewController.h"
 #import "UVNavigationController.h"
+#import "UVHelpTopic.h"
 #import "UVUtils.h"
 #import "UVBabayaga.h"
 #import "UVClientConfig.h"
@@ -107,6 +108,11 @@
     [[UVSession currentSession] setExternalId:identifier forScope:scope];
 }
 
++ (void)presentUserVoiceKnowledgeBaseArticleForParentViewController:(UIViewController *)parentViewController andArticleId:(NSInteger)articleId andConfig:(UVConfig *)config{
+    [self initialize:config];
+    UIViewController *viewController = [[[UVRootViewController alloc] initWithViewToLoad:[NSString stringWithFormat:@"%i",articleId]] autorelease];
+    [self presentUserVoiceController:viewController forParentViewController:parentViewController];
+}
 + (void)track:(NSString *)event properties:(NSDictionary *)properties {
     [UVBabayaga track:event props:properties];
 }

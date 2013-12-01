@@ -36,6 +36,16 @@
     [super loadView];
     self.navigationItem.title = NSLocalizedStringFromTable(@"Knowledge Base", @"UserVoice", nil);
     self.view = [[[UIView alloc] initWithFrame:[self contentFrame]] autorelease];
+
+    if(article != nil){
+        [self loadWebView];
+    }
+    else{
+        [self showActivityIndicator];
+    }
+}
+
+-(void)loadWebView{
     self.webView = [[[UIWebView alloc] initWithFrame:CGRectMake(0, 0, self.view.bounds.size.width, self.view.bounds.size.height - 40)] autorelease];
     NSString *html = [NSString stringWithFormat:@"<html><head><link rel=\"stylesheet\" type=\"text/css\" href=\"http://cdn.uservoice.com/stylesheets/vendor/typeset.css\"/></head><body class=\"typeset\" style=\"font-family: sans-serif; margin: 1em\"><h3>%@</h3>%@</body></html>", article.question, article.answerHTML];
     self.webView.autoresizingMask = UIViewAutoresizingFlexibleWidth|UIViewAutoresizingFlexibleHeight;
@@ -48,8 +58,9 @@
         }
     }
     [self.webView loadHTMLString:html baseURL:nil];
+    self.webView.delegate = self;
     [self.view addSubview:webView];
-
+    
     UIToolbar *helpfulBar = [[[UIToolbar alloc] initWithFrame:CGRectMake(0, self.view.bounds.size.height - 40, self.view.bounds.size.width, 40)] autorelease];
     helpfulBar.autoresizingMask = UIViewAutoresizingFlexibleWidth|UIViewAutoresizingFlexibleTopMargin;
     if (!IOS7) {
@@ -132,6 +143,58 @@
     self.helpfulPrompt = nil;
     self.returnMessage = nil;
     [super dealloc];
+}
+
+#pragma mark - UIWebViewDelegate
+
+// Open links in Safari
+
+-(BOOL) webView:(UIWebView *)inWeb shouldStartLoadWithRequest:(NSURLRequest *)inRequest navigationType:(UIWebViewNavigationType)inType {
+    if ( inType == UIWebViewNavigationTypeLinkClicked ) {
+        
+        NSString *urlString = inRequest.URL.absoluteString;
+        
+        // If this is a link to another article, push that article
+        
+        NSRegularExpression *regex = [NSRegularExpression
+                                      regularExpressionWithPattern:@"https?://[a-z]+\\.uservoice\\.com/knowledgebase/articles/([0-9]+)-.+"
+                                      options:0
+                                      error:nil];
+        
+        NSTextCheckingResult *match   = [regex firstMatchInString:urlString
+                                                   options:0
+                                                     range:NSMakeRange(0, [urlString length])];
+        
+        if (match) {
+            NSRange range = [match rangeAtIndex:1];
+            NSInteger articleId = [[urlString substringWithRange:range] integerValue];
+
+            UVArticleViewController* pushedArticleViewController = [[UVArticleViewController alloc] initWithArticle:nil
+                                                                                                      helpfulPrompt:nil
+                                                                                                      returnMessage:nil];
+            
+            [UVArticle getArticleWithId:articleId delegate:pushedArticleViewController];
+
+            [self.navigationController pushViewController:pushedArticleViewController animated:YES];
+        }
+
+        // Else open in safari
+        
+        else{
+            [[UIApplication sharedApplication] openURL:[inRequest URL]];
+        }
+        return NO;
+    }
+    
+    return YES;
+}
+
+-(void) didRetrieveArticle:(UVArticle*) receivedArticle{
+    if(self.article == nil){
+        self.article = receivedArticle;
+        [self hideActivityIndicator];
+        [self loadWebView];
+    }
 }
 
 @end
