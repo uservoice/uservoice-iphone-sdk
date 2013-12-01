@@ -30,9 +30,17 @@
 @synthesize shade;
 @synthesize activityIndicatorView;
 
+- (id)init {
+    self = [super init];
+    if (self) {
+        self.signinManager = [UVSigninManager manager];
+        self.signinManager.delegate = self;
+    }
+    return self;
+}
+
 - (void)dismissUserVoice {
     [[UVImageCache sharedInstance] flush];
-    [[UVSession currentSession] flushInteractions];
     [[UVSession currentSession] clear];
     [[UVSession currentSession] clearFlash];
     
@@ -71,9 +79,40 @@
 }
 
 - (void)hideActivityIndicator {
+    [self enableSubmitButton];
     [activityIndicatorView stopAnimating];
     activityIndicatorView.hidden = YES;
     shade.hidden = YES;
+}
+
+- (void)setSubmitButtonEnabled:(BOOL)enabled {
+    if (!self.navigationItem) {
+        return;
+    }
+    
+    if (self.navigationItem.rightBarButtonItem) {
+        self.navigationItem.rightBarButtonItem.enabled = enabled;
+    }
+}
+
+- (void)disableSubmitButton {
+    [self setSubmitButtonEnabled:NO];
+}
+
+- (void)enableSubmitButton {
+    [self enableSubmitButtonForce:NO];
+}
+
+- (void)enableSubmitButtonForce:(BOOL)force {
+    BOOL shouldEnableButton = [self shouldEnableSubmitButton];
+
+    if (shouldEnableButton || force) {
+        [self setSubmitButtonEnabled:YES];
+    }
+}
+
+- (BOOL)shouldEnableSubmitButton {
+    return YES;
 }
 
 - (void)alertError:(NSString *)message {
@@ -131,6 +170,52 @@
 
 - (BOOL)shouldAutorotateToInterfaceOrientation:(UIInterfaceOrientation)interfaceOrientation {
     return YES;
+}
+
+- (BOOL)needNestedModalHack {
+    return [UIDevice currentDevice].systemVersion.floatValue >= 6;
+}
+
+- (void)willAnimateRotationToInterfaceOrientation:(UIInterfaceOrientation)toInterfaceOrientation
+                                         duration:(NSTimeInterval)duration {
+
+    // We are the top modal, make to sure that parent modals use our size
+    if (self.needNestedModalHack && self.presentedViewController == nil && self.presentingViewController) {
+        for (UIViewController* parent = self.presentingViewController;
+             parent.presentingViewController;
+             parent = parent.presentingViewController) {
+            parent.view.superview.frame = parent.presentedViewController.view.superview.frame;
+        }
+    }
+
+    [super willAnimateRotationToInterfaceOrientation:toInterfaceOrientation duration:duration];
+}
+
+- (void)willRotateToInterfaceOrientation:(UIInterfaceOrientation)toInterfaceOrientation
+                                duration:(NSTimeInterval)duration {
+    // We are the top modal, make to sure that parent modals are hidden during transition
+    if (self.needNestedModalHack && self.presentedViewController == nil && self.presentingViewController) {
+        for (UIViewController* parent = self.presentingViewController;
+             parent.presentingViewController;
+             parent = parent.presentingViewController) {
+            parent.view.superview.hidden = YES;
+        }
+    }
+
+    [super willRotateToInterfaceOrientation:toInterfaceOrientation duration:duration];
+}
+
+- (void)didRotateFromInterfaceOrientation:(UIInterfaceOrientation)fromInterfaceOrientation {
+    // We are the top modal, make to sure that parent modals are shown after animation
+    if (self.needNestedModalHack && self.presentedViewController == nil && self.presentingViewController) {
+        for (UIViewController* parent = self.presentingViewController;
+             parent.presentingViewController;
+             parent = parent.presentingViewController) {
+            parent.view.superview.hidden = NO;
+        }
+    }
+
+    [super didRotateFromInterfaceOrientation:fromInterfaceOrientation];
 }
 
 #pragma mark ===== helper methods for table views =====
@@ -200,7 +285,7 @@
 }
 
 - (void)keyboardDidShow:(NSNotification*)notification {
-    UIEdgeInsets contentInsets = UIEdgeInsetsMake(0.0, 0.0, kbHeight, 0.0);
+    UIEdgeInsets contentInsets = UIEdgeInsetsMake([self scrollView].contentInset.top, 0.0, kbHeight, 0.0);
     [self scrollView].contentInset = contentInsets;
     [self scrollView].scrollIndicatorInsets = contentInsets;
 }
@@ -209,21 +294,18 @@
 }
 
 - (void)keyboardDidHide:(NSNotification*)notification {
-    UIEdgeInsets contentInsets = UIEdgeInsetsZero;
+    UIEdgeInsets contentInsets = UIEdgeInsetsMake([self scrollView].contentInset.top, 0.0, 0.0, 0.0);
     [self scrollView].contentInset = contentInsets;
     [self scrollView].scrollIndicatorInsets = contentInsets;
 }
 
 - (void)presentModalViewController:(UIViewController *)viewController {
     UINavigationController *navigationController = [[[UINavigationController alloc] init] autorelease];
-    navigationController.navigationBar.tintColor = [UVStyleSheet navigationBarTintColor];
-    [navigationController.navigationBar setBackgroundImage:[UVStyleSheet navigationBarBackgroundImage] forBarMetrics:UIBarMetricsDefault];
+    [UVUtils applyStylesheetToNavigationController:navigationController];
     navigationController.viewControllers = @[viewController];
     if (IPAD)
         navigationController.modalPresentationStyle = UIModalPresentationFormSheet;
     [self presentModalViewController:navigationController animated:YES];
-    if (IPAD)
-        navigationController.modalPresentationStyle = UIModalPresentationPageSheet;
 }
 
 - (void)setupGroupedTableView {
@@ -252,16 +334,12 @@
     [view addSubview:border];
 }
 
-- (void)requireUserSignedIn:(SEL)action {
-    if (!signinManager)
-        self.signinManager = [UVSigninManager manager];
-    [signinManager signInWithDelegate:self action:action];
+- (void)requireUserSignedIn:(UVCallback *)callback {
+    [signinManager signInWithCallback:callback];
 }
 
-- (void)requireUserAuthenticated:(NSString *)email name:(NSString *)name action:(SEL)action {
-    if (!signinManager)
-        self.signinManager = [UVSigninManager manager];
-    [signinManager signInWithEmail:email name:name delegate:self action:action];
+- (void)requireUserAuthenticated:(NSString *)email name:(NSString *)name callback:(UVCallback *)callback {
+    [self.signinManager signInWithEmail:email name:name callback:callback];
 }
 
 - (void)setUserName:(NSString *)theName {
@@ -304,6 +382,70 @@
     return userEmail;
 }
 
+- (CGRect)cellLabelRect:(UIView *)container {
+    CGFloat offset = 14 + (IOS7 ? 0 : (IPAD ? 27 : 2));
+    return CGRectMake(offset, 12, container.frame.size.width - offset - (IOS7 ? 2 : offset), 16);
+}
+
+- (CGRect)cellValueRect:(UIView *)container {
+    CGFloat offset = 14 + (IOS7 ? 0 : (IPAD ? 27 : 2));
+    return CGRectMake(offset, 28, container.frame.size.width - offset - (IOS7 ? 2 : offset), 30);
+}
+
+- (UILabel *)addCellLabel:(UIView *)container {
+    UILabel *label = [[[UILabel alloc] initWithFrame:[self cellLabelRect:container]] autorelease];
+    label.autoresizingMask = UIViewAutoresizingFlexibleWidth;
+    label.font = [UIFont systemFontOfSize:13];
+    if (IOS7){
+        label.textColor = [self.view valueForKey:@"tintColor"];
+    } else {
+        label.textColor = [UIColor grayColor];
+    }
+    label.backgroundColor = [UIColor clearColor];
+    [container addSubview:label];
+    return label;
+}
+
+- (UILabel *)addCellValueLabel:(UIView *)container {
+    UILabel *label = [[[UILabel alloc] initWithFrame:[self cellValueRect:container]] autorelease];
+    label.autoresizingMask = UIViewAutoresizingFlexibleWidth;
+    label.font = [UIFont systemFontOfSize:16];
+    label.backgroundColor = [UIColor clearColor];
+    [container addSubview:label];
+    return label;
+}
+
+- (UITextField *)addCellValueTextField:(UIView *)container {
+    UITextField *textField = [[[UITextField alloc] initWithFrame:[self cellValueRect:container]] autorelease];
+    textField.autoresizingMask = UIViewAutoresizingFlexibleWidth;
+    textField.borderStyle = UITextBorderStyleNone;
+    textField.backgroundColor = [UIColor clearColor];
+    textField.returnKeyType = UIReturnKeyDone;
+    textField.placeholder = NSLocalizedStringFromTable(@"enter value", @"UserVoice", nil);
+    [container addSubview:textField];
+    return textField;
+}
+
+- (UITextField *)customizeTextFieldCell:(UITableViewCell *)cell label:(NSString *)labelText placeholder:(NSString *)placeholder {
+    UILabel *label = [self addCellLabel:cell];
+    label.text = labelText;
+    UITextField *textField = [self addCellValueTextField:cell];
+    textField.placeholder = placeholder;
+    textField.delegate = self;
+    return textField;
+}
+
+#pragma mark - UVSigninManageDelegate
+
+- (void)signinManagerDidSignIn:(UVUser *)user {
+    [self hideActivityIndicator];
+}
+
+- (void)signinManagerDidFail {
+    [self hideActivityIndicator];
+}
+
+
 #pragma mark ===== Basic View Methods =====
 
 - (void)loadView {
@@ -315,6 +457,7 @@
     [[NSNotificationCenter defaultCenter] removeObserver:self];
     self.tableView = nil;
     self.exitButton = nil;
+    self.signinManager.delegate = nil;
     self.signinManager = nil;
     self.shade = nil;
     self.activityIndicatorView = nil;

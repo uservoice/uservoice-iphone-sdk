@@ -18,6 +18,9 @@
 #import "UVCommentViewController.h"
 #import "UVGradientButton.h"
 #import "UVTruncatingLabel.h"
+#import "UVCallback.h"
+#import "UVBabayaga.h"
+#import "UVDeflection.h"
 
 #define MARGIN 15
 
@@ -26,7 +29,12 @@
 #define COMMENT_DATE_TAG 1002
 #define COMMENT_TEXT_TAG 1003
 
-@implementation UVSuggestionDetailsViewController
+@implementation UVSuggestionDetailsViewController {
+    
+    UVCallback *_showVotesCallback;
+    UVCallback *_showCommentControllerCallback;
+    
+}
 
 @synthesize suggestion;
 @synthesize scrollView;
@@ -40,11 +48,26 @@
 @synthesize responseLabel;
 @synthesize buttons;
 @synthesize voteButton;
+@synthesize instantAnswers;
+
+- (id)init {
+    self = [super init];
+    
+    if (self) {
+        _showVotesCallback = [[UVCallback alloc] initWithTarget:self selector:@selector(openVoteActionSheet)];
+        _showCommentControllerCallback = [[UVCallback alloc] initWithTarget:self selector:@selector(presentCommentController)];
+    }
+    
+    return self;
+}
 
 - (id)initWithSuggestion:(UVSuggestion *)theSuggestion {
-    if ((self = [super init])) {
+    self = [self init];
+
+    if (self) {
         self.suggestion = theSuggestion;
     }
+
     return self;
 }
 
@@ -68,11 +91,16 @@
 }
 
 - (void)didVoteForSuggestion:(UVSuggestion *)theSuggestion {
+    [UVBabayaga track:VOTE_IDEA id:theSuggestion.suggestionId];
+    [UVBabayaga track:SUBSCRIBE_IDEA id:theSuggestion.suggestionId];
     [UVSession currentSession].user.votesRemaining = theSuggestion.votesRemaining;
-    [UVSession currentSession].clientConfig.forum.suggestionsNeedReload = YES;
+    [UVSession currentSession].forum.suggestionsNeedReload = YES;
     self.suggestion = theSuggestion;
     [self hideActivityIndicator];
     [self updateVotesLabel];
+    if (instantAnswers) {
+        [UVDeflection trackDeflection:@"subscribed" deflector:theSuggestion];
+    }
 }
 
 #pragma mark ===== UITableView Methods =====
@@ -133,9 +161,11 @@
 
 - (void)customizeCellForComment:(UITableViewCell *)cell indexPath:(NSIndexPath *)indexPath {
     UVComment *comment = [self.comments objectAtIndex:indexPath.row];
-    cell.backgroundView.backgroundColor = indexPath.row % 2 == 0 ?
-        [UIColor colorWithRed:0.99f green:1.00f blue:1.00f alpha:1.0f] :
-        [UIColor colorWithRed:0.94f green:0.95f blue:0.95f alpha:1.0f];
+    if (!IOS7) {
+        cell.backgroundView.backgroundColor = indexPath.row % 2 == 0 ?
+            [UIColor colorWithRed:0.99f green:1.00f blue:1.00f alpha:1.0f] :
+            [UIColor colorWithRed:0.94f green:0.95f blue:0.95f alpha:1.0f];
+    }
 
     UVImageView *avatar = (UVImageView *)[cell viewWithTag:COMMENT_AVATAR_TAG];
     avatar.URL = comment.avatarUrl;
@@ -162,9 +192,11 @@
 }
 
 - (void)customizeCellForLoad:(UITableViewCell *)cell indexPath:(NSIndexPath *)indexPath {
-    cell.backgroundView.backgroundColor = indexPath.row % 2 == 0 ?
-        [UIColor colorWithRed:0.99f green:1.00f blue:1.00f alpha:1.0f] :
-        [UIColor colorWithRed:0.94f green:0.95f blue:0.95f alpha:1.0f];
+    if (!IOS7) {
+        cell.backgroundView.backgroundColor = indexPath.row % 2 == 0 ?
+            [UIColor colorWithRed:0.99f green:1.00f blue:1.00f alpha:1.0f] :
+            [UIColor colorWithRed:0.94f green:0.95f blue:0.95f alpha:1.0f];
+    }
 }
 
 - (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section {
@@ -208,7 +240,7 @@
 }
 
 - (void)voteButtonTapped {
-    [self requireUserSignedIn:@selector(openVoteActionSheet)];
+    [self requireUserSignedIn:_showVotesCallback];
 }
 
 - (void)openVoteActionSheet {
@@ -249,7 +281,6 @@
     if (votes == 0) {
         [[UVSession currentSession].user didWithdrawSupportForSuggestion:suggestion];
     } else if (suggestion.votesFor == 0) {
-        [[UVSession currentSession] trackInteraction:@"v"];
         [[UVSession currentSession].user didSupportSuggestion:suggestion];
     }
 
@@ -258,7 +289,7 @@
 }
 
 - (void)commentButtonTapped {
-    [self requireUserSignedIn:@selector(presentCommentController)];
+    [self requireUserSignedIn:_showCommentControllerCallback];
 }
 
 - (void)presentCommentController {
@@ -360,6 +391,7 @@
 
 - (void)loadView {
     [super loadView];
+    [UVBabayaga track:VIEW_IDEA id:suggestion.suggestionId];
     self.navigationItem.title = self.suggestion.title;
     self.view = [[[UIView alloc] initWithFrame:[self contentFrame]] autorelease];
     self.view.autoresizesSubviews = YES;
@@ -545,11 +577,15 @@
 }
 
 - (void)viewWillAppear:(BOOL)animated {
-    self.navigationController.navigationBar.layer.masksToBounds = YES;
+    if (!IOS7) {
+        self.navigationController.navigationBar.layer.masksToBounds = YES;
+    }
 }
 
 - (void)viewWillDisappear:(BOOL)animated {
-    self.navigationController.navigationBar.layer.masksToBounds = NO;
+    if (!IOS7) {
+        self.navigationController.navigationBar.layer.masksToBounds = NO;
+    }
 }
 
 - (void)didRotateFromInterfaceOrientation:(UIInterfaceOrientation)fromInterfaceOrientation {
@@ -569,6 +605,12 @@
     self.responseLabel = nil;
     self.buttons = nil;
     self.voteButton = nil;
+    
+    [_showVotesCallback invalidate];
+    [_showVotesCallback release];
+    [_showCommentControllerCallback invalidate];
+    [_showCommentControllerCallback release];
+    
     [super dealloc];
 }
 

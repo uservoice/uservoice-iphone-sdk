@@ -14,6 +14,9 @@
 #import "UVSuggestion.h"
 #import "UVSuggestionDetailsViewController.h"
 #import "UVHighlightingLabel.h"
+#import "UVUtils.h"
+#import "UVBabayaga.h"
+#import "UVDeflection.h"
 
 @implementation UVBaseInstantAnswersViewController
 
@@ -31,24 +34,7 @@
 }
 
 - (void)updatePattern {
-    NSRegularExpression *termPattern = [NSRegularExpression regularExpressionWithPattern:@"\\b\\w+\\b" options:0 error:nil];
-    NSMutableString *pattern = [NSMutableString stringWithString:@"\\b("];
-    NSString *query = instantAnswersQuery;
-    __block NSString *lastTerm = nil;
-    [termPattern enumerateMatchesInString:query options:0 range:NSMakeRange(0, [query length]) usingBlock:^(NSTextCheckingResult *match, NSMatchingFlags flags, BOOL *stop){
-        if (lastTerm) {
-            [pattern appendString:lastTerm];
-            [pattern appendString:@"|"];
-        }
-        lastTerm = [query substringWithRange:[match range]];
-    }];
-    if (lastTerm) {
-        [pattern appendString:lastTerm];
-        [pattern appendString:@")"];
-        self.searchPattern = [NSRegularExpression regularExpressionWithPattern:pattern options:NSRegularExpressionCaseInsensitive error:nil];
-    } else {
-        self.searchPattern = nil;
-    }
+    self.searchPattern = [UVUtils patternForQuery:instantAnswersQuery];
 }
 
 - (void)searchInstantAnswers:(NSString *)query {
@@ -78,9 +64,7 @@
     self.instantAnswers = [NSArray array];
     if (self.instantAnswersQuery == nil) return;
     [self willLoadInstantAnswers];
-    // It's a combined search, remember?
-    [[UVSession currentSession] trackInteraction:@"sf"];
-    [[UVSession currentSession] trackInteraction:@"si"];
+    [UVDeflection setSearchText:self.instantAnswersQuery];
     [UVArticle getInstantAnswers:self.instantAnswersQuery delegate:self];
     [self updatePattern];
 }
@@ -94,15 +78,16 @@
     if (index >= [answers count])
         return;
     id model = [answers objectAtIndex:index];
+    [UVDeflection trackDeflection:@"show" deflector:model];
     if ([model isMemberOfClass:[UVArticle class]]) {
         UVArticle *article = (UVArticle *)model;
-        [[UVSession currentSession] trackInteraction:@"cf" details:[NSDictionary dictionaryWithObjectsAndKeys:[NSNumber numberWithInt:article.articleId], @"id", self.instantAnswersQuery, @"t", nil]];
         UVArticleViewController *next = [[[UVArticleViewController alloc] initWithArticle:article helpfulPrompt:articleHelpfulPrompt returnMessage:articleReturnMessage] autorelease];
+        next.instantAnswers = YES;
         [self.navigationController pushViewController:next animated:YES];
     } else {
         UVSuggestion *suggestion = (UVSuggestion *)model;
-        [[UVSession currentSession] trackInteraction:@"ci" details:[NSDictionary dictionaryWithObjectsAndKeys:[NSNumber numberWithInt:suggestion.suggestionId], @"id", self.instantAnswersQuery, @"t", nil]];
         UVSuggestionDetailsViewController *next = [[[UVSuggestionDetailsViewController alloc] initWithSuggestion:suggestion] autorelease];
+        next.instantAnswers = YES;
         [self.navigationController pushViewController:next animated:YES];
     }
 }
@@ -172,13 +157,17 @@
 
 - (void)initCellForInstantAnswer:(UITableViewCell *)cell indexPath:(NSIndexPath *)indexPath {
     cell.backgroundColor = [UIColor whiteColor];
-    UVHighlightingLabel *label = [[[UVHighlightingLabel alloc] initWithFrame:CGRectMake(IPAD ? 75 : 50, 12, cell.bounds.size.width - (IPAD ? 130 : 80), 20)] autorelease];
+    UVHighlightingLabel *label = [[[UVHighlightingLabel alloc] initWithFrame:CGRectMake(IPAD && !IOS7 ? 75 : 50, 12, cell.bounds.size.width - (IPAD ? 130 : 80), 20)] autorelease];
     label.backgroundColor = [UIColor clearColor];
     label.numberOfLines = 2;
     label.autoresizingMask = UIViewAutoresizingFlexibleWidth;
     label.font = [UIFont boldSystemFontOfSize:13.0];
     label.tag = HIGHLIGHTING_LABEL_TAG;
     [cell addSubview:label];
+    UIImageView *imageView = [[[UIImageView alloc] initWithFrame:CGRectMake(IPAD && !IOS7 ? 40 : 18, 8, 24, 24)] autorelease];
+    imageView.autoresizingMask = UIViewAutoresizingFlexibleRightMargin;
+    imageView.tag = IA_IMAGE_TAG;
+    [cell addSubview:imageView];
     cell.accessoryType = UITableViewCellAccessoryDisclosureIndicator;
 }
 
@@ -187,15 +176,16 @@
         return;
     id model = [instantAnswers objectAtIndex:index];
     UVHighlightingLabel *label = (UVHighlightingLabel *)[cell viewWithTag:HIGHLIGHTING_LABEL_TAG];
+    UIImageView *imageView = (UIImageView *)[cell viewWithTag:IA_IMAGE_TAG];
     label.pattern = searchPattern;
     if ([model isMemberOfClass:[UVArticle class]]) {
         UVArticle *article = (UVArticle *)model;
         label.text = article.question;
-        cell.imageView.image = [UIImage imageNamed:@"uv_article.png"];
+        imageView.image = [UIImage imageNamed:@"uv_article.png"];
     } else {
         UVSuggestion *suggestion = (UVSuggestion *)model;
         label.text = suggestion.title;
-        cell.imageView.image = [UIImage imageNamed:@"uv_idea.png"];
+        imageView.image = [UIImage imageNamed:@"uv_idea.png"];
     }
 }
 
@@ -227,14 +217,13 @@
     loadingInstantAnswers = NO;
     [self didLoadInstantAnswers];
     
-    // This seems like the only way to do justice to tracking the number of results from the combined search
     NSMutableArray *articleIds = [NSMutableArray arrayWithCapacity:[theInstantAnswers count]];
     for (id answer in theInstantAnswers) {
         if ([answer isKindOfClass:[UVArticle class]]) {
             [articleIds addObject:[NSNumber numberWithInt:[((UVArticle *)answer) articleId]]];
         }
     }
-    [[UVSession currentSession] trackInteraction:[articleIds count] > 0 ? @"rfp" : @"rfz" details:[NSDictionary dictionaryWithObjectsAndKeys:[NSNumber numberWithInt:[articleIds count]], @"count", articleIds, @"ids", nil]];
+    [UVBabayaga track:SEARCH_ARTICLES searchText:self.instantAnswersQuery ids:articleIds];
     
     NSMutableArray *suggestionIds = [NSMutableArray arrayWithCapacity:[theInstantAnswers count]];
     for (id answer in theInstantAnswers) {
@@ -242,7 +231,8 @@
             [suggestionIds addObject:[NSNumber numberWithInt:[((UVSuggestion *)answer) suggestionId]]];
         }
     }
-    [[UVSession currentSession] trackInteraction:[suggestionIds count] > 0 ? @"rip" : @"riz" details:[NSDictionary dictionaryWithObjectsAndKeys:[NSNumber numberWithInt:[suggestionIds count]], @"count", suggestionIds, @"ids", nil]];
+    [UVBabayaga track:SEARCH_IDEAS searchText:self.instantAnswersQuery ids:suggestionIds];
+    [UVDeflection trackSearchDeflection:theInstantAnswers];
 }
 
 - (void)cleanupInstantAnswersTimer {

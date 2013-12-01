@@ -10,6 +10,7 @@
 #import "UVStyleSheet.h"
 #import "UVClientConfig.h"
 #import <QuartzCore/QuartzCore.h>
+#import "UVDefines.h"
 
 @implementation UVCellViewWithIndex
 
@@ -34,7 +35,9 @@
 
 - (void)setZebraColorFromIndex:(NSInteger)index {
     BOOL darkZebra = index % 2 == 0;
-    self.backgroundColor = [UVStyleSheet zebraBgColor:darkZebra];
+    if (!IOS7) {
+        self.backgroundColor = [UVStyleSheet zebraBgColor:darkZebra];
+    }
 }
 
 @end

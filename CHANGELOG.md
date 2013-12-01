@@ -1,5 +1,27 @@
 ## master ##
 
+## 2.0.13 ##
+
+* Add support for new UserVoice metrics
+* Add the ability to control the navbar font
+* Fix crash on iOS 7 when posting ideas
+* Stop forcing user to return to the portal view after creating an idea or ticket
+* Add the ability to customize the nav bar font
+
+## 2.0.12 ##
+
+* Respect specified order of articles within a topic
+* Speed up initial load slightly
+* Fix a potential crash when the SDK is dismissed during initial load
+* Add ability to customize navigation bar title appearance
+* Show action sheets from bar button item on iPad
+* Update Traditional Chinese translation (thanks to bcylin)
+* Add Portuguese translation (thanks to hebertialmeida)
+* Add client-side forumId option
+* Add a bunch of translations (thanks to rafaelbaggio)
+* Remove need for client keys
+* A bunch of fixes for iOS 7 (more to come)
+
 ## 2.0.11 ##
 
 * Remove the need for -ObjC

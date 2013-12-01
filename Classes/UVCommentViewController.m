@@ -12,6 +12,7 @@
 #import "UVComment.h"
 #import "UVSuggestionDetailsViewController.h"
 #import "UVKeyboardUtils.h"
+#import "UVBabayaga.h"
 
 @implementation UVCommentViewController
 
@@ -33,6 +34,7 @@
     if (textView.text.length == 0) {
         [self dismiss];
     } else {
+        [self disableSubmitButton];
         [self showActivityIndicator];
         [UVComment createWithSuggestion:suggestion text:textView.text delegate:self];
     }
@@ -40,6 +42,7 @@
 
 - (void)didCreateComment:(UVComment *)comment {
     [self hideActivityIndicator];
+    [UVBabayaga track:COMMENT_IDEA id:self.suggestion.suggestionId];
     self.suggestion.commentsCount += 1;
     UINavigationController *navController = (UINavigationController *)self.presentingViewController;
     UVSuggestionDetailsViewController *previous = (UVSuggestionDetailsViewController *)[navController.viewControllers lastObject];

@@ -18,6 +18,8 @@
 #import "UVCellViewWithIndex.h"
 #import "UVSuggestionButton.h"
 #import "UVConfig.h"
+#import "UVUtils.h"
+#import "UVBabayaga.h"
 
 #define SUGGESTIONS_PAGE_SIZE 10
 #define UV_SEARCH_TEXTBAR 1
@@ -39,7 +41,7 @@
 
 - (id)init {
     if ((self = [super init])) {
-        self.forum = [UVSession currentSession].clientConfig.forum;
+        self.forum = [UVSession currentSession].forum;
     }
     return self;
 }
@@ -52,8 +54,8 @@
 
 - (void)populateSuggestions {
     self.suggestions = [NSMutableArray arrayWithCapacity:10];
-    [UVSession currentSession].clientConfig.forum.suggestions = [NSMutableArray arrayWithCapacity:10];
-    [UVSession currentSession].clientConfig.forum.suggestionsNeedReload = NO;
+    _forum.suggestions = [NSMutableArray arrayWithCapacity:10];
+    _forum.suggestionsNeedReload = NO;
     [self retrieveMoreSuggestions];
 }
 
@@ -63,7 +65,7 @@
         [self.suggestions addObjectsFromArray:theSuggestions];
     }
 
-    [[UVSession currentSession].clientConfig.forum.suggestions addObjectsFromArray:theSuggestions];
+    [_forum.suggestions addObjectsFromArray:theSuggestions];
     [self.tableView reloadData];
 }
 
@@ -73,7 +75,7 @@
     for (UVSuggestion *suggestion in theSuggestions) {
         [ids addObject:[NSNumber numberWithInt:suggestion.suggestionId]];
     }
-    [[UVSession currentSession] trackInteraction:[theSuggestions count] > 0 ? @"rip" : @"riz" details:[NSDictionary dictionaryWithObjectsAndKeys:[NSNumber numberWithInt:[theSuggestions count]], @"count", ids, @"ids", nil]];
+    [UVBabayaga track:SEARCH_IDEAS searchText:searchController.searchBar.text ids:ids];
     [searchController.searchResultsTableView reloadData];
 }
 
@@ -83,24 +85,7 @@
 }
 
 - (void)updatePattern {
-    NSRegularExpression *termPattern = [NSRegularExpression regularExpressionWithPattern:@"\\b\\w+\\b" options:0 error:nil];
-    NSMutableString *pattern = [NSMutableString stringWithString:@"\\b("];
-    NSString *query = [NSString stringWithString:searchController.searchBar.text];
-    __block NSString *lastTerm = nil;
-    [termPattern enumerateMatchesInString:query options:0 range:NSMakeRange(0, [query length]) usingBlock:^(NSTextCheckingResult *match, NSMatchingFlags flags, BOOL *stop){
-        if (lastTerm) {
-            [pattern appendString:lastTerm];
-            [pattern appendString:@"|"];
-        }
-        lastTerm = [query substringWithRange:[match range]];
-    }];
-    if (lastTerm) {
-        [pattern appendString:lastTerm];
-        [pattern appendString:@")"];
-        self.searchPattern = [NSRegularExpression regularExpressionWithPattern:pattern options:NSRegularExpressionCaseInsensitive error:nil];
-    } else {
-        self.searchPattern = nil;
-    }
+    self.searchPattern = [UVUtils patternForQuery:searchController.searchBar.text];
 }
 
 #pragma mark ===== UITableViewDataSource Methods =====
@@ -178,7 +163,9 @@
 }
 
 - (void)customizeCellForLoad:(UITableViewCell *)cell indexPath:(NSIndexPath *)indexPath {
-    cell.backgroundView.backgroundColor = [UVStyleSheet zebraBgColor:(indexPath.row % 2 == 0)];
+    if (!IOS7) {
+        cell.backgroundView.backgroundColor = [UVStyleSheet zebraBgColor:(indexPath.row % 2 == 0)];
+    }
 }
 
 - (UITableViewCell *)tableView:(UITableView *)theTableView cellForRowAtIndexPath:(NSIndexPath *)indexPath {
@@ -201,7 +188,7 @@
 - (NSInteger)tableView:(UITableView *)theTableView numberOfRowsInSection:(NSInteger)section {
     if (theTableView == tableView) {
         int loadedCount = [self.suggestions count];
-        int suggestionsCount = [UVSession currentSession].clientConfig.forum.suggestionsCount;
+        int suggestionsCount = _forum.suggestionsCount;
         return loadedCount + (loadedCount >= suggestionsCount || suggestionsCount < SUGGESTIONS_PAGE_SIZE ? 0 : 1);
     } else {
         return [searchResults count] + ([UVSession currentSession].config.showPostIdea ? 1 : 0);
@@ -222,8 +209,7 @@
 }
 
 - (void)showSuggestion:(UVSuggestion *)suggestion {
-    UVSuggestionDetailsViewController *next = [[[UVSuggestionDetailsViewController alloc] init] autorelease];
-    next.suggestion = suggestion;
+    UVSuggestionDetailsViewController *next = [[[UVSuggestionDetailsViewController alloc] initWithSuggestion:suggestion] autorelease];
     [self.navigationController pushViewController:next animated:YES];
 }
 
@@ -259,7 +245,6 @@
 - (void)searchBar:(UISearchBar *)searchBar textDidChange:(NSString *)searchText {
     [self updatePattern];
     [UVSuggestion searchWithForum:self.forum query:searchBar.text delegate:self];
-    [[UVSession currentSession] trackInteraction:@"si"];
 }
 
 #pragma mark ===== Basic View Methods =====
@@ -268,6 +253,7 @@
 - (void)loadView {
     [super loadView];
 
+    [UVBabayaga track:VIEW_FORUM id:_forum.forumId];
     self.navigationItem.title = NSLocalizedStringFromTable(@"Feedback Forum", @"UserVoice", nil);
 
     self.view = [[[UIView alloc] initWithFrame:[self contentFrame]] autorelease];
@@ -294,14 +280,8 @@
 
     UISearchBar *searchBar = [[[UISearchBar alloc] initWithFrame:CGRectMake(0, 0, screenWidth, headerHeight)] autorelease];
     searchBar.autoresizingMask = UIViewAutoresizingFlexibleWidth;
-    searchBar.placeholder = [NSString stringWithFormat:@"%@ %@", NSLocalizedStringFromTable(@"Search", @"UserVoice", nil), self.forum.name];
+    searchBar.placeholder = [NSString stringWithFormat:@"%@ %@", NSLocalizedStringFromTable(@"Search", @"UserVoice", nil), _forum.name];
     searchBar.delegate = self;
-
-    UIView *border = [[[UIView alloc] initWithFrame:CGRectMake(0, searchBar.bounds.size.height - 1, searchBar.bounds.size.width, 1)] autorelease];
-    border.backgroundColor = [UIColor colorWithRed:0.64f green:0.66f blue:0.68f alpha:1.0f];
-    border.autoresizingMask = UIViewAutoresizingFlexibleWidth|UIViewAutoresizingFlexibleTopMargin;
-    [searchBar addSubview:border];
-
     [headerView addSubview:searchBar];
 
     self.searchController = [[[UISearchDisplayController alloc] initWithSearchBar:searchBar contentsController:self] autorelease];
@@ -333,15 +313,15 @@
 }
 
 - (void)reloadTableData {
-    self.suggestions = [UVSession currentSession].clientConfig.forum.suggestions;
+    self.suggestions = _forum.suggestions;
     [self.tableView reloadData];
 }
 
 - (void)viewWillAppear:(BOOL)animated {
     [super viewWillAppear:animated];
 
-    if (self.forum) {
-        if ([UVSession currentSession].clientConfig.forum.suggestionsNeedReload) {
+    if (_forum) {
+        if (_forum.suggestionsNeedReload) {
             self.suggestions = nil;
         }
 

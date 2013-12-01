@@ -24,6 +24,7 @@
 #import "UVForum.h"
 #import "UVKeyboardUtils.h"
 #import "UVWelcomeViewController.h"
+#import "UVBabayaga.h"
 
 @implementation UVBaseTicketViewController
 
@@ -76,7 +77,6 @@
     } else {
         [self showActivityIndicator];
         [UVTicket createWithMessage:self.text andEmailIfNotLoggedIn:emailField.text andName:nameField.text andCustomFields:selectedCustomFieldValues andDelegate:self];
-        [[UVSession currentSession] trackInteraction:@"pt"];
     }
 }
 
@@ -84,24 +84,11 @@
     self.text = nil;
     [self hideActivityIndicator];
     [[UVSession currentSession] flash:NSLocalizedStringFromTable(@"Your message has been sent.", @"UserVoice", nil) title:NSLocalizedStringFromTable(@"Success!", @"UserVoice", nil) suggestion:nil];
+    [UVBabayaga track:SUBMIT_TICKET];
 
     [self cleanupInstantAnswersTimer];
     dismissed = YES;
-    if ([UVSession currentSession].isModal && firstController) {
-        CATransition* transition = [CATransition animation];
-        transition.duration = 0.3;
-        transition.type = kCATransitionFade;
-        [self.navigationController.view.layer addAnimation:transition forKey:kCATransition];
-        UVWelcomeViewController *welcomeView = [[[UVWelcomeViewController alloc] init] autorelease];
-        welcomeView.firstController = YES;
-        NSArray *viewControllers = @[[self.navigationController.viewControllers objectAtIndex:0], welcomeView];
-        [self.navigationController setViewControllers:viewControllers animated:NO];
-    } else {
-        UINavigationController *nav = (UINavigationController *)self.presentingViewController;
-        [nav setViewControllers:[nav.viewControllers subarrayWithRange:NSMakeRange(0, 2)] animated:NO];
-        [(UVWelcomeViewController *)[nav.viewControllers lastObject] updateLayout];
-        [self dismissModalViewControllerAnimated:YES];
-    }
+    [self dismissModalViewControllerAnimated:YES];
 }
 
 - (void)reloadCustomFieldsTable {
@@ -125,8 +112,16 @@
 
 - (void)nonPredefinedValueChanged:(NSNotification *)notification {
     UITextField *textField = (UITextField *)[notification object];
-    UITableViewCell *cell = (UITableViewCell *)[textField superview];
-    UITableView *table = (UITableView *)[cell superview];
+    UIView *view = textField;
+    while (view != nil && ![view isKindOfClass:[UITableViewCell class]]) {
+        view = view.superview;
+    }
+    UITableViewCell *cell = (UITableViewCell *)view;
+    view = cell;
+    while (view != nil && ![view isKindOfClass:[UITableView class]]) {
+        view = view.superview;
+    }
+    UITableView *table = (UITableView *)view;
     NSIndexPath *path = [table indexPathForCell:cell];
     UVCustomField *field = (UVCustomField *)[[UVSession currentSession].clientConfig.customFields objectAtIndex:path.row];
     [selectedCustomFieldValues setObject:textField.text forKey:field.name];
@@ -166,47 +161,15 @@
     [super didRetrieveInstantAnswers:theInstantAnswers];
 }
 
-- (UITextField *)customizeTextFieldCell:(UITableViewCell *)cell label:(NSString *)label placeholder:(NSString *)placeholder {
-    cell.textLabel.text = label;
-    UITextField *textField = [[UITextField alloc] initWithFrame:CGRectMake(65, 11, cell.bounds.size.width - 75, 22)];
-    textField.autoresizingMask = UIViewAutoresizingFlexibleWidth;
-    textField.placeholder = placeholder;
-    textField.returnKeyType = UIReturnKeyDone;
-    textField.borderStyle = UITextBorderStyleNone;
-    textField.backgroundColor = [UIColor clearColor];
-    textField.delegate = self;
-    [cell.contentView addSubview:textField];
-    return [textField autorelease];
-}
-
 - (void)initCellForCustomField:(UITableViewCell *)cell indexPath:(NSIndexPath *)indexPath {
     cell.backgroundColor = [UIColor whiteColor];
-    UILabel *label = [[[UILabel alloc] initWithFrame:CGRectMake(16 + (IPAD ? 25 : 0), 0, cell.frame.size.width / 2 - 20, cell.frame.size.height)] autorelease];
-    label.autoresizingMask = UIViewAutoresizingFlexibleWidth|UIViewAutoresizingFlexibleRightMargin;
-    label.font = [UIFont boldSystemFontOfSize:16];
+    UILabel *label = [self addCellLabel:cell];
     label.tag = UV_CUSTOM_FIELD_CELL_LABEL_TAG;
-    label.textColor = [UIColor blackColor];
-    label.backgroundColor = [UIColor clearColor];
-    label.adjustsFontSizeToFitWidth = YES;
-    [cell addSubview:label];
-
-    UILabel *valueLabel = [[[UILabel alloc] initWithFrame:CGRectMake(cell.frame.size.width / 2 + 10, 5, cell.frame.size.width / 2 - (IPAD ? 64 : 20), cell.frame.size.height - 10)] autorelease];
-    valueLabel.autoresizingMask = UIViewAutoresizingFlexibleWidth|UIViewAutoresizingFlexibleLeftMargin;
-    valueLabel.font = [UIFont systemFontOfSize:18];
+    UILabel *valueLabel = [self addCellValueLabel:cell];
     valueLabel.tag = UV_CUSTOM_FIELD_CELL_VALUE_LABEL_TAG;
-    valueLabel.textColor = [UIColor colorWithRed:0.22f green:0.33f blue:0.53f alpha:1.0f];
-    valueLabel.backgroundColor = [UIColor clearColor];
-    valueLabel.adjustsFontSizeToFitWidth = YES;
-    valueLabel.textAlignment = UITextAlignmentRight;
-    valueLabel.minimumFontSize = 14;
-    [cell addSubview:valueLabel];
-
-    UITextField *textField = [[[UITextField alloc] initWithFrame:CGRectMake(cell.frame.size.width / 2 + 10, 10, cell.frame.size.width / 2 - (IPAD ? 64 : 20), cell.frame.size.height - 10)] autorelease];
-    textField.autoresizingMask = UIViewAutoresizingFlexibleWidth|UIViewAutoresizingFlexibleLeftMargin;
-    textField.borderStyle = UITextBorderStyleNone;
+    UITextField *textField = [self addCellValueTextField:cell];
     textField.tag = UV_CUSTOM_FIELD_CELL_TEXT_FIELD_TAG;
     textField.delegate = self;
-    [cell addSubview:textField];
 }
 
 - (void)customizeCellForCustomField:(UITableViewCell *)cell indexPath:(NSIndexPath *)indexPath {
@@ -219,12 +182,14 @@
     textField.enabled = [field isPredefined] ? NO : YES;
     cell.selectionStyle = [field isPredefined] ? UITableViewCellSelectionStyleBlue : UITableViewCellSelectionStyleNone;
     valueLabel.hidden = ![field isPredefined];
-    valueLabel.text = [selectedCustomFieldValues objectForKey:field.name];
-    CGRect labelFrame = label.frame;
-    [label sizeToFit];
-    CGFloat labelWidth = MIN(label.frame.size.width, labelFrame.size.width);
-    label.frame = labelFrame;
-    valueLabel.frame = CGRectMake(label.frame.origin.x + labelWidth + 10, valueLabel.frame.origin.y, cell.frame.size.width - label.frame.origin.x - labelWidth - (IPAD ? 64 : 20) - 25, valueLabel.frame.size.height);
+    textField.hidden = [field isPredefined];
+    if ([selectedCustomFieldValues objectForKey:field.name]) {
+        valueLabel.text = [selectedCustomFieldValues objectForKey:field.name];
+        valueLabel.textColor = [UIColor blackColor];
+    } else {
+        valueLabel.text = NSLocalizedStringFromTable(@"select", @"UserVoice", nil);
+        valueLabel.textColor = [UIColor colorWithRed:0.78f green:0.78f blue:0.80f alpha:1.0f];
+    }
     [[NSNotificationCenter defaultCenter] addObserver:self
                                              selector:@selector(nonPredefinedValueChanged:)
                                                  name:UITextFieldTextDidChangeNotification
@@ -272,7 +237,11 @@
                                                 destructiveButtonTitle:NSLocalizedStringFromTable(@"Don't save", @"UserVoice", nil)
                                                      otherButtonTitles:NSLocalizedStringFromTable(@"Save draft", @"UserVoice", nil), nil] autorelease];
 
-    [actionSheet showInView:self.view];
+    if ([[UIDevice currentDevice] userInterfaceIdiom] == UIUserInterfaceIdiomPad) {
+        [actionSheet showFromBarButtonItem:self.navigationItem.leftBarButtonItem animated:YES];
+    } else {
+        [actionSheet showInView:self.view];
+    }
 }
 
 - (void)actionSheet:(UIActionSheet *)actionSheet didDismissWithButtonIndex:(NSInteger)buttonIndex {

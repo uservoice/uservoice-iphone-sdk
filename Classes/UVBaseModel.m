@@ -62,24 +62,25 @@
     [headers setObject:@"application/x-www-form-urlencoded" forKey:@"Content-Type"];
     [headers setObject:[NSString stringWithFormat:@"uservoice-ios-%@", [UserVoice version]] forKey:@"API-Client"];
     [headers setObject:[[NSLocale preferredLanguages] objectAtIndex:0] forKey:@"Accept-Language"];
-    YOAuthToken *token = nil;
 
-    // only store access tokens
-    if ([UVAccessToken exists]) {
-        token = [UVSession currentSession].accessToken.oauthToken;
+    if ([UVSession currentSession].yOAuthConsumer != nil) {
+        YOAuthToken *token = nil;
+        if ([UVAccessToken exists]) {
+            token = [UVSession currentSession].accessToken.oauthToken;
+        }
+        NSURL *url = [NSURL URLWithString:path relativeToURL:[self baseURL]];
+        YOAuthRequest *yReq = [[YOAuthRequest alloc] initWithConsumer:[[UVSession currentSession] yOAuthConsumer]
+                                                               andUrl:url
+                                                        andHTTPMethod:method
+                                                             andToken:token
+                                                   andSignatureMethod:nil];
+        if (![@"PUT" isEqualToString:method])
+            yReq.requestParams = [NSMutableDictionary dictionaryWithDictionary:params];
+        [yReq prepareRequest];
+        NSString *authHeader = [yReq buildAuthorizationHeaderValue];
+        [headers setObject:authHeader forKey:@"Authorization"];
+        [yReq release];
     }
-    NSURL *url = [NSURL URLWithString:path relativeToURL:[self baseURL]];
-    YOAuthRequest *yReq = [[YOAuthRequest alloc] initWithConsumer:[[UVSession currentSession] yOAuthConsumer]
-                                                           andUrl:url
-                                                    andHTTPMethod:method
-                                                         andToken:token
-                                               andSignatureMethod:nil];
-    if (![@"PUT" isEqualToString:method])
-        yReq.requestParams = [NSMutableDictionary dictionaryWithDictionary:params];
-    [yReq prepareRequest];
-    NSString *authHeader = [yReq buildAuthorizationHeaderValue];
-    [headers setObject:authHeader forKey:@"Authorization"];
-    [yReq release];
 
     return headers;
 }
@@ -178,21 +179,11 @@
     return [self putPath:path withOptions:opts object:requestContext];
 }
 
-+ (void)processModel:(id)model {
-    // Override in subclasses if necessary
-}
-
-+ (void)processModels:(NSArray *)models {
-    // Override in subclasses if necessary
-}
-
 + (UVBaseModel *)modelForDictionary:(NSDictionary *)dict {
     return [[[self alloc] initWithDictionary:dict] autorelease];
 }
 
 + (void)didReturnModel:(id)model context:(UVRequestContext *)context {
-    [self processModel:model];
-
     if (context.callback.methodSignature.numberOfArguments > 2)
         [context.callback setArgument:&model atIndex:2];
 
@@ -203,8 +194,6 @@
 }
 
 + (void)didReturnModels:(NSArray *)models context:(UVRequestContext *)context {
-    [self processModels:models];
-
     if (context.callback.methodSignature.numberOfArguments > 2)
         [context.callback setArgument:&models atIndex:2];
 

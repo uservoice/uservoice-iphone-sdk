@@ -100,6 +100,7 @@
     [self.view addSubview:instantAnswersView];
     
     self.fieldsTableView = [[[UITableView alloc] initWithFrame:CGRectMake(0, 200, 320, 1000) style:UITableViewStyleGrouped] autorelease];
+    self.fieldsTableView.rowHeight = 62;
     self.fieldsTableView.backgroundView = nil;
     self.fieldsTableView.dataSource = self;
     self.fieldsTableView.delegate = self;
@@ -145,7 +146,12 @@
 
 - (void)textViewDidChange:(UVTextView *)theTextEditor {
     [super textViewDidChange:theTextEditor];
-    self.navigationItem.rightBarButtonItem.enabled = [theTextEditor.text length] != 0 && state != STATE_WAITING;
+    
+    if ([theTextEditor.text length] != 0 && state != STATE_WAITING) {
+        [self enableSubmitButton];
+    } else {
+        [self disableSubmitButton];
+    }
 }
 
 - (void)reloadCustomFieldsTable {
@@ -169,7 +175,7 @@
 }
 
 - (void)textFieldDidBeginEditing:(UITextField *)textField {
-    CGPoint offset = [textField convertPoint:CGPointZero toView:scrollView];
+    CGPoint offset = [textField convertPoint:CGPointMake(0, -scrollView.contentInset.top) toView:scrollView];
     offset.x = 0;
     offset.y -= 20;
     offset.y = MIN(offset.y, MAX(0, scrollView.contentSize.height + [UVKeyboardUtils height] - scrollView.bounds.size.height));
@@ -177,7 +183,7 @@
 }
 
 - (BOOL)textFieldShouldEndEditing:(UITextField *)textField {
-    [scrollView setContentOffset:CGPointZero animated:YES];
+    [scrollView setContentOffset:CGPointMake(0, -scrollView.contentInset.top) animated:YES];
     return YES;
 }
 
@@ -187,7 +193,7 @@
     else
         state = STATE_IA;
     [self updateLayout];
-    [scrollView setContentOffset:CGPointZero animated:YES];
+    [scrollView setContentOffset:CGPointMake(0, -scrollView.contentInset.top) animated:YES];
 }
 
 - (void)instantAnswersMessageTapped {
@@ -321,7 +327,11 @@
     else
         self.navigationItem.rightBarButtonItem = sendButton;
     
-    self.navigationItem.rightBarButtonItem.enabled = !(showTextView && [self.text length] == 0) && state != STATE_WAITING;
+    if (!(showTextView && [self.text length] == 0) && state != STATE_WAITING) {
+        [self enableSubmitButton];
+    } else {
+        [self disableSubmitButton];
+    }
 
     scrollView.contentSize = CGSizeMake(scrollView.bounds.size.width, textViewRect.size.height + (showIAMessage ? 40 : 0) + (showIATable ? instantAnswersTableView.contentSize.height : 0) + (showFieldsTable ? fieldsTableView.contentSize.height : 0));
 
@@ -345,10 +355,12 @@
 }
 
 - (void)viewWillAppear:(BOOL)animated {
-   [super viewWillAppear:animated];
-   scrollView.contentInset = UIEdgeInsetsZero;
-   scrollView.scrollIndicatorInsets = UIEdgeInsetsZero;
-   scrollView.contentOffset = CGPointZero;
+    [super viewWillAppear:animated];
+    if (!IOS7) {
+        scrollView.contentInset = UIEdgeInsetsZero;
+        scrollView.scrollIndicatorInsets = UIEdgeInsetsZero;
+        scrollView.contentOffset = CGPointZero;
+    }
 }
 
 - (void)dealloc {

@@ -21,10 +21,14 @@
 + (NSString *)encode64:(NSString *)data;
 + (UIColor *)parseHexColor:(NSString *)str;
 
++ (NSRegularExpression *)patternForQuery:(NSString *)query;
+
 + (BOOL)isConnectionError:(NSError *)error;
 + (BOOL)isUVRecordInvalid:(NSError *)error;
 + (BOOL)isUVRecordInvalid:(NSError *)error forField:(NSString *)field withMessage:(NSString *)message;
 + (BOOL)isAuthError:(NSError *)error;
 + (BOOL)isNotFoundError:(NSError *)error;
+
++ (void)applyStylesheetToNavigationController:(UINavigationController *)navigationController;
 
 @end

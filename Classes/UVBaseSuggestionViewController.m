@@ -18,8 +18,16 @@
 #import "UVSuggestionListViewController.h"
 #import "UVWelcomeViewController.h"
 #import "UVCategorySelectViewController.h"
+#import "UVCallback.h"
+#import "UVBabayaga.h"
 
-@implementation UVBaseSuggestionViewController
+@implementation UVBaseSuggestionViewController {
+    
+    BOOL _isSubmittingSuggestion;
+    UVCallback *_didCreateCallback;
+    UVCallback *_didAuthenticateCallback;
+
+}
 
 @synthesize forum;
 @synthesize title;
@@ -33,6 +41,8 @@
 @synthesize category;
 @synthesize shouldShowCategories;
 
+#define UV_CATEGORY_VALUE 100
+
 - (id)initWithTitle:(NSString *)theTitle {
     if (self = [self init]) {
         self.title = theTitle;
@@ -42,15 +52,20 @@
 
 - (id)init {
     if (self = [super init]) {
-        self.forum = [UVSession currentSession].clientConfig.forum;
+        self.forum = [UVSession currentSession].forum;
         self.shouldShowCategories = self.forum.categories && [self.forum.categories count] > 0;
         self.articleHelpfulPrompt = NSLocalizedStringFromTable(@"Do you still want to post an idea?", @"UserVoice", nil);
         self.articleReturnMessage = NSLocalizedStringFromTable(@"Yes, go to my idea", @"UserVoice", nil);
+        
+        _didCreateCallback = [[UVCallback alloc] initWithTarget:self selector:@selector(didCreateSuggestion:)];
+        _didAuthenticateCallback = [[UVCallback alloc] initWithTarget:self selector:@selector(createSuggestion)];
     }
     return self;
 }
 
 - (void)didReceiveError:(NSError *)error {
+    _isSubmittingSuggestion = NO;
+    
     if ([UVUtils isNotFoundError:error]) {
         [self hideActivityIndicator];
     } else if ([UVUtils isUVRecordInvalid:error forField:@"title" withMessage:@"is not allowed."]) {
@@ -64,14 +79,13 @@
 - (void)createSuggestion {
     self.title = titleField.text;
     self.text = textView.text;
-    [self showActivityIndicator];
-    [[UVSession currentSession] trackInteraction:@"pi"];
+    
     [UVSuggestion createWithForum:self.forum
                          category:self.category
                             title:self.title
                              text:self.text
                             votes:1
-                         delegate:self];
+                         callback:_didCreateCallback];
 }
 
 - (void)createButtonTapped {
@@ -83,74 +97,57 @@
     [emailField resignFirstResponder];
 
     if (self.email && [self.email length] > 1) {
-        [self requireUserAuthenticated:email name:name action:@selector(createSuggestion)];
+        [self disableSubmitButton];
+        [self showActivityIndicator];
+
+        _isSubmittingSuggestion = YES;
+        
+        [self requireUserAuthenticated:email name:name callback:_didAuthenticateCallback];
     } else {
         [self alertError:NSLocalizedStringFromTable(@"Please enter your email address before submitting your suggestion.", @"UserVoice", nil)];
     }
 }
 
+- (BOOL)shouldEnableSubmitButton {
+    return !_isSubmittingSuggestion;
+}
+
 - (void)didCreateSuggestion:(UVSuggestion *)theSuggestion {
-    [self hideActivityIndicator];
     [[UVSession currentSession] flash:NSLocalizedStringFromTable(@"Your idea has been posted on our forum.", @"UserVoice", nil) title:NSLocalizedStringFromTable(@"Success!", @"UserVoice", nil) suggestion:theSuggestion];
+    [UVBabayaga track:SUBMIT_IDEA];
 
     // increment the created suggestions and supported suggestions counts
     [[UVSession currentSession].user didCreateSuggestion:theSuggestion];
 
-    [UVSession currentSession].clientConfig.forum.suggestionsNeedReload = YES;
+    self.forum.suggestionsNeedReload = YES;
 
     // update the remaining votes
     [UVSession currentSession].user.votesRemaining = theSuggestion.votesRemaining;
 
-    // Back out to the welcome screen
-    if ([UVSession currentSession].isModal && firstController) {
-        CATransition* transition = [CATransition animation];
-        transition.duration = 0.3;
-        transition.type = kCATransitionFade;
-        [self.navigationController.view.layer addAnimation:transition forKey:kCATransition];
-        UVWelcomeViewController *welcomeView = [[[UVWelcomeViewController alloc] init] autorelease];
-        welcomeView.firstController = YES;
-        NSArray *viewControllers = @[[self.navigationController.viewControllers objectAtIndex:0], welcomeView];
-        [self.navigationController setViewControllers:viewControllers animated:NO];
-    } else {
-        UVSuggestionListViewController *list = (UVSuggestionListViewController *)[((UINavigationController *)self.presentingViewController).viewControllers lastObject];
-        [list.navigationController setNavigationBarHidden:NO animated:NO];
-        if ([UVSession currentSession].isModal && list.firstController) {
-            CATransition* transition = [CATransition animation];
-            transition.duration = 0.3;
-            transition.type = kCATransitionFade;
-            [list.navigationController.view.layer addAnimation:transition forKey:kCATransition];
-            UVWelcomeViewController *welcomeView = [[[UVWelcomeViewController alloc] init] autorelease];
-            welcomeView.firstController = YES;
-            NSArray *viewControllers = @[[list.navigationController.viewControllers objectAtIndex:0], welcomeView];
-            [list.navigationController setViewControllers:viewControllers animated:NO];
-        } else {
-            [list.navigationController popViewControllerAnimated:NO];
-            [(UVWelcomeViewController *)[list.navigationController.viewControllers lastObject] updateLayout];
-        }
-    }
+    _isSubmittingSuggestion = NO;
+    
+    [self hideActivityIndicator];
     [self dismissModalViewControllerAnimated:YES];
 }
 
-- (UITextField *)customizeTextFieldCell:(UITableViewCell *)cell label:(NSString *)label placeholder:(NSString *)placeholder {
-    cell.textLabel.text = label;
-    cell.textLabel.font = [UIFont boldSystemFontOfSize:16];
-    NSInteger offset = MAX(65, [label sizeWithFont:cell.textLabel.font].width + 14);
-    UITextField *textField = [[UITextField alloc] initWithFrame:CGRectMake(offset, 12, cell.bounds.size.width - offset - 10, 22)];
-    textField.autoresizingMask = UIViewAutoresizingFlexibleWidth;
-    textField.placeholder = placeholder;
-    textField.returnKeyType = UIReturnKeyDone;
-    textField.borderStyle = UITextBorderStyleNone;
-    textField.delegate = self;
-    [cell.contentView addSubview:textField];
-    [textField release];
-    return textField;
+- (void)initCellForCategory:(UITableViewCell *)cell indexPath:(NSIndexPath *)indexPath {
+    cell.backgroundColor = [UIColor whiteColor];
+    UILabel *label = [self addCellLabel:cell];
+    label.text = NSLocalizedStringFromTable(@"Category", @"UserVoice", nil);
+    UILabel *valueLabel = [self addCellValueLabel:cell];
+    valueLabel.tag = UV_CATEGORY_VALUE;
+    cell.accessoryType = UITableViewCellAccessoryDisclosureIndicator;
 }
 
 - (void)customizeCellForCategory:(UITableViewCell *)cell indexPath:(NSIndexPath *)indexPath {
-    cell.backgroundColor = [UIColor whiteColor];
-    cell.textLabel.text = NSLocalizedStringFromTable(@"Category", @"UserVoice", nil);
-    cell.detailTextLabel.text = self.category.name;
-    cell.accessoryType = UITableViewCellAccessoryDisclosureIndicator;
+    UILabel *valueLabel = (UILabel *)[cell viewWithTag:UV_CATEGORY_VALUE];
+    if (self.category.name) {
+        valueLabel.text = self.category.name;
+        valueLabel.textColor = [UIColor blackColor];
+    } else {
+        valueLabel.text = NSLocalizedStringFromTable(@"select", @"UserVoice", nil);
+        valueLabel.textColor = [UIColor colorWithRed:0.78f green:0.78f blue:0.80f alpha:1.0f];
+    }
 }
 
 - (void)initCellForName:(UITableViewCell *)cell indexPath:(NSIndexPath *)indexPath {
@@ -179,19 +176,29 @@
     [self.navigationController pushViewController:next animated:YES];
 }
 
+- (void)keyboardDidShow:(NSNotification*)notification {
+    [super keyboardDidShow:notification];
+    _isSubmittingSuggestion = NO;
+    [self enableSubmitButton];
+}
+
 - (void)actionSheet:(UIActionSheet *)actionSheet clickedButtonAtIndex:(NSInteger)buttonIndex {
     if (buttonIndex == 0)
         [self dismissModalViewControllerAnimated:YES];
 }
 
 - (void)dismiss {
-    if (titleField.text.length > 0) {
+    if (titleField.text.length > 0 && !_isSubmittingSuggestion) {
         UIActionSheet *actionSheet = [[[UIActionSheet alloc] initWithTitle:NSLocalizedStringFromTable(@"You have not posted your idea. Are you sure you want to lose your unsaved data?", @"UserVoice", nil)
                                                                   delegate:self
                                                          cancelButtonTitle:NSLocalizedStringFromTable(@"Cancel", @"UserVoice", nil)
                                                     destructiveButtonTitle:NSLocalizedStringFromTable(@"OK", @"UserVoice", nil)
                                                          otherButtonTitles:nil] autorelease];
-        [actionSheet showInView:self.view];
+        if ([[UIDevice currentDevice] userInterfaceIdiom] == UIUserInterfaceIdiomPad) {
+            [actionSheet showFromBarButtonItem:self.navigationItem.leftBarButtonItem animated:YES];
+        } else {
+            [actionSheet showInView:self.view];
+        }
     } else {
         [self dismissModalViewControllerAnimated:YES];
     }
@@ -205,6 +212,15 @@
                                                                              action:@selector(dismiss)] autorelease];
 }
 
+
+#pragma mark - UVSigninManageDelegate
+
+- (void)signinManagerDidFail {
+    _isSubmittingSuggestion = NO;
+    [super signinManagerDidFail];
+}
+
+
 - (void)dealloc {
     self.forum = nil;
     self.title = nil;
@@ -216,6 +232,12 @@
     self.nameField = nil;
     self.emailField = nil;
     self.category = nil;
+    
+    [_didCreateCallback invalidate];
+    [_didCreateCallback release];
+    [_didAuthenticateCallback invalidate];
+    [_didAuthenticateCallback release];
+    
     [super dealloc];
 }
 

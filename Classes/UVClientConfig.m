@@ -9,35 +9,32 @@
 #import "HTTPRiot.h"
 #import "UVClientConfig.h"
 #import "UVSession.h"
-#import "UVForum.h"
 #import "UVUser.h"
 #import "UVSubdomain.h"
 #import "UVCustomField.h"
 #import "UVSuggestion.h"
 #import "UVArticle.h"
+#import "UVConfig.h"
 
 @implementation UVClientConfig
 
 @synthesize ticketsEnabled;
 @synthesize feedbackEnabled;
-@synthesize forum;
 @synthesize subdomain;
 @synthesize customFields;
-@synthesize topArticles;
-@synthesize topSuggestions;
 @synthesize clientId;
 @synthesize whiteLabel;
+@synthesize defaultForumId;
+@synthesize key;
+@synthesize secret;
 
 + (id)getWithDelegate:(id)delegate {
-    return [self getPath:[self apiPath:@"/client.json"]
+    NSString *path = ([UVSession currentSession].config.key == nil) ? @"/clients/default.json" : @"/client.json";
+    return [self getPath:[self apiPath:path]
               withParams:nil
                   target:delegate
                 selector:@selector(didRetrieveClientConfig:)
                  rootKey:@"client"];
-}
-
-+ (void)processModel:(id)model {
-    [UVSession currentSession].clientConfig = model;
 }
 
 + (CGFloat)getScreenWidth {
@@ -62,34 +59,26 @@
             self.whiteLabel = [(NSNumber *)[dict objectForKey:@"white_label"] boolValue];
         }
 
-        if (feedbackEnabled) {
-            // get the forum
-            NSDictionary *forumDict = [self objectOrNilForDict:dict key:@"forum"];
-            UVForum *theForum = [[UVForum alloc] initWithDictionary:forumDict];
-            self.forum = theForum;
-            [theForum release];
-        }
-
-        // get the subdomain
         NSDictionary *subdomainDict = [self objectOrNilForDict:dict key:@"subdomain"];
         UVSubdomain *theSubdomain = [[UVSubdomain alloc] initWithDictionary:subdomainDict];
         self.subdomain = theSubdomain;
         [theSubdomain release];
 
+        self.defaultForumId = [[[self objectOrNilForDict:dict key:@"forum"] objectForKey:@"id"] intValue];
         self.customFields = [self arrayForJSONArray:[self objectOrNilForDict:dict key:@"custom_fields"] withClass:[UVCustomField class]];
-        self.topArticles = [self arrayForJSONArray:[self objectOrNilForDict:dict key:@"top_articles"] withClass:[UVArticle class]];
-        self.topSuggestions = [self arrayForJSONArray:[self objectOrNilForDict:dict key:@"top_suggestions"] withClass:[UVSuggestion class]];
         self.clientId = [(NSNumber *)[self objectOrNilForDict:dict key:@"id"] integerValue];
+        self.key = [self objectOrNilForDict:dict key:@"key"];
+        // secret is only available if we are using the default client
+        self.secret = [self objectOrNilForDict:dict key:@"secret"];
     }
     return self;
 }
 
 - (void)dealloc {
-    self.forum = nil;
     self.subdomain = nil;
     self.customFields = nil;
-    self.topArticles = nil;
-    self.topSuggestions = nil;
+    self.key = nil;
+    self.secret = nil;
     [super dealloc];
 }
 
