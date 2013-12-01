@@ -314,4 +314,16 @@
     [super dealloc];
 }
 
+#pragma mark - UITableViewDelegate
+
+- (UITableViewCell*) tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath{
+    [NSException raise:@"Not implemented" format:@"Subclasses of UVBaseTicketViewController must implement tableView:cellForRowAtIndexPath:"];
+    return nil;
+}
+
+-(NSInteger) tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section{
+    [NSException raise:@"Not implemented" format:@"Subclasses of UVBaseTicketViewController must implement tableView:numberOfRowsInSection:"];
+    return 0;
+}
+
 @end

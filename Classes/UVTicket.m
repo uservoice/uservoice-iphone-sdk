@@ -26,13 +26,15 @@
 #ifdef UV_FILE_UPLOADS
 //Required for detecting content type
 #import <MobileCoreServices/MobileCoreServices.h>
-#endif
 
 @interface UVTicket()
 
 + (NSString*) fileMIMEType:(NSString*) file;
 
 @end
+
+#endif
+
 
 @implementation UVTicket
 
@@ -131,10 +133,13 @@
     
 }
 
+#ifdef UV_FILE_UPLOADS
 + (NSString*) fileMIMEType:(NSString*) file {
     CFStringRef UTI = UTTypeCreatePreferredIdentifierForTag(kUTTagClassFilenameExtension, (CFStringRef)[file pathExtension], NULL);
     CFStringRef MIMEType = UTTypeCopyPreferredTagWithClass (UTI, kUTTagClassMIMEType);
     CFRelease(UTI);
     return [(NSString *)MIMEType autorelease];
 }
+#endif
+
 @end

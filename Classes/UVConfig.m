@@ -31,11 +31,11 @@
 @synthesize attachmentFilePaths;
 #else
 -(NSArray*) attachmentFilePaths{
-    NSLog("UserVoice SDK was compiled without support for file uploads.")
+    NSLog(@"UserVoice SDK was compiled without support for file uploads.");
     return nil;
 }
 -(void) setAttachmentFilePaths:(NSArray*) paths{
-    NSLog("UserVoice SDK was compiled without support for file uploads.")
+    NSLog(@"UserVoice SDK was compiled without support for file uploads.");
 }
 
 #endif
