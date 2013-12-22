@@ -125,6 +125,10 @@ static UVStyleSheet *styleSheet;
     return [[self styleSheet] alertTextColor];
 }
 
++ (UIStatusBarStyle)preferredStatusBarStyle {
+    return [[self styleSheet] preferredStatusBarStyle];
+}
+
 - (UIColor *)primaryTextColor {
     return [UIColor colorWithRed:0.102 green:0.102 blue:0.102 alpha:1.0];
 }
@@ -183,6 +187,10 @@ static UVStyleSheet *styleSheet;
 
 - (UIFont *)navigationBarFont {
     return nil;
+}
+
+- (UIStatusBarStyle)preferredStatusBarStyle {
+    return UIStatusBarStyleDefault;
 }
 
 @end

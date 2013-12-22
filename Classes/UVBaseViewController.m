@@ -19,6 +19,7 @@
 #import "UVSigninManager.h"
 #import "UVKeyboardUtils.h"
 #import "UVUtils.h"
+#import "UVNavigationController.h"
 
 @implementation UVBaseViewController
 
@@ -300,7 +301,7 @@
 }
 
 - (void)presentModalViewController:(UIViewController *)viewController {
-    UINavigationController *navigationController = [[[UINavigationController alloc] init] autorelease];
+    UVNavigationController *navigationController = [[[UVNavigationController alloc] init] autorelease];
     [UVUtils applyStylesheetToNavigationController:navigationController];
     navigationController.viewControllers = @[viewController];
     if (IPAD)

@@ -10,6 +10,13 @@
 
 @implementation UVNavigationController
 
+- (UIStatusBarStyle)preferredStatusBarStyle {
+    if (!_preferredStatusBarStyle) {
+        return UIStatusBarStyleDefault;
+    }
+    return _preferredStatusBarStyle;
+}
+
 - (BOOL)disablesAutomaticKeyboardDismissal {
     return NO;
 }

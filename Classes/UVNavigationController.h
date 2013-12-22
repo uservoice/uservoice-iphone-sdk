@@ -10,4 +10,6 @@
 
 @interface UVNavigationController : UINavigationController
 
+@property (nonatomic) UIStatusBarStyle preferredStatusBarStyle;
+
 @end
