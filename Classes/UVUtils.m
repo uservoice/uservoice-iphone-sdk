@@ -9,6 +9,7 @@
 #import "UVUtils.h"
 #import "UVJSON.h"
 #import "UVStyleSheet.h"
+#import "UVNavigationController.h"
 
 @implementation UVUtils
 
@@ -254,7 +255,7 @@ static const char encodingTable[] = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopq
     }
 }
 
-+ (void)applyStylesheetToNavigationController:(UINavigationController *)navigationController {
++ (void)applyStylesheetToNavigationController:(UVNavigationController *)navigationController {
     navigationController.navigationBar.tintColor = [UVStyleSheet navigationBarTintColor];
     [navigationController.navigationBar setBackgroundImage:[UVStyleSheet navigationBarBackgroundImage] forBarMetrics:UIBarMetricsDefault];
     NSMutableDictionary *navbarTitleTextAttributes = [[[NSMutableDictionary alloc] initWithDictionary:navigationController.navigationBar.titleTextAttributes] autorelease];
@@ -267,6 +268,7 @@ static const char encodingTable[] = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopq
     if ([UVStyleSheet navigationBarFont]) {
         [navbarTitleTextAttributes setObject:[UVStyleSheet navigationBarFont] forKey:UITextAttributeFont];
     }
+    navigationController.preferredStatusBarStyle = [UVStyleSheet preferredStatusBarStyle];
     [navigationController.navigationBar setTitleTextAttributes:navbarTitleTextAttributes];
 }
 

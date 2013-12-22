@@ -37,6 +37,7 @@
 + (UIColor *)navigationBarTextColor;
 + (UIColor *)navigationBarTextShadowColor;
 + (UIFont *)navigationBarFont;
++ (UIStatusBarStyle)preferredStatusBarStyle;
 
 /**
  * The background color for all table views, etc.
@@ -150,5 +151,12 @@
  * Default: nil (platform default).
  */
 - (UIFont *)navigationBarFont;
+
+/**
+ * Set as the status bar style in the UserVoice popover.
+ *
+ * Default: UIStatusBarDefault (platform default).
+ */
+- (UIStatusBarStyle)preferredStatusBarStyle;
 
 @end

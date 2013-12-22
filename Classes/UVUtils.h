@@ -9,6 +9,8 @@
 #import <Foundation/Foundation.h>
 #import <UIKit/UIKit.h>
 
+@class UVNavigationController;
+
 @interface UVUtils : NSObject
 
 + (NSString *)toQueryString:(NSDictionary *)dict;
@@ -29,6 +31,6 @@
 + (BOOL)isAuthError:(NSError *)error;
 + (BOOL)isNotFoundError:(NSError *)error;
 
-+ (void)applyStylesheetToNavigationController:(UINavigationController *)navigationController;
++ (void)applyStylesheetToNavigationController:(UVNavigationController *)navigationController;
 
 @end

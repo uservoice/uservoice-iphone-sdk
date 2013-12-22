@@ -37,7 +37,7 @@
 + (void)presentUserVoiceControllers:(NSArray *)viewControllers forParentViewController:(UIViewController *)parentViewController {
     [UVBabayaga track:VIEW_CHANNEL];
     [UVSession currentSession].isModal = YES;
-    UINavigationController *navigationController = [[[UVNavigationController alloc] init] autorelease];
+    UVNavigationController *navigationController = [[[UVNavigationController alloc] init] autorelease];
     [UVUtils applyStylesheetToNavigationController:navigationController];
     navigationController.viewControllers = viewControllers;
     navigationController.modalPresentationStyle = UIModalPresentationFormSheet;
