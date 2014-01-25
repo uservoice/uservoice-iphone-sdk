@@ -31,6 +31,7 @@
 @property (nonatomic, assign) BOOL showPostIdea;
 @property (nonatomic, assign) BOOL showContactUs;
 @property (nonatomic, assign) BOOL showKnowledgeBase;
+@property (nonatomic, assign) BOOL tryInstantAnswers;
 @property (nonatomic, retain) NSString* extraTicketInfo;
 @property (nonatomic, retain) NSDictionary *userTraits;
 

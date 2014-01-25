@@ -7,6 +7,8 @@
 //
 
 #import <QuartzCore/QuartzCore.h>
+#import "UVSession.h"
+#import "UVConfig.h"
 #import "UVInstantAnswerManager.h"
 #import "UVArticle.h"
 #import "UVSuggestion.h"
@@ -26,6 +28,11 @@
 @implementation UVInstantAnswerManager
 
 - (void)setSearchText:(NSString *)newText {
+	
+	if (![UVSession currentSession].config.tryInstantAnswers)
+		return;
+	
+	
     if ([_searchText.lowercaseString isEqualToString:newText.lowercaseString]) {
         return;
     }
@@ -50,6 +57,13 @@
 }
 
 - (void)doSearch:(NSTimer *)timer {
+	
+	// Technically not necessary, but just in case... :)
+	// If search text never being set, timer is never created, so no way to get here... :)
+	if (![UVSession currentSession].config.tryInstantAnswers)
+		return;
+	
+	
     _loading = YES;
     self.runningQuery = _searchText;
     if (_deflectingType) {
@@ -85,7 +99,7 @@
 }
 
 - (void)pushInstantAnswersViewForParent:(UIViewController *)parent articlesFirst:(BOOL)articlesFirst {
-    if (_instantAnswers.count > 0) {
+    if ([UVSession currentSession].config.tryInstantAnswers && _instantAnswers.count > 0) {
         UVInstantAnswersViewController *next = [UVInstantAnswersViewController new];
         next.instantAnswerManager = self;
         next.articlesFirst = articlesFirst;
