@@ -52,6 +52,7 @@
         _showPostIdea = YES;
         _showContactUs = YES;
         _showKnowledgeBase = YES;
+        _tryInstantAnswers = YES;
     }
     return self;
 }
@@ -99,6 +100,13 @@
         return NO;
     else
         return _showKnowledgeBase;
+}
+
+- (BOOL)tryInstantAnswers {
+    if ([UVSession currentSession].clientConfig && ![UVSession currentSession].clientConfig.ticketsEnabled && ![UVSession currentSession].clientConfig.feedbackEnabled)
+        return NO;
+    else
+        return _tryInstantAnswers;
 }
 
 - (void)identifyUserWithEmail:(NSString *)theEmail name:(NSString *)name guid:(NSString *)theGuid {
