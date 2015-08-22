@@ -41,6 +41,7 @@
     BOOL _subscribing;
     BOOL _loading;
     UVCallback *_subscribeCallback;
+    UVCallback *_canceledEmailInputOnsubscribeCallback;
     UISwitch *_toggle;
 }
 
@@ -49,6 +50,7 @@
     
     if (self) {
         _subscribeCallback = [[UVCallback alloc] initWithTarget:self selector:@selector(doSubscribe)];
+        _canceledEmailInputOnsubscribeCallback = [[UVCallback alloc] initWithTarget:self selector:@selector(cancelledEmailInputSubscribe)];
     }
     
     return self;
@@ -393,7 +395,11 @@
 - (void)subscribe {
     if (_subscribing) return;
     _subscribing = YES;
-    [self requireUserSignedIn:_subscribeCallback];
+    [self requireUserSignedIn:_subscribeCallback ifCanceledDo:_canceledEmailInputOnsubscribeCallback];
+}
+
+- (void)cancelledEmailInputSubscribe{
+    _subscribing = NO;
 }
 
 - (void)doSubscribe {

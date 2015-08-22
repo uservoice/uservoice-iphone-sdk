@@ -19,6 +19,7 @@
 @implementation UVSigninManager {
     NSInteger _state;
     UVCallback *_callback;
+    UVCallback *_cancelCallback;
     NSRegularExpression *_emailFormat;
 }
 
@@ -112,7 +113,7 @@
     [self invokeDidFail];
 }
 
-- (void)signInWithCallback:(UVCallback *)callback {
+- (void)signInWithCallback:(UVCallback *)callback cancelCallBack:(UVCallback *)cancelCallBack; {
     if ([self user]) {
         [callback invokeCallback:nil];
     } else {
@@ -123,6 +124,7 @@
             [self signInWithEmail:storedEmail name:storedName callback:callback];
         } else {
             _callback = callback;
+            _cancelCallback = cancelCallBack;
             [self showEmailAlertView];
         }
     }
@@ -204,11 +206,20 @@
 
 - (void)alertView:(UIAlertView *)theAlertView willDismissWithButtonIndex:(NSInteger)buttonIndex {
     if (_state == STATE_EMAIL) {
-        if (buttonIndex == 1) {
+        if (buttonIndex == 0) {
+            if (_cancelCallback) {
+                [_cancelCallback invokeCallback:nil];
+                _cancelCallback = nil;
+            }
+        }else if(buttonIndex == 1) {
             NSString *text = [_alertView textFieldAtIndex:0].text;
-            if (text.length == 0)
+            if (text.length == 0){
+                if (_cancelCallback) {
+                    [_cancelCallback invokeCallback:nil];
+                    _cancelCallback = nil;
+                }
                 return;
-
+            }            
             _email = text;
             [UVUser discoverWithEmail:text delegate:self];
         }

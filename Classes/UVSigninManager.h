@@ -20,7 +20,7 @@
 
 + (UVSigninManager *)manager;
 
-- (void)signInWithCallback:(UVCallback *)callback;
+- (void)signInWithCallback:(UVCallback *)callback cancelCallBack:(UVCallback *)cancelCallBack;
 - (void)signInWithEmail:(NSString *)theEmail name:(NSString *)theName callback:(UVCallback *)callback;
 
 @property (nonatomic, assign) id<UVSigninManagerDelegate> delegate;
