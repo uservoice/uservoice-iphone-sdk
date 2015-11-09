@@ -46,6 +46,9 @@
 // Get the current version number of the iOS SDK
 + (NSString *)version;
 
+// Log out user and clear stored name and email
++ (void)logoutUser;
+
 // For integration with other services
 + (void)setExternalId:(NSString *)identifier forScope:(NSString *)scope;
 
