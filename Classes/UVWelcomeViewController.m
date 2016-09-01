@@ -30,7 +30,12 @@
 #define LOADING 30
 
 @interface UVWelcomeViewController ()
-@property (nonatomic, retain) UISearchDisplayController *searchController;
+//
+// DDSearch
+// This needs to change to the UISearchController
+//
+//@property (nonatomic, retain) UISearchDisplayController *searchControllerOld;
+@property (nonatomic, retain) UISearchController *searchControllerNew;
 @end
 
 @implementation UVWelcomeViewController {
@@ -145,7 +150,9 @@
 - (UITableViewCell *)tableView:(UITableView *)theTableView cellForRowAtIndexPath:(NSIndexPath *)indexPath {
     NSString *identifier = @"";
     NSInteger style = UITableViewCellStyleValue1;
-    if (theTableView == _searchController.searchResultsTableView || _searching) {
+    // DDSearch
+//    if (theTableView == _searchControllerOld.searchResultsTableView || _searching) {
+    if (_searchControllerNew.active && ![_searchControllerNew.searchBar.text isEqualToString:@""]) {
         id model = [self.searchResults objectAtIndex:indexPath.row];
         if ([model isMemberOfClass:[UVArticle class]]) {
             identifier = @"ArticleResult";
@@ -172,7 +179,9 @@
 }
 
 - (CGFloat)tableView:(UITableView *)tableView heightForRowAtIndexPath:(NSIndexPath *)indexPath {
-    if (tableView == _searchController.searchResultsTableView || _searching) {
+    // DDSearch
+    if (_searchControllerNew.active && ![_searchControllerNew.searchBar.text isEqualToString:@""]) {
+//    if (tableView == _searchControllerOld.searchResultsTableView || _searching) {
         NSString *identifier;
         id model = [self.searchResults objectAtIndex:indexPath.row];
         if ([model isMemberOfClass:[UVArticle class]]) {
@@ -187,7 +196,9 @@
 }
 
 - (NSInteger)numberOfSectionsInTableView:(UITableView *)theTableView {
-    if (theTableView == _searchController.searchResultsTableView || _searching) {
+    // DDSearch
+    if (_searchControllerNew.active && ![_searchControllerNew.searchBar.text isEqualToString:@""]) {
+//    if (theTableView == _searchControllerOld.searchResultsTableView || _searching) {
         return 1;
     } else {
         int sections = 0;
@@ -203,7 +214,9 @@
 }
 
 - (NSInteger)tableView:(UITableView *)theTableView numberOfRowsInSection:(NSInteger)section {
-    if (theTableView == _searchController.searchResultsTableView || _searching) {
+    // DDSearch
+    if (_searchControllerNew.active && ![_searchControllerNew.searchBar.text isEqualToString:@""]) {
+//    if (theTableView == _searchControllerOld.searchResultsTableView || _searching) {
         return self.searchResults.count;
     } else {
         if (section == 0 && ([UVSession currentSession].config.showForum || [UVSession currentSession].config.showContactUs || [UVSession currentSession].config.showPostIdea))
@@ -216,7 +229,9 @@
 }
 
 - (void)tableView:(UITableView *)theTableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath {
-    if (theTableView == _searchController.searchResultsTableView || _searching) {
+    // DDSearch
+    if (_searchControllerNew.active && ![_searchControllerNew.searchBar.text isEqualToString:@""]) {
+//    if (theTableView == _searchControllerOld.searchResultsTableView || _searching) {
         [_instantAnswerManager pushViewFor:[self.searchResults objectAtIndex:indexPath.row] parent:self];
     } else {
         if (indexPath.section == 0 && indexPath.row == 0 && [UVSession currentSession].config.showContactUs) {
@@ -259,7 +274,9 @@
 }
 
 - (NSString *)tableView:(UITableView *)theTableView titleForHeaderInSection:(NSInteger)section {
-    if (theTableView == _searchController.searchResultsTableView || _searching)
+    // DDSearch
+    if (_searchControllerNew.active && ![_searchControllerNew.searchBar.text isEqualToString:@""])
+//    if (theTableView == _searchControllerOld.searchResultsTableView || _searching)
         return nil;
     else if (section == 0 && ([UVSession currentSession].config.showForum || [UVSession currentSession].config.showContactUs || [UVSession currentSession].config.showPostIdea))
         return nil;
@@ -270,7 +287,9 @@
 }
 
 - (CGFloat)tableView:(UITableView *)theTableView heightForHeaderInSection:(NSInteger)section {
-    return theTableView == _searchController.searchResultsTableView || _searching ? 0 : 30;
+    // DDSearch
+    return _searchControllerNew.active ? 0 : 30;
+//    return theTableView == _searchControllerOld.searchResultsTableView || _searching ? 0 : 30;
 }
 
 - (void)logoTapped {
@@ -279,62 +298,89 @@
 
 #pragma mark ===== UISearchBarDelegate Methods =====
 
+//
+// DDSearch
+// Will need to update these methods depending on changes to the delegates
+//
+
+// Not sure if we need this method just yet.
 - (BOOL)searchBarShouldBeginEditing:(UISearchBar *)searchBar {
-    [searchBar setShowsCancelButton:YES animated:YES];
+    // DDSearch
+//    [searchBar setShowsCancelButton:YES animated:YES];
     _filter = IA_FILTER_ALL;
-    searchBar.showsScopeBar = YES;
-    searchBar.selectedScopeButtonIndex = 0;
-    [searchBar sizeToFit];
-    
-    if (FORMSHEET) {
-        _tableView.tableHeaderView = searchBar;
-        _searching = YES;
-        [_tableView reloadData];
-    } else {
-        [_searchController setActive:YES animated:YES];
-        _searchController.searchResultsTableView.tableFooterView = [[UIView alloc] initWithFrame:CGRectZero];
-    }
+//    searchBar.showsScopeBar = YES;
+//    searchBar.selectedScopeButtonIndex = 0;
+//    [searchBar sizeToFit];
+//    
+//    if (FORMSHEET) {
+//        _tableView.tableHeaderView = searchBar;
+//        _searching = YES;
+//        [_tableView reloadData];
+//    } else {
+//        [_searchControllerOld setActive:YES animated:YES];
+//        _searchControllerOld.searchResultsTableView.tableFooterView = [[UIView alloc] initWithFrame:CGRectZero];
+//    }
     return YES;
 }
 
 - (void)searchBar:(UISearchBar *)searchBar selectedScopeButtonIndexDidChange:(NSInteger)selectedScope {
     _filter = searchBar.selectedScopeButtonIndex;
-    if (FORMSHEET) {
-        [_tableView reloadData];
-    } else {
-        [_searchController.searchResultsTableView reloadData];
-    }
+    // DDSearch
+    [_tableView reloadData];
+//    if (FORMSHEET) {
+//        [_tableView reloadData];
+//    } else {
+//        [_tableView reloadData];
+//        [_searchControllerOld.searchResultsTableView reloadData];
+//    }
 }
 
-- (void)searchBar:(UISearchBar *)searchBar textDidChange:(NSString *)searchText {
-    _instantAnswerManager.searchText = searchBar.text;
-    [_instantAnswerManager search];
-}
+//
+// DDSearch
+// The search results updater should replace this method
+//
+//- (void)searchBar:(UISearchBar *)searchBar textDidChange:(NSString *)searchText {
+//    _instantAnswerManager.searchText = searchBar.text;
+//    [_instantAnswerManager search];
+//}
 
 - (void)searchBarCancelButtonClicked:(UISearchBar *)searchBar {
-    _searchBar.showsScopeBar = NO;
-    if (FORMSHEET) {
-        [_searchBar setShowsCancelButton:NO animated:YES];
-        _searchBar.text = @"";
-        _instantAnswerManager.instantAnswers = [NSArray array];
-        [_searchBar resignFirstResponder];
-        _searching = NO;
-        [_searchBar sizeToFit];
-        _tableView.tableHeaderView = _searchBar;
-        [_tableView reloadData];
-    }
+    // DDSearch
+    [_searchControllerNew.searchBar resignFirstResponder];
+    _instantAnswerManager.instantAnswers = [NSArray array];
+    [_tableView reloadData];
+//    _searchBarOld.showsScopeBar = NO;
+//    if (FORMSHEET) {
+//        [_searchBarOld setShowsCancelButton:NO animated:YES];
+//        _searchBarOld.text = @"";
+//        _instantAnswerManager.instantAnswers = [NSArray array];
+//        [_searchBarOld resignFirstResponder];
+//        _searching = NO;
+//        [_searchBarOld sizeToFit];
+//        _tableView.tableHeaderView = _searchBarOld;
+//        [_tableView reloadData];
+//    }
+}
+
+// DDSearch
+- (void)updateSearchResultsForSearchController:(UISearchController *)searchController {
+    _instantAnswerManager.searchText = searchController.searchBar.text;
+    [_instantAnswerManager search];
 }
 
 #pragma mark ===== Search handling =====
 
 - (void)didUpdateInstantAnswers {
-    if (FORMSHEET) {
-        if (_searching)
-            [_tableView reloadData];
-    } else {
-        if (_searchController.active)
-            [_searchController.searchResultsTableView reloadData];
-    }
+    // DDSearch
+    if (_searchControllerNew.active)
+        [_tableView reloadData];
+//    if (FORMSHEET) {
+//        if (_searching)
+//            [_tableView reloadData];
+//    } else {
+//        if (_searchControllerOld.active)
+//            [_searchControllerOld.searchResultsTableView reloadData];
+//    }
 }
 
 - (NSArray *)searchResults {
@@ -383,21 +429,46 @@
     [self setupGroupedTableView];
 
     if ([UVSession currentSession].config.showKnowledgeBase) {
-        _searchBar = [[UISearchBar alloc] initWithFrame:CGRectMake(0, 0, self.view.bounds.size.width, 44)];
-        _searchBar.autoresizingMask = UIViewAutoresizingFlexibleWidth;
-        _searchBar.placeholder = NSLocalizedStringFromTableInBundle(@"Search", @"UserVoice", [UserVoice bundle], nil);
-        _searchBar.delegate = self;
-        _searchBar.showsScopeBar = NO;
-        if ([UVSession currentSession].config.showForum) {
-            _searchBar.scopeButtonTitles = @[NSLocalizedStringFromTableInBundle(@"All", @"UserVoice", [UserVoice bundle], nil), NSLocalizedStringFromTableInBundle(@"Articles", @"UserVoice", [UserVoice bundle], nil), NSLocalizedStringFromTableInBundle(@"Ideas", @"UserVoice", [UserVoice bundle], nil)];
-        }
-        _tableView.tableHeaderView = _searchBar;
+        //
+        // DDSearch
+        // May not need this search bar
+        //
+//        _searchBarOld = [[UISearchBar alloc] initWithFrame:CGRectMake(0, 0, self.view.bounds.size.width, 44)];
+//        _searchBarOld.autoresizingMask = UIViewAutoresizingFlexibleWidth;
+//        _searchBarOld.placeholder = NSLocalizedStringFromTableInBundle(@"Search", @"UserVoice", [UserVoice bundle], nil);
+//        _searchBarOld.delegate = self;
+//        _searchBarOld.showsScopeBar = NO;
+//        if ([UVSession currentSession].config.showForum) {
+//            _searchBarOld.scopeButtonTitles = @[NSLocalizedStringFromTableInBundle(@"All", @"UserVoice", [UserVoice bundle], nil), NSLocalizedStringFromTableInBundle(@"Articles", @"UserVoice", [UserVoice bundle], nil), NSLocalizedStringFromTableInBundle(@"Ideas", @"UserVoice", [UserVoice bundle], nil)];
+//        }
+        
+        //
+        // DDSearch
+        // Set this to the search bar on the search controller
+        //
+//        _tableView.tableHeaderView = _searchBarOld;
 
-        if (!FORMSHEET) {
-            _searchController = [[UISearchDisplayController alloc] initWithSearchBar:_searchBar contentsController:self];
-            _searchController.searchResultsDelegate = self;
-            _searchController.searchResultsDataSource = self;
-        }
+//        if (!FORMSHEET) {
+            //
+            // DDSearch
+            // Replace this with the UISearchController
+            //
+//            _searchControllerOld = [[UISearchDisplayController alloc] initWithSearchBar:_searchBarOld contentsController:self];
+//            _searchControllerOld.searchResultsDelegate = self;
+//            _searchControllerOld.searchResultsDataSource = self;
+            
+            _searchControllerNew = [[UISearchController alloc] initWithSearchResultsController:nil];
+            _searchControllerNew.searchResultsUpdater = self;
+            _searchControllerNew.dimsBackgroundDuringPresentation = false;
+            self.definesPresentationContext = true;
+            _searchControllerNew.searchBar.delegate = self;
+            _searchControllerNew.searchBar.placeholder = NSLocalizedStringFromTableInBundle(@"Search", @"UserVoice", [UserVoice bundle], nil);
+            if ([UVSession currentSession].config.showForum ) {
+                _searchControllerNew.searchBar.scopeButtonTitles = @[NSLocalizedStringFromTableInBundle(@"All", @"UserVoice", [UserVoice bundle], nil), NSLocalizedStringFromTableInBundle(@"Articles", @"UserVoice", [UserVoice bundle], nil), NSLocalizedStringFromTableInBundle(@"Ideas", @"UserVoice", [UserVoice bundle], nil)];
+            }
+            
+            _tableView.tableHeaderView = _searchControllerNew.searchBar;
+//        }
     }
 
     if (![UVSession currentSession].clientConfig.whiteLabel) {
@@ -421,12 +492,20 @@
     if (_instantAnswerManager) {
         _instantAnswerManager.delegate = nil;
     }
-    if (_searchBar) {
-        _searchBar.delegate = nil;
-    }
-    if (_searchController) {
-        _searchController.searchResultsDelegate = nil;
-        _searchController.searchResultsDataSource = nil;
+    
+    //
+    // DDSearch
+    // Need to update these after changing to the UISearchController
+    //
+//    if (_searchBarOld) {
+//        _searchBarOld.delegate = nil;
+//    }
+//    if (_searchControllerOld) {
+//        _searchControllerOld.searchResultsDelegate = nil;
+//        _searchControllerOld.searchResultsDataSource = nil;
+//    }
+    if (_searchControllerNew) {
+        _searchControllerNew.searchResultsUpdater = nil;
     }
 }
 
