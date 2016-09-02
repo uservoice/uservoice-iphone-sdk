@@ -288,7 +288,7 @@
 
 - (CGFloat)tableView:(UITableView *)theTableView heightForHeaderInSection:(NSInteger)section {
     // DDSearch
-    return _searchControllerNew.active ? 0 : 30;
+    return (_searchControllerNew.active && ![_searchControllerNew.searchBar.text isEqualToString:@""]) ? 0 : 30;
 //    return theTableView == _searchControllerOld.searchResultsTableView || _searching ? 0 : 30;
 }
 
@@ -346,7 +346,7 @@
 
 - (void)searchBarCancelButtonClicked:(UISearchBar *)searchBar {
     // DDSearch
-    [_searchControllerNew.searchBar resignFirstResponder];
+    _searchControllerNew.searchBar.text = @"";
     _instantAnswerManager.instantAnswers = [NSArray array];
     [_tableView reloadData];
 //    _searchBarOld.showsScopeBar = NO;
