@@ -12,12 +12,12 @@
 
 @class UVForum;
 
-@interface UVSuggestionListViewController : UVBaseViewController <UITableViewDataSource, UITableViewDelegate, UISearchBarDelegate, UVPostIdeaDelegate>
+@interface UVSuggestionListViewController : UVBaseViewController <UITableViewDataSource, UITableViewDelegate, UISearchBarDelegate, UISearchResultsUpdating, UVPostIdeaDelegate>
 
 @property (nonatomic, retain) UVForum *forum;
 @property (nonatomic, retain) UITextField *textEditor;
 @property (nonatomic, retain) NSArray *searchResults;
-@property (nonatomic, retain) UISearchBar *searchBar;
-@property (nonatomic, assign) BOOL searching;
+//@property (nonatomic, retain) UISearchBar *searchBar;
+//@property (nonatomic, assign) BOOL searching;
 
 @end
