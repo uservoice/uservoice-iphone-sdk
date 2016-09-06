@@ -114,8 +114,9 @@
     }
     
     return cell;
-//    return [_baseVC createCellForIdentifier:identifier tableView:tableView indexPath:indexPath style:style selectable:YES];
 }
+
+#pragma mark - Table view delegate
 
 - (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath {
     [tableView deselectRowAtIndexPath:indexPath animated:YES];
@@ -132,6 +133,8 @@
     }
     return [self heightForDynamicRowWithReuseIdentifier:identifier indexPath:indexPath];
 }
+
+#pragma mark - Table cell configurations
 
 - (CGFloat)heightForDynamicRowWithReuseIdentifier:(NSString *)reuseIdentifier indexPath:(NSIndexPath *)indexPath {
     NSString *cacheKey = [NSString stringWithFormat:@"%@-%d", reuseIdentifier, (int)self.view.frame.size.width];
