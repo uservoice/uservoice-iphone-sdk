@@ -321,25 +321,24 @@
 //
 
 // Not sure if we need this method just yet.
-- (BOOL)searchBarShouldBeginEditing:(UISearchBar *)searchBar {
-    // DDSearch
-//    [searchBar setShowsCancelButton:YES animated:YES];
-    _filter = IA_FILTER_ALL;
-    _searchController.searchBar.selectedScopeButtonIndex = IA_FILTER_ALL;
-//    searchBar.showsScopeBar = YES;
-//    searchBar.selectedScopeButtonIndex = 0;
-//    [searchBar sizeToFit];
-//    
-//    if (FORMSHEET) {
-//        _tableView.tableHeaderView = searchBar;
-//        _searching = YES;
-//        [_tableView reloadData];
-//    } else {
-//        [_searchControllerOld setActive:YES animated:YES];
-//        _searchControllerOld.searchResultsTableView.tableFooterView = [[UIView alloc] initWithFrame:CGRectZero];
-//    }
-    return YES;
-}
+//- (BOOL)searchBarShouldBeginEditing:(UISearchBar *)searchBar {
+//    // DDSearch
+////    [searchBar setShowsCancelButton:YES animated:YES];
+//    _filter = IA_FILTER_ALL;
+////    searchBar.showsScopeBar = YES;
+////    searchBar.selectedScopeButtonIndex = 0;
+////    [searchBar sizeToFit];
+////    
+////    if (FORMSHEET) {
+////        _tableView.tableHeaderView = searchBar;
+////        _searching = YES;
+////        [_tableView reloadData];
+////    } else {
+////        [_searchControllerOld setActive:YES animated:YES];
+////        _searchControllerOld.searchResultsTableView.tableFooterView = [[UIView alloc] initWithFrame:CGRectZero];
+////    }
+//    return YES;
+//}
 
 - (void)searchBar:(UISearchBar *)searchBar selectedScopeButtonIndexDidChange:(NSInteger)selectedScope {
     _filter = searchBar.selectedScopeButtonIndex;
@@ -364,6 +363,8 @@
 
 - (void)searchBarCancelButtonClicked:(UISearchBar *)searchBar {
     // DDSearch
+    _filter = IA_FILTER_ALL;
+    _searchController.searchBar.selectedScopeButtonIndex = IA_FILTER_ALL;
     if (![UVSession currentSession].clientConfig.whiteLabel) {
         _tableView.tableFooterView = self.poweredByView;
     }
@@ -371,6 +372,7 @@
     _searchController.searchBar.text = @"";
     _instantAnswerManager.instantAnswers = [NSArray array];
     [_tableView reloadData];
+    [_tableView scrollToRowAtIndexPath:[NSIndexPath indexPathForRow:0 inSection:0] atScrollPosition:UITableViewScrollPositionTop animated:YES];
 //    _searchBarOld.showsScopeBar = NO;
 //    if (FORMSHEET) {
 //        [_searchBarOld setShowsCancelButton:NO animated:YES];
@@ -504,7 +506,8 @@
     [_tableView reloadData];
 }
 
-- (void)dismiss {    
+- (void)dismiss {
+    _searchController.active = NO;
     _instantAnswerManager.delegate = nil;
     [super dismiss];
 }
