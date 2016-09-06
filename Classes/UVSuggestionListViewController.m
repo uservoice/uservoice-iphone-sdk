@@ -218,8 +218,24 @@
 
 - (NSInteger)numberOfSectionsInTableView:(UITableView *)tableView {
     // DDSearch
-    return _searchController.active && ![_searchController.searchBar.text isEqualToString:@""] ? 1 : 2;
-//    return [UVSession currentSession].config.showPostIdea && tableView == _tableView && !_searching ? 2 : 1;
+    tableView.backgroundView = nil;
+    if (_searchResults.count == 0 && _searchController.active && ![_searchController.searchBar.text isEqualToString:@""]) {
+        tableView.tableFooterView = [[UIView alloc] initWithFrame:CGRectZero];
+        UILabel *noResultsLabel = [[UILabel alloc] initWithFrame:CGRectMake(0, 0, tableView.frame.size.width, tableView.frame.size.height)];
+        noResultsLabel.text = @"No Results";
+        noResultsLabel.textAlignment = NSTextAlignmentCenter;
+        [noResultsLabel sizeToFit];
+        tableView.backgroundView = noResultsLabel;
+        tableView.separatorStyle = UITableViewCellSeparatorStyleNone;
+        return 0;
+    } else if (_searchController.active && ![_searchController.searchBar.text isEqualToString:@""]) {
+        if (![UVSession currentSession].clientConfig.whiteLabel) {
+            _tableView.tableFooterView = self.poweredByView;
+        }
+        return 1;
+    }
+//    return _searchController.active && ![_searchController.searchBar.text isEqualToString:@""] ? 1 : 2;
+    return [UVSession currentSession].config.showPostIdea && tableView == _tableView ? 2 : 1;
 }
 
 #pragma mark ===== UITableViewDelegate Methods =====
@@ -321,6 +337,10 @@
 
 - (void)searchBarCancelButtonClicked:(UISearchBar *)searchBar {
     // DDSearch
+    if (![UVSession currentSession].clientConfig.whiteLabel) {
+        _tableView.tableFooterView = self.poweredByView;
+    }
+    _tableView.separatorStyle = UITableViewCellSeparatorStyleSingleLine;
     _searchController.searchBar.text = @"";
     _searchResults = [NSArray array];
     [_tableView reloadData];

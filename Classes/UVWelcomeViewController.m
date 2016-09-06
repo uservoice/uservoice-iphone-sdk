@@ -197,10 +197,27 @@
 
 - (NSInteger)numberOfSectionsInTableView:(UITableView *)theTableView {
     // DDSearch
-    if (_searchController.active && ![_searchController.searchBar.text isEqualToString:@""]) {
-//    if (theTableView == _searchControllerOld.searchResultsTableView || _searching) {
+    theTableView.backgroundView = nil;
+    if (self.searchResults.count == 0 && _searchController.active && ![_searchController.searchBar.text isEqualToString:@""]) {
+        theTableView.tableFooterView = [[UIView alloc] initWithFrame:CGRectZero];
+        UILabel *noResultsLabel = [[UILabel alloc] initWithFrame:CGRectMake(0, 0, theTableView.frame.size.width, theTableView.frame.size.height)];
+        noResultsLabel.text = @"No Results";
+        noResultsLabel.textAlignment = NSTextAlignmentCenter;
+        [noResultsLabel sizeToFit];
+        theTableView.backgroundView = noResultsLabel;
+        theTableView.separatorStyle = UITableViewCellSeparatorStyleNone;
+        return 0;
+    } else if (_searchController.active && ![_searchController.searchBar.text isEqualToString:@""]) {
+        if (![UVSession currentSession].clientConfig.whiteLabel) {
+            _tableView.tableFooterView = self.poweredByView;
+        }
         return 1;
-    } else {
+    }
+    
+//    if (_searchController.active && ![_searchController.searchBar.text isEqualToString:@""]) {
+////    if (theTableView == _searchControllerOld.searchResultsTableView || _searching) {
+//        return 1;
+//    } else {
         int sections = 0;
 
         if ([UVSession currentSession].config.showKnowledgeBase && ([[UVSession currentSession].topics count] > 0 || [[UVSession currentSession].articles count] > 0))
@@ -210,7 +227,7 @@
             sections++;
 
         return sections;
-    }
+//    }
 }
 
 - (NSInteger)tableView:(UITableView *)theTableView numberOfRowsInSection:(NSInteger)section {
@@ -308,6 +325,7 @@
     // DDSearch
 //    [searchBar setShowsCancelButton:YES animated:YES];
     _filter = IA_FILTER_ALL;
+    _searchController.searchBar.selectedScopeButtonIndex = IA_FILTER_ALL;
 //    searchBar.showsScopeBar = YES;
 //    searchBar.selectedScopeButtonIndex = 0;
 //    [searchBar sizeToFit];
@@ -346,6 +364,10 @@
 
 - (void)searchBarCancelButtonClicked:(UISearchBar *)searchBar {
     // DDSearch
+    if (![UVSession currentSession].clientConfig.whiteLabel) {
+        _tableView.tableFooterView = self.poweredByView;
+    }
+    _tableView.separatorStyle = UITableViewCellSeparatorStyleSingleLine;
     _searchController.searchBar.text = @"";
     _instantAnswerManager.instantAnswers = [NSArray array];
     [_tableView reloadData];
