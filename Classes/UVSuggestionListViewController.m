@@ -344,6 +344,7 @@
     _searchController.searchBar.text = @"";
     _searchResults = [NSArray array];
     [_tableView reloadData];
+    [_tableView scrollToRowAtIndexPath:[NSIndexPath indexPathForRow:0 inSection:0] atScrollPosition:UITableViewScrollPositionTop animated:YES];
 //    _searchBar.showsScopeBar = NO;
 //    if (FORMSHEET) {
 //        [_searchBar setShowsCancelButton:NO animated:YES];
@@ -439,6 +440,11 @@
     _forum.suggestions = nil;
     [self populateSuggestions];
     [_tableView reloadData];
+}
+
+- (void)dismiss {
+    _searchController.active = NO;
+    [super dismiss];
 }
 
 - (void)dealloc {
