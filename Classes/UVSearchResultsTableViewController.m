@@ -8,12 +8,10 @@
 
 #import "UVSearchResultsTableViewController.h"
 #import "UVArticle.h"
-#import "UVBaseViewController.h"
 #import "UVTruncatingLabel.m"
 
 @interface UVSearchResultsTableViewController ()
 
-@property (nonatomic, strong) UVBaseViewController *baseVC;
 @property (nonatomic, retain) NSMutableDictionary *templateCells;
 
 @end
@@ -24,11 +22,9 @@
     [super viewDidLoad];
     
     _templateCells = [NSMutableDictionary dictionary];
-    _baseVC = [[UVBaseViewController alloc] init];
 }
 
 - (void)dealloc {
-    _baseVC = nil;
     _instantAnswerManager = nil;
 }
 

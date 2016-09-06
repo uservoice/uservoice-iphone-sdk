@@ -248,6 +248,7 @@
 
 - (BOOL)searchBarShouldBeginEditing:(UISearchBar *)searchBar {
     _filter = IA_FILTER_ALL;
+    _searchController.searchBar.selectedScopeButtonIndex = IA_FILTER_ALL;
     return YES;
 }
 
