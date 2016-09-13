@@ -1,5 +1,5 @@
 //
-//  UVSearchResultsTableViewController.h
+//  UVWelcomeSearchResultsController.h
 //  UserVoice
 //
 //  Created by Donny Davis on 9/5/16.
@@ -10,7 +10,7 @@
 #import "UVBaseViewController.h"
 #import "UVInstantAnswerManager.h"
 
-@interface UVSearchResultsTableViewController : UITableViewController
+@interface UVWelcomeSearchResultsController : UVBaseViewController<UITableViewDelegate, UITableViewDataSource>
 
 @property (nonatomic, retain) UVInstantAnswerManager *instantAnswerManager;
 @property (nonatomic, strong) NSArray *searchResults;

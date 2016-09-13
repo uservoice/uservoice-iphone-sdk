@@ -9,10 +9,10 @@
 /* Begin PBXBuildFile section */
 		3A37C3D11929A96B00942423 /* UVAttachment.h in Headers */ = {isa = PBXBuildFile; fileRef = 3A37C3CF1929A96B00942423 /* UVAttachment.h */; };
 		3A37C3D21929A96B00942423 /* UVAttachment.m in Sources */ = {isa = PBXBuildFile; fileRef = 3A37C3D01929A96B00942423 /* UVAttachment.m */; };
-		410BA91E1D7D9E270014A56D /* UVSearchResultsTableViewController.h in Headers */ = {isa = PBXBuildFile; fileRef = 410BA91C1D7D9E270014A56D /* UVSearchResultsTableViewController.h */; };
-		410BA91F1D7D9E270014A56D /* UVSearchResultsTableViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 410BA91D1D7D9E270014A56D /* UVSearchResultsTableViewController.m */; };
-		410BA9201D7D9E320014A56D /* UVSearchResultsTableViewController.h in Headers */ = {isa = PBXBuildFile; fileRef = 410BA91C1D7D9E270014A56D /* UVSearchResultsTableViewController.h */; };
-		410BA9211D7D9E360014A56D /* UVSearchResultsTableViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 410BA91D1D7D9E270014A56D /* UVSearchResultsTableViewController.m */; };
+		410BA91E1D7D9E270014A56D /* UVWelcomeSearchResultsController.h in Headers */ = {isa = PBXBuildFile; fileRef = 410BA91C1D7D9E270014A56D /* UVWelcomeSearchResultsController.h */; };
+		410BA91F1D7D9E270014A56D /* UVWelcomeSearchResultsController.m in Sources */ = {isa = PBXBuildFile; fileRef = 410BA91D1D7D9E270014A56D /* UVWelcomeSearchResultsController.m */; };
+		410BA9201D7D9E320014A56D /* UVWelcomeSearchResultsController.h in Headers */ = {isa = PBXBuildFile; fileRef = 410BA91C1D7D9E270014A56D /* UVWelcomeSearchResultsController.h */; };
+		410BA9211D7D9E360014A56D /* UVWelcomeSearchResultsController.m in Sources */ = {isa = PBXBuildFile; fileRef = 410BA91D1D7D9E270014A56D /* UVWelcomeSearchResultsController.m */; };
 		6474C33614BB8D5D00F6A2F0 /* UserVoice.h in Headers */ = {isa = PBXBuildFile; fileRef = 6474C33714BB8D5D00F6A2F0 /* UserVoice.h */; };
 		80B5291E13A16A2F008709D2 /* UVCustomField.h in Headers */ = {isa = PBXBuildFile; fileRef = 80B5291C13A16A2F008709D2 /* UVCustomField.h */; };
 		80B5291F13A16A2F008709D2 /* UVCustomField.m in Sources */ = {isa = PBXBuildFile; fileRef = 80B5291D13A16A2F008709D2 /* UVCustomField.m */; };
@@ -289,8 +289,8 @@
 /* Begin PBXFileReference section */
 		3A37C3CF1929A96B00942423 /* UVAttachment.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = UVAttachment.h; sourceTree = "<group>"; };
 		3A37C3D01929A96B00942423 /* UVAttachment.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = UVAttachment.m; sourceTree = "<group>"; };
-		410BA91C1D7D9E270014A56D /* UVSearchResultsTableViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = UVSearchResultsTableViewController.h; sourceTree = "<group>"; };
-		410BA91D1D7D9E270014A56D /* UVSearchResultsTableViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = UVSearchResultsTableViewController.m; sourceTree = "<group>"; };
+		410BA91C1D7D9E270014A56D /* UVWelcomeSearchResultsController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = UVWelcomeSearchResultsController.h; sourceTree = "<group>"; };
+		410BA91D1D7D9E270014A56D /* UVWelcomeSearchResultsController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = UVWelcomeSearchResultsController.m; sourceTree = "<group>"; };
 		6474C33714BB8D5D00F6A2F0 /* UserVoice.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = UserVoice.h; path = Include/UserVoice.h; sourceTree = SOURCE_ROOT; };
 		70D9A20D1CBFA4E300D8BAA0 /* af.lproj */ = {isa = PBXFileReference; lastKnownFileType = folder; path = af.lproj; sourceTree = "<group>"; };
 		80B5291C13A16A2F008709D2 /* UVCustomField.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = UVCustomField.h; sourceTree = "<group>"; };
@@ -636,8 +636,8 @@
 				D9A7A66318185F7500EBF41E /* UVSuccessViewController.m */,
 				D9CB6546181877F2006B05D7 /* UVPostIdeaViewController.h */,
 				D9CB6547181877F2006B05D7 /* UVPostIdeaViewController.m */,
-				410BA91C1D7D9E270014A56D /* UVSearchResultsTableViewController.h */,
-				410BA91D1D7D9E270014A56D /* UVSearchResultsTableViewController.m */,
+				410BA91C1D7D9E270014A56D /* UVWelcomeSearchResultsController.h */,
+				410BA91D1D7D9E270014A56D /* UVWelcomeSearchResultsController.m */,
 			);
 			name = Controllers;
 			sourceTree = "<group>";
@@ -860,7 +860,7 @@
 				D2620F0411B597290053EA4C /* HRFormatJSON.h in Headers */,
 				D2620F0811B597290053EA4C /* HRFormatterProtocol.h in Headers */,
 				D9CB6548181877F2006B05D7 /* UVPostIdeaViewController.h in Headers */,
-				410BA91E1D7D9E270014A56D /* UVSearchResultsTableViewController.h in Headers */,
+				410BA91E1D7D9E270014A56D /* UVWelcomeSearchResultsController.h in Headers */,
 				3A37C3D11929A96B00942423 /* UVAttachment.h in Headers */,
 				D2620F0911B597290053EA4C /* HRGlobal.h in Headers */,
 				D2620F0B11B597290053EA4C /* HROperationQueue.h in Headers */,
@@ -963,7 +963,7 @@
 				D3683A761C77476F0036064E /* HROperationQueue.h in Headers */,
 				D3683A771C77476F0036064E /* HRRequestOperation.h in Headers */,
 				D3683A781C7747700036064E /* HRResponseDelegate.h in Headers */,
-				410BA9201D7D9E320014A56D /* UVSearchResultsTableViewController.h in Headers */,
+				410BA9201D7D9E320014A56D /* UVWelcomeSearchResultsController.h in Headers */,
 				D3683A791C7747700036064E /* HRRestModel.h in Headers */,
 				D3683A7A1C7747700036064E /* HTTPRiot.h in Headers */,
 				D3683A7B1C7747700036064E /* Base64Transcoder.h in Headers */,
@@ -1113,7 +1113,7 @@
 				D24BDE6311DAE3FA00B26012 /* UVImageView.m in Sources */,
 				D24BE0A011DB1B7C00B26012 /* UVTextView.m in Sources */,
 				D2BEEBBA1367436D00EBC307 /* UVTicket.m in Sources */,
-				410BA91F1D7D9E270014A56D /* UVSearchResultsTableViewController.m in Sources */,
+				410BA91F1D7D9E270014A56D /* UVWelcomeSearchResultsController.m in Sources */,
 				80B5291F13A16A2F008709D2 /* UVCustomField.m in Sources */,
 				D9B1D1DD14ACCBE700D9189F /* UVImageCache.m in Sources */,
 				D92767FC15597F3800E17EF1 /* UVArticle.m in Sources */,
@@ -1184,7 +1184,7 @@
 				D3683A211C77471D0036064E /* UVTextWithFieldsView.m in Sources */,
 				D3683A221C77471D0036064E /* UserVoice.m in Sources */,
 				D3683A231C77471D0036064E /* UVNavigationController.m in Sources */,
-				410BA9211D7D9E360014A56D /* UVSearchResultsTableViewController.m in Sources */,
+				410BA9211D7D9E360014A56D /* UVWelcomeSearchResultsController.m in Sources */,
 				D3683A241C77471D0036064E /* UVConfig.m in Sources */,
 				D3683A251C77471D0036064E /* UVImageCache.m in Sources */,
 				D3683A261C77471D0036064E /* UVResponseDelegate.m in Sources */,

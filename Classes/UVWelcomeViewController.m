@@ -26,12 +26,13 @@
 #import "UVBabayaga.h"
 #import "UVUtils.h"
 #import "UVPaginationInfo.h"
-#import "UVSearchResultsTableViewController.h"
+#import "UVWelcomeSearchResultsController.h"
 
 #define LOADING 30
 
 @interface UVWelcomeViewController ()
 @property (nonatomic, retain) UISearchController *searchController;
+@property (nonatomic, strong) UVWelcomeSearchResultsController *searchResultsController;
 @end
 
 @implementation UVWelcomeViewController {
@@ -271,9 +272,8 @@
     [_instantAnswerManager search];
     
     if (_searchController.searchResultsController) {
-        UVSearchResultsTableViewController *searchResultsTVC = (UVSearchResultsTableViewController *)_searchController.searchResultsController;
+        UVWelcomeSearchResultsController *searchResultsTVC = (UVWelcomeSearchResultsController *)_searchController.searchResultsController;
         searchResultsTVC.searchResults = self.searchResults;
-        searchResultsTVC.instantAnswerManager = _instantAnswerManager;
         [searchResultsTVC.tableView reloadData];
     }
 }
@@ -336,9 +336,9 @@
         //
         // DDSearch
         self.definesPresentationContext = true;
-//        _searchController = [[UISearchController alloc] initWithSearchResultsController:nil];
-        UVSearchResultsTableViewController *searchResultsController = [[UVSearchResultsTableViewController alloc] init];
-        _searchController = [[UISearchController alloc] initWithSearchResultsController:searchResultsController];
+        self.searchResultsController = [[UVWelcomeSearchResultsController alloc] init];
+        UINavigationController *searchNavController = [[UINavigationController alloc] initWithRootViewController:self.searchResultsController];
+        _searchController = [[UISearchController alloc] initWithSearchResultsController:searchNavController.topViewController];
         _searchController.searchResultsUpdater = self;
         [_searchController.searchBar sizeToFit];
         _searchController.searchBar.delegate = self;
