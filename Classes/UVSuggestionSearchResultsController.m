@@ -152,7 +152,7 @@
 
 - (void)showSuggestion:(UVSuggestion *)suggestion {
     UVSuggestionDetailsViewController *next = [[UVSuggestionDetailsViewController alloc] initWithSuggestion:suggestion];
-    [self.navigationController pushViewController:next animated:YES];
+    [self.presentingViewController.navigationController pushViewController:next animated:YES];
 }
 
 @end
