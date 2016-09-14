@@ -169,29 +169,7 @@
 }
 
 - (NSInteger)numberOfSectionsInTableView:(UITableView *)theTableView {
-    // DDSearch
-    theTableView.backgroundView = nil;
-    if (self.searchResults.count == 0 && _searchController.active && ![_searchController.searchBar.text isEqualToString:@""]) {
-        theTableView.tableFooterView = [[UIView alloc] initWithFrame:CGRectZero];
-        UILabel *noResultsLabel = [[UILabel alloc] initWithFrame:CGRectMake(0, 0, theTableView.frame.size.width, theTableView.frame.size.height)];
-        noResultsLabel.text = @"No Results";
-        noResultsLabel.textAlignment = NSTextAlignmentCenter;
-        [noResultsLabel sizeToFit];
-        theTableView.backgroundView = noResultsLabel;
-        theTableView.separatorStyle = UITableViewCellSeparatorStyleNone;
-        return 0;
-    } else if (_searchController.active && ![_searchController.searchBar.text isEqualToString:@""]) {
-        if (![UVSession currentSession].clientConfig.whiteLabel) {
-            _tableView.tableFooterView = self.poweredByView;
-        }
-        return 1;
-    }
-    
-//    if (_searchController.active && ![_searchController.searchBar.text isEqualToString:@""]) {
-////    if (theTableView == _searchControllerOld.searchResultsTableView || _searching) {
-//        return 1;
-//    } else {
-        int sections = 0;
+    int sections = 0;
 
     if ([UVSession currentSession].config.showKnowledgeBase && ([[UVSession currentSession].topics count] > 0 || [[UVSession currentSession].articles count] > 0))
         sections++;
@@ -199,8 +177,7 @@
     if ([UVSession currentSession].config.showForum || [UVSession currentSession].config.showContactUs || [UVSession currentSession].config.showPostIdea)
         sections++;
 
-        return sections;
-//    }
+    return sections;
 }
 
 - (NSInteger)tableView:(UITableView *)theTableView numberOfRowsInSection:(NSInteger)section {
@@ -270,30 +247,10 @@
 
 #pragma mark ===== UISearchBarDelegate Methods =====
 
-//
-// DDSearch
-// Will need to update these methods depending on changes to the delegates
-//
-
-// Not sure if we need this method just yet.
-//- (BOOL)searchBarShouldBeginEditing:(UISearchBar *)searchBar {
-//    // DDSearch
-////    [searchBar setShowsCancelButton:YES animated:YES];
-//    _filter = IA_FILTER_ALL;
-////    searchBar.showsScopeBar = YES;
-////    searchBar.selectedScopeButtonIndex = 0;
-////    [searchBar sizeToFit];
-////    
-////    if (FORMSHEET) {
-////        _tableView.tableHeaderView = searchBar;
-////        _searching = YES;
-////        [_tableView reloadData];
-////    } else {
-////        [_searchControllerOld setActive:YES animated:YES];
-////        _searchControllerOld.searchResultsTableView.tableFooterView = [[UIView alloc] initWithFrame:CGRectZero];
-////    }
-//    return YES;
-//}
+- (BOOL)searchBarShouldBeginEditing:(UISearchBar *)searchBar {
+    _filter = _searchController.searchBar.selectedScopeButtonIndex;
+    return YES;
+}
 
 - (void)searchBar:(UISearchBar *)searchBar selectedScopeButtonIndexDidChange:(NSInteger)selectedScope {
     _filter = searchBar.selectedScopeButtonIndex;
@@ -303,27 +260,10 @@
 
 - (void)searchBarCancelButtonClicked:(UISearchBar *)searchBar {
     // DDSearch
-    _filter = IA_FILTER_ALL;
-    _searchController.searchBar.selectedScopeButtonIndex = IA_FILTER_ALL;
-    if (![UVSession currentSession].clientConfig.whiteLabel) {
-        _tableView.tableFooterView = self.poweredByView;
-    }
-    _tableView.separatorStyle = UITableViewCellSeparatorStyleSingleLine;
+    _searchController.searchBar.selectedScopeButtonIndex = 0;
     _searchController.searchBar.text = @"";
     _instantAnswerManager.instantAnswers = [NSArray array];
     [_tableView reloadData];
-    [_tableView scrollToRowAtIndexPath:[NSIndexPath indexPathForRow:0 inSection:0] atScrollPosition:UITableViewScrollPositionTop animated:YES];
-//    _searchBarOld.showsScopeBar = NO;
-//    if (FORMSHEET) {
-//        [_searchBarOld setShowsCancelButton:NO animated:YES];
-//        _searchBarOld.text = @"";
-//        _instantAnswerManager.instantAnswers = [NSArray array];
-//        [_searchBarOld resignFirstResponder];
-//        _searching = NO;
-//        [_searchBarOld sizeToFit];
-//        _tableView.tableHeaderView = _searchBarOld;
-//        [_tableView reloadData];
-//    }
 }
 
 #pragma mark ==== UISearchResultsUpdating Methods ====
