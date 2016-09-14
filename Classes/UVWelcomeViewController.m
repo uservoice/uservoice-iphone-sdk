@@ -248,8 +248,7 @@
 #pragma mark ===== UISearchBarDelegate Methods =====
 
 - (BOOL)searchBarShouldBeginEditing:(UISearchBar *)searchBar {
-    _filter = IA_FILTER_ALL;
-    _searchController.searchBar.selectedScopeButtonIndex = IA_FILTER_ALL;
+    _filter = _searchController.searchBar.selectedScopeButtonIndex;
     return YES;
 }
 
@@ -261,6 +260,7 @@
 
 - (void)searchBarCancelButtonClicked:(UISearchBar *)searchBar {
     // DDSearch
+    _searchController.searchBar.selectedScopeButtonIndex = 0;
     _searchController.searchBar.text = @"";
     _instantAnswerManager.instantAnswers = [NSArray array];
     [_tableView reloadData];
