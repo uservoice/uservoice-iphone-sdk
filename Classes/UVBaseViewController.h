@@ -82,6 +82,7 @@
 
 - (void)alertError:(NSString *)message;
 - (void)setupGroupedTableView;
+- (void)setupPlainTableView;
 - (UIScrollView *)scrollView;
 
 - (CGFloat)heightForDynamicRowWithReuseIdentifier:(NSString *)reuseIdentifier indexPath:(NSIndexPath *)indexPath;
