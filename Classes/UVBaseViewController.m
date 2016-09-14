@@ -352,8 +352,18 @@
 
 - (void)setupGroupedTableView {
     _tableView = [[UITableView alloc] initWithFrame:[self contentFrame] style:UITableViewStyleGrouped];
+    [self tableViewSetup];
+}
+
+- (void)setupPlainTableView {
+    _tableView = [[UITableView alloc] initWithFrame:[self contentFrame] style:UITableViewStylePlain];
+    [self tableViewSetup];
+}
+
+- (void)tableViewSetup {
     _tableView.delegate = (id<UITableViewDelegate>)self;
     _tableView.dataSource = (id<UITableViewDataSource>)self;
+    _tableView.tableFooterView = [[UIView alloc] initWithFrame:CGRectZero];
     if ([UVStyleSheet instance].tableViewBackgroundColor) {
         if (!IOS7) {
             UIView *bg = [UIView new];
