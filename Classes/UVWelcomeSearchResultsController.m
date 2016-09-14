@@ -92,7 +92,7 @@
 #pragma mark - Table view delegate
 
 - (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath {
-    [_instantAnswerManager pushViewFor:[_searchResults objectAtIndex:indexPath.row] parent:self];
+    [_instantAnswerManager pushViewFor:[_searchResults objectAtIndex:indexPath.row] parent:self.presentingViewController];
     [tableView deselectRowAtIndexPath:indexPath animated:YES];
 }
 
