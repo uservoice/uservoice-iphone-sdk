@@ -13,6 +13,10 @@
 		410BA91F1D7D9E270014A56D /* UVWelcomeSearchResultsController.m in Sources */ = {isa = PBXBuildFile; fileRef = 410BA91D1D7D9E270014A56D /* UVWelcomeSearchResultsController.m */; };
 		410BA9201D7D9E320014A56D /* UVWelcomeSearchResultsController.h in Headers */ = {isa = PBXBuildFile; fileRef = 410BA91C1D7D9E270014A56D /* UVWelcomeSearchResultsController.h */; };
 		410BA9211D7D9E360014A56D /* UVWelcomeSearchResultsController.m in Sources */ = {isa = PBXBuildFile; fileRef = 410BA91D1D7D9E270014A56D /* UVWelcomeSearchResultsController.m */; };
+		413DC6741D88DA8B00F6426F /* UVSuggestionSearchResultsController.h in Headers */ = {isa = PBXBuildFile; fileRef = 413DC6721D88DA8B00F6426F /* UVSuggestionSearchResultsController.h */; };
+		413DC6751D88DA8B00F6426F /* UVSuggestionSearchResultsController.h in Headers */ = {isa = PBXBuildFile; fileRef = 413DC6721D88DA8B00F6426F /* UVSuggestionSearchResultsController.h */; };
+		413DC6761D88DA8B00F6426F /* UVSuggestionSearchResultsController.m in Sources */ = {isa = PBXBuildFile; fileRef = 413DC6731D88DA8B00F6426F /* UVSuggestionSearchResultsController.m */; };
+		413DC6771D88DA8B00F6426F /* UVSuggestionSearchResultsController.m in Sources */ = {isa = PBXBuildFile; fileRef = 413DC6731D88DA8B00F6426F /* UVSuggestionSearchResultsController.m */; };
 		6474C33614BB8D5D00F6A2F0 /* UserVoice.h in Headers */ = {isa = PBXBuildFile; fileRef = 6474C33714BB8D5D00F6A2F0 /* UserVoice.h */; };
 		80B5291E13A16A2F008709D2 /* UVCustomField.h in Headers */ = {isa = PBXBuildFile; fileRef = 80B5291C13A16A2F008709D2 /* UVCustomField.h */; };
 		80B5291F13A16A2F008709D2 /* UVCustomField.m in Sources */ = {isa = PBXBuildFile; fileRef = 80B5291D13A16A2F008709D2 /* UVCustomField.m */; };
@@ -291,6 +295,8 @@
 		3A37C3D01929A96B00942423 /* UVAttachment.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = UVAttachment.m; sourceTree = "<group>"; };
 		410BA91C1D7D9E270014A56D /* UVWelcomeSearchResultsController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = UVWelcomeSearchResultsController.h; sourceTree = "<group>"; };
 		410BA91D1D7D9E270014A56D /* UVWelcomeSearchResultsController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = UVWelcomeSearchResultsController.m; sourceTree = "<group>"; };
+		413DC6721D88DA8B00F6426F /* UVSuggestionSearchResultsController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = UVSuggestionSearchResultsController.h; sourceTree = "<group>"; };
+		413DC6731D88DA8B00F6426F /* UVSuggestionSearchResultsController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = UVSuggestionSearchResultsController.m; sourceTree = "<group>"; };
 		6474C33714BB8D5D00F6A2F0 /* UserVoice.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = UserVoice.h; path = Include/UserVoice.h; sourceTree = SOURCE_ROOT; };
 		70D9A20D1CBFA4E300D8BAA0 /* af.lproj */ = {isa = PBXFileReference; lastKnownFileType = folder; path = af.lproj; sourceTree = "<group>"; };
 		80B5291C13A16A2F008709D2 /* UVCustomField.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = UVCustomField.h; sourceTree = "<group>"; };
@@ -638,6 +644,8 @@
 				D9CB6547181877F2006B05D7 /* UVPostIdeaViewController.m */,
 				410BA91C1D7D9E270014A56D /* UVWelcomeSearchResultsController.h */,
 				410BA91D1D7D9E270014A56D /* UVWelcomeSearchResultsController.m */,
+				413DC6721D88DA8B00F6426F /* UVSuggestionSearchResultsController.h */,
+				413DC6731D88DA8B00F6426F /* UVSuggestionSearchResultsController.m */,
 			);
 			name = Controllers;
 			sourceTree = "<group>";
@@ -863,6 +871,7 @@
 				410BA91E1D7D9E270014A56D /* UVWelcomeSearchResultsController.h in Headers */,
 				3A37C3D11929A96B00942423 /* UVAttachment.h in Headers */,
 				D2620F0911B597290053EA4C /* HRGlobal.h in Headers */,
+				413DC6741D88DA8B00F6426F /* UVSuggestionSearchResultsController.h in Headers */,
 				D2620F0B11B597290053EA4C /* HROperationQueue.h in Headers */,
 				D9E8B6A818105CC8003C7E07 /* UVInstantAnswerManager.h in Headers */,
 				D2620F0D11B597290053EA4C /* HRRequestOperation.h in Headers */,
@@ -943,6 +952,7 @@
 				D3683A621C77476E0036064E /* UVImageView.h in Headers */,
 				D3683A631C77476E0036064E /* UVTextView.h in Headers */,
 				D3683A641C77476E0036064E /* UVTruncatingLabel.h in Headers */,
+				413DC6751D88DA8B00F6426F /* UVSuggestionSearchResultsController.h in Headers */,
 				D3683A651C77476E0036064E /* UVCalculatingLabel.h in Headers */,
 				D3683A661C77476E0036064E /* UVTextWithFieldsView.h in Headers */,
 				D3683A671C77476E0036064E /* UVNavigationController.h in Headers */,
@@ -1086,6 +1096,7 @@
 				AC312546109231D800000D5F /* YOAuthRequest.m in Sources */,
 				AC312549109231D800000D5F /* YOAuthSignatureMethod_HMAC-SHA1.m in Sources */,
 				AC31254B109231D800000D5F /* YOAuthSignatureMethod_PLAINTEXT.m in Sources */,
+				413DC6761D88DA8B00F6426F /* UVSuggestionSearchResultsController.m in Sources */,
 				AC31254D109231D800000D5F /* YOAuthToken.m in Sources */,
 				AC31254F109231D800000D5F /* YOAuthUtil.m in Sources */,
 				AC31259F109263F600000D5F /* UVResponseDelegate.m in Sources */,
@@ -1157,6 +1168,7 @@
 				D3683A061C77471D0036064E /* UVCommentViewController.m in Sources */,
 				D3683A071C77471D0036064E /* UVHelpTopicViewController.m in Sources */,
 				D3683A081C77471D0036064E /* UVContactViewController.m in Sources */,
+				413DC6771D88DA8B00F6426F /* UVSuggestionSearchResultsController.m in Sources */,
 				D3683A091C77471D0036064E /* UVInstantAnswersViewController.m in Sources */,
 				D3683A0A1C77471D0036064E /* UVDetailsFormViewController.m in Sources */,
 				D3683A0B1C77471D0036064E /* UVSuccessViewController.m in Sources */,
