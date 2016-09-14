@@ -266,6 +266,8 @@
     [_tableView reloadData];
 }
 
+#pragma mark ==== UISearchResultsUpdating Methods ====
+
 // DDSearch
 - (void)updateSearchResultsForSearchController:(UISearchController *)searchController {
     _instantAnswerManager.searchText = searchController.searchBar.text;

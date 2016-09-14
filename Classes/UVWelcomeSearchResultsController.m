@@ -18,9 +18,7 @@
     self = [super init];
     if (self) {
         _instantAnswerManager = [UVInstantAnswerManager new];
-        [self setupGroupedTableView];
-        self.tableView.delegate = self;
-        self.tableView.dataSource = self;
+        [self setupPlainTableView];
         return self;
     }
 }
@@ -58,12 +56,13 @@
 
 - (NSInteger)numberOfSectionsInTableView:(UITableView *)tableView {
     tableView.backgroundView = nil;
-    UILabel *noResultsLabel = [[UILabel alloc] initWithFrame:CGRectMake(0, 0, tableView.frame.size.width, tableView.frame.size.height)];
-    noResultsLabel.text = @"No Results";
-    noResultsLabel.textAlignment = NSTextAlignmentCenter;
-    [noResultsLabel sizeToFit];
+    tableView.separatorStyle = UITableViewCellSeparatorStyleSingleLine;
     
     if (_searchResults.count == 0) {
+        UILabel *noResultsLabel = [[UILabel alloc] initWithFrame:CGRectMake(0, 0, tableView.frame.size.width, tableView.frame.size.height)];
+        noResultsLabel.text = @"No Results";
+        noResultsLabel.textAlignment = NSTextAlignmentCenter;
+        [noResultsLabel sizeToFit];
         tableView.backgroundView = noResultsLabel;
         tableView.separatorStyle = UITableViewCellSeparatorStyleNone;
         return 0;
