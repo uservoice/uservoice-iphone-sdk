@@ -192,23 +192,6 @@
 
 - (NSInteger)numberOfSectionsInTableView:(UITableView *)tableView {
     // DDSearch
-    tableView.backgroundView = nil;
-    if (_searchResults.count == 0 && _searchController.active && ![_searchController.searchBar.text isEqualToString:@""]) {
-        tableView.tableFooterView = [[UIView alloc] initWithFrame:CGRectZero];
-        UILabel *noResultsLabel = [[UILabel alloc] initWithFrame:CGRectMake(0, 0, tableView.frame.size.width, tableView.frame.size.height)];
-        noResultsLabel.text = @"No Results";
-        noResultsLabel.textAlignment = NSTextAlignmentCenter;
-        [noResultsLabel sizeToFit];
-        tableView.backgroundView = noResultsLabel;
-        tableView.separatorStyle = UITableViewCellSeparatorStyleNone;
-        return 0;
-    } else if (_searchController.active && ![_searchController.searchBar.text isEqualToString:@""]) {
-        if (![UVSession currentSession].clientConfig.whiteLabel) {
-            _tableView.tableFooterView = self.poweredByView;
-        }
-        return 1;
-    }
-//    return _searchController.active && ![_searchController.searchBar.text isEqualToString:@""] ? 1 : 2;
     return [UVSession currentSession].config.showPostIdea && tableView == _tableView ? 2 : 1;
 }
 
@@ -269,23 +252,9 @@
 
 - (void)searchBarCancelButtonClicked:(UISearchBar *)searchBar {
     // DDSearch
-    if (![UVSession currentSession].clientConfig.whiteLabel) {
-        _tableView.tableFooterView = self.poweredByView;
-    }
-    _tableView.separatorStyle = UITableViewCellSeparatorStyleSingleLine;
     _searchController.searchBar.text = @"";
     _searchResults = [NSArray array];
     [_tableView reloadData];
-    [_tableView scrollToRowAtIndexPath:[NSIndexPath indexPathForRow:0 inSection:0] atScrollPosition:UITableViewScrollPositionTop animated:YES];
-//    _searchBar.showsScopeBar = NO;
-//    if (FORMSHEET) {
-//        [_searchBar setShowsCancelButton:NO animated:YES];
-//        _searchBar.text = @"";
-//        _searchResults = [NSArray array];
-//        [_searchBar resignFirstResponder];
-//        _searching = NO;
-//        [_tableView reloadData];
-//    }
 }
 
 #pragma mark ==== UISearchResultsUpdating Methods ====

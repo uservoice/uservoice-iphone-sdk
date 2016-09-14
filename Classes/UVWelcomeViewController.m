@@ -339,8 +339,7 @@
         // DDSearch
         self.definesPresentationContext = true;
         self.searchResultsController = [[UVWelcomeSearchResultsController alloc] init];
-        UINavigationController *searchNavController = [[UINavigationController alloc] initWithRootViewController:self.searchResultsController];
-        _searchController = [[UISearchController alloc] initWithSearchResultsController:searchNavController.topViewController];
+        _searchController = [[UISearchController alloc] initWithSearchResultsController:self.searchResultsController];
         _searchController.searchResultsUpdater = self;
         [_searchController.searchBar sizeToFit];
         _searchController.searchBar.delegate = self;
