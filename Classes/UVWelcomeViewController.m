@@ -32,7 +32,7 @@
 
 @interface UVWelcomeViewController ()
 @property (nonatomic, retain) UISearchController *searchController;
-@property (nonatomic, strong) UVWelcomeSearchResultsController *searchResultsController;
+@property (nonatomic, retain) UVWelcomeSearchResultsController *searchResultsController;
 @end
 
 @implementation UVWelcomeViewController {
@@ -363,7 +363,7 @@
 }
 
 - (void)dismiss {
-    _searchController.active = NO;
+    self.searchResultsController = nil;
     _instantAnswerManager.delegate = nil;
     [super dismiss];
 }
@@ -381,8 +381,10 @@
     //
     // DDSearch
     if (_searchController) {
-        _searchController = nil;
         _searchController.searchResultsUpdater = nil;
+    }
+    if (self.searchResultsController) {
+        self.searchResultsController = nil;
     }
 }
 
