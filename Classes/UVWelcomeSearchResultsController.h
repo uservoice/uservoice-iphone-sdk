@@ -13,6 +13,6 @@
 @interface UVWelcomeSearchResultsController : UVBaseViewController<UITableViewDelegate, UITableViewDataSource>
 
 @property (nonatomic, retain) UVInstantAnswerManager *instantAnswerManager;
-@property (nonatomic, strong) NSArray *searchResults;
+@property (nonatomic, retain) NSArray *searchResults;
 
 @end

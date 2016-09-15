@@ -33,6 +33,7 @@
 }
 
 - (void)dealloc {
+    _searchResults = nil;
 }
 
 - (void)dismiss {

@@ -32,7 +32,7 @@
 
 @interface UVWelcomeViewController ()
 @property (nonatomic, retain) UISearchController *searchController;
-@property (nonatomic, strong) UVWelcomeSearchResultsController *searchResultsController;
+@property (nonatomic, retain) UVWelcomeSearchResultsController *searchResultsController;
 @end
 
 @implementation UVWelcomeViewController {
@@ -376,6 +376,10 @@
 - (void)dealloc {
     if (_instantAnswerManager) {
         _instantAnswerManager.delegate = nil;
+    }
+    
+    if (_searchResultsController) {
+        self.searchResultsController = nil;
     }
     
     //
