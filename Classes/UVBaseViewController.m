@@ -363,7 +363,6 @@
 - (void)tableViewSetup {
     _tableView.delegate = (id<UITableViewDelegate>)self;
     _tableView.dataSource = (id<UITableViewDataSource>)self;
-    _tableView.tableFooterView = [[UIView alloc] initWithFrame:CGRectZero];
     if ([UVStyleSheet instance].tableViewBackgroundColor) {
         if (!IOS7) {
             UIView *bg = [UIView new];
@@ -373,7 +372,8 @@
         _tableView.backgroundColor = [UVStyleSheet instance].tableViewBackgroundColor;
     }
     self.view = _tableView;
-    _tableView.tableFooterView =  [[UIView alloc] initWithFrame:CGRectZero];
+    // Remove empty table cells from the bottom of the table view
+    _tableView.tableFooterView = [[UIView alloc] initWithFrame:CGRectZero];
 }
 
 - (void)setView:(UIView *)view {

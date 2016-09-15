@@ -38,7 +38,7 @@
 
 @interface UVSuggestionListViewController()
 @property (nonatomic, retain) UISearchController *searchController;
-@property (nonatomic, strong) UVSuggestionSearchResultsController *searchResultsController;
+@property (nonatomic, retain) UVSuggestionSearchResultsController *searchResultsController;
 @end
 
 @implementation UVSuggestionListViewController {
@@ -333,22 +333,23 @@
     }
 }
 
+- (void)dismiss {
+    self.searchResultsController = nil;
+}
+
 - (void)ideaWasCreated:(UVSuggestion *)suggestion {
     _forum.suggestions = nil;
     [self populateSuggestions];
     [_tableView reloadData];
 }
 
-- (void)dismiss {
-    _searchController.active = NO;
-    [super dismiss];
-}
-
 - (void)dealloc {
     // DDSearch
     if (_searchController) {
-        _searchController = nil;
         _searchController.searchResultsUpdater = nil;
+    }
+    if (self.searchResultsController) {
+        self.searchResultsController = nil;
     }
 }
 

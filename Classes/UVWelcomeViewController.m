@@ -363,7 +363,7 @@
 }
 
 - (void)dismiss {
-    _searchController.active = NO;
+    self.searchResultsController = nil;
     _instantAnswerManager.delegate = nil;
     [super dismiss];
 }
@@ -385,8 +385,10 @@
     //
     // DDSearch
     if (_searchController) {
-        _searchController = nil;
         _searchController.searchResultsUpdater = nil;
+    }
+    if (self.searchResultsController) {
+        self.searchResultsController = nil;
     }
 }
 
