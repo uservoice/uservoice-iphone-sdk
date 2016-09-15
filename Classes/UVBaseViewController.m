@@ -373,6 +373,7 @@
         _tableView.backgroundColor = [UVStyleSheet instance].tableViewBackgroundColor;
     }
     self.view = _tableView;
+    _tableView.tableFooterView =  [[UIView alloc] initWithFrame:CGRectZero];
 }
 
 - (void)setView:(UIView *)view {
