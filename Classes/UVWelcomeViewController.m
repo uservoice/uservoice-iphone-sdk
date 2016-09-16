@@ -378,10 +378,6 @@
         _instantAnswerManager.delegate = nil;
     }
     
-    if (_searchResultsController) {
-        self.searchResultsController = nil;
-    }
-    
     //
     // DDSearch
     if (_searchController) {

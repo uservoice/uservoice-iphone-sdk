@@ -334,7 +334,13 @@
 }
 
 - (void)dismiss {
-    self.searchResultsController = nil;
+    _searchResults = nil;
+    if (_searchController) {
+        _searchController.searchResultsUpdater = nil;
+    }
+    if (self.searchResultsController) {
+        self.searchResultsController = nil;
+    }
 }
 
 - (void)ideaWasCreated:(UVSuggestion *)suggestion {
@@ -345,6 +351,7 @@
 
 - (void)dealloc {
     // DDSearch
+    _searchResults = nil;
     if (_searchController) {
         _searchController.searchResultsUpdater = nil;
     }
