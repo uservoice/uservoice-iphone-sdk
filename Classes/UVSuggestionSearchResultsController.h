@@ -11,6 +11,6 @@
 
 @interface UVSuggestionSearchResultsController: UVBaseViewController<UITableViewDelegate, UITableViewDataSource>
 
-@property (nonatomic, strong) NSArray *searchResults;
+@property (nonatomic, retain) NSArray *searchResults;
 
 @end

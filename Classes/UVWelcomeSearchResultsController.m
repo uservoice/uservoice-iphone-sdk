@@ -25,6 +25,7 @@
 
 - (void)dealloc {
     _instantAnswerManager = nil;
+    _searchResults = nil;
 }
 
 - (void)dismiss {
