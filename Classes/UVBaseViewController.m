@@ -352,6 +352,15 @@
 
 - (void)setupGroupedTableView {
     _tableView = [[UITableView alloc] initWithFrame:[self contentFrame] style:UITableViewStyleGrouped];
+    [self tableViewSetup];
+}
+
+- (void)setupPlainTableView {
+    _tableView = [[UITableView alloc] initWithFrame:[self contentFrame] style:UITableViewStylePlain];
+    [self tableViewSetup];
+}
+
+- (void)tableViewSetup {
     _tableView.delegate = (id<UITableViewDelegate>)self;
     _tableView.dataSource = (id<UITableViewDataSource>)self;
     if ([UVStyleSheet instance].tableViewBackgroundColor) {
@@ -363,6 +372,8 @@
         _tableView.backgroundColor = [UVStyleSheet instance].tableViewBackgroundColor;
     }
     self.view = _tableView;
+    // Remove empty table cells from the bottom of the table view
+    _tableView.tableFooterView = [[UIView alloc] initWithFrame:CGRectZero];
 }
 
 - (void)setView:(UIView *)view {
