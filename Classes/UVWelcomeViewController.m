@@ -254,12 +254,10 @@
 
 - (void)searchBar:(UISearchBar *)searchBar selectedScopeButtonIndexDidChange:(NSInteger)selectedScope {
     _filter = searchBar.selectedScopeButtonIndex;
-    // DDSearch
     [self updateSearchResultsForSearchController:_searchController];
 }
 
 - (void)searchBarCancelButtonClicked:(UISearchBar *)searchBar {
-    // DDSearch
     _searchController.searchBar.selectedScopeButtonIndex = 0;
     _searchController.searchBar.text = @"";
     _instantAnswerManager.instantAnswers = [NSArray array];
@@ -268,7 +266,6 @@
 
 #pragma mark ==== UISearchResultsUpdating Methods ====
 
-// DDSearch
 - (void)updateSearchResultsForSearchController:(UISearchController *)searchController {
     _instantAnswerManager.searchText = searchController.searchBar.text;
     [_instantAnswerManager search];
@@ -283,7 +280,6 @@
 #pragma mark ===== Search handling =====
 
 - (void)didUpdateInstantAnswers {
-    // DDSearch
     if (_searchController.active && ![_searchController.searchBar.text isEqualToString:@""]) {
         [self updateSearchResultsForSearchController:_searchController];
     }
@@ -335,8 +331,6 @@
     [self setupGroupedTableView];
 
     if ([UVSession currentSession].config.showKnowledgeBase) {
-        //
-        // DDSearch
         self.definesPresentationContext = true;
         self.searchResultsController = [[UVWelcomeSearchResultsController alloc] init];
         _searchController = [[UISearchController alloc] initWithSearchResultsController:self.searchResultsController];
@@ -378,8 +372,6 @@
         _instantAnswerManager.delegate = nil;
     }
     
-    //
-    // DDSearch
     if (_searchController) {
         _searchController.searchResultsUpdater = nil;
     }

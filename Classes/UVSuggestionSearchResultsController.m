@@ -30,6 +30,7 @@
         [self setupPlainTableView];
         return self;
     }
+    return nil;
 }
 
 - (void)dealloc {

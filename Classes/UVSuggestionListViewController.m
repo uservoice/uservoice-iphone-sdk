@@ -79,7 +79,6 @@
     for (UVSuggestion *suggestion in theSuggestions) {
         [ids addObject:[NSNumber numberWithInteger:suggestion.suggestionId]];
     }
-    // DDSearch
     [UVBabayaga track:SEARCH_IDEAS searchText:_searchController.searchBar.text ids:ids];
     
     if (_searchController.active && ![_searchController.searchBar.text isEqualToString:@""]) {
@@ -171,7 +170,6 @@
 }
 
 - (UITableViewCell *)tableView:(UITableView *)theTableView cellForRowAtIndexPath:(NSIndexPath *)indexPath {
-    // DDSearch
     NSString *identifier = (indexPath.section == 0 && [UVSession currentSession].config.showPostIdea) ? @"Add" : (indexPath.row < _forum.suggestions.count) ? @"Suggestion" : @"Load";
 
     return [self createCellForIdentifier:identifier
@@ -182,7 +180,6 @@
 }
 
 - (NSInteger)tableView:(UITableView *)theTableView numberOfRowsInSection:(NSInteger)section {
-    // DDSearch
     if (section == 0 && [UVSession currentSession].config.showPostIdea && theTableView == _tableView) {
         return 1;
     } else {
@@ -191,14 +188,12 @@
 }
 
 - (NSInteger)numberOfSectionsInTableView:(UITableView *)tableView {
-    // DDSearch
     return [UVSession currentSession].config.showPostIdea && tableView == _tableView ? 2 : 1;
 }
 
 #pragma mark ===== UITableViewDelegate Methods =====
 
 - (CGFloat)tableView:(UITableView *)theTableView heightForRowAtIndexPath:(NSIndexPath *)indexPath {
-    // DDSearch
     if (theTableView == _tableView && indexPath.row < _forum.suggestions.count) {
         return [self heightForDynamicRowWithReuseIdentifier:@"Suggestion" indexPath:indexPath];
     } else {
@@ -207,7 +202,6 @@
 }
 
 - (NSString *)tableView:(UITableView *)tableView titleForHeaderInSection:(NSInteger)section {
-    // DDSearch
     if (section == 0 && [UVSession currentSession].config.showPostIdea) {
             return nil;
     } else {
@@ -222,14 +216,12 @@
 
 - (void)composeButtonTapped {
     UVPostIdeaViewController *next = [UVPostIdeaViewController new];
-    // DDSearch
     next.initialText = _searchController.searchBar.text;
     next.delegate = self;
     [self presentModalViewController:next];
 }
 
 - (void)tableView:(UITableView *)theTableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath {
-    // DDSearch
     if (indexPath.section == 0 && [UVSession currentSession].config.showPostIdea) {
         [self composeButtonTapped];
     } else if (indexPath.row < _forum.suggestions.count) {
@@ -244,14 +236,12 @@
 }
 
 - (CGFloat)tableView:(UITableView *)tableView heightForHeaderInSection:(NSInteger)section {
-    // DDSearch
     return 30;
 }
 
 #pragma mark ===== UISearchBarDelegate Methods =====
 
 - (void)searchBarCancelButtonClicked:(UISearchBar *)searchBar {
-    // DDSearch
     _searchController.searchBar.text = @"";
     _searchResults = [NSArray array];
     [_tableView reloadData];
@@ -259,7 +249,6 @@
 
 #pragma mark ==== UISearchResultsUpdating Methods ====
 
-// DDSearch
 - (void)updateSearchResultsForSearchController:(UISearchController *)searchController {
     [UVSuggestion searchWithForum:_forum query:searchController.searchBar.text delegate:self];
     
@@ -277,7 +266,6 @@
     [UVBabayaga track:VIEW_FORUM id:_forum.forumId];
     [self setupGroupedTableView];
 
-    // DDSearch
     self.definesPresentationContext = true;
     self.searchResultsController = [[UVSuggestionSearchResultsController alloc] init];
     _searchController = [[UISearchController alloc] initWithSearchResultsController:self.searchResultsController];
@@ -350,7 +338,6 @@
 }
 
 - (void)dealloc {
-    // DDSearch
     _searchResults = nil;
     if (_searchController) {
         _searchController.searchResultsUpdater = nil;
