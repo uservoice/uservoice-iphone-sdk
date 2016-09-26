@@ -14,12 +14,9 @@
 
 @implementation UVWelcomeSearchResultsController
 
-- (instancetype)init {
-    self = [super init];
-    if (self) {
-        _instantAnswerManager = [UVInstantAnswerManager new];
-    }
-    return self;
+- (void)loadView {
+    [super loadView];
+    _instantAnswerManager = [UVInstantAnswerManager new];
 }
 
 - (void)dealloc {

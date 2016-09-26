@@ -14,12 +14,9 @@
 
 @implementation UVBaseSearchResultsViewController
 
-- (instancetype)init {
-    self = [super init];
-    if (self) {
-        [self setupPlainTableView];
-    }
-    return self;
+- (void)loadView {
+    [super loadView];
+    [self setupPlainTableView];
 }
 
 - (void)dealloc {
@@ -28,10 +25,7 @@
 
 #pragma mark - Table view data source
 
-- (NSInteger)numberOfSectionsInTableView:(UITableView *)tableView {
-    tableView.backgroundView = nil;
-    tableView.separatorStyle = UITableViewCellSeparatorStyleSingleLine;
-    
+- (NSInteger)numberOfSectionsInTableView:(UITableView *)tableView {    
     if (self.searchResults.count == 0) {
         UILabel *noResultsLabel = [[UILabel alloc] initWithFrame:CGRectMake(0, 0, tableView.frame.size.width, tableView.frame.size.height)];
         noResultsLabel.text = @"No Results";

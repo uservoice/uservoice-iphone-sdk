@@ -139,7 +139,9 @@
 #pragma mark ===== UITableViewDelegate Methods =====
 
 - (CGFloat)tableView:(UITableView *)theTableView heightForRowAtIndexPath:(NSIndexPath *)indexPath {
-    if (theTableView == _tableView && indexPath.row < _forum.suggestions.count) {
+    if (indexPath.section == 0 && [UVSession currentSession].config.showPostIdea && theTableView == _tableView) {
+        return 44;
+    } else if (theTableView == _tableView && indexPath.row < _forum.suggestions.count) {
         return [self heightForDynamicRowWithReuseIdentifier:@"Suggestion" indexPath:indexPath];
     } else {
         return 44;
@@ -200,6 +202,8 @@
     if (_searchController.searchResultsController) {
         UVSuggestionSearchResultsController *searchResultsTVC = (UVSuggestionSearchResultsController *)_searchController.searchResultsController;
         searchResultsTVC.searchResults = self.searchResults;
+        searchResultsTVC.tableView.backgroundView = nil;
+        searchResultsTVC.tableView.separatorStyle = UITableViewCellSeparatorStyleSingleLine;
         [searchResultsTVC.tableView reloadData];
     }
 }
