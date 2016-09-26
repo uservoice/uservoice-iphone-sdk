@@ -202,8 +202,7 @@
     if (_searchController.searchResultsController) {
         UVSuggestionSearchResultsController *searchResultsTVC = (UVSuggestionSearchResultsController *)_searchController.searchResultsController;
         searchResultsTVC.searchResults = self.searchResults;
-        searchResultsTVC.tableView.backgroundView = nil;
-        searchResultsTVC.tableView.separatorStyle = UITableViewCellSeparatorStyleSingleLine;
+        searchResultsTVC.tableView.backgroundView = [searchResultsTVC displayNoResults];
         [searchResultsTVC.tableView reloadData];
     }
 }

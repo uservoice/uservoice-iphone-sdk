@@ -13,4 +13,6 @@
 
 @property (nonatomic, retain) NSArray *searchResults;
 
+- (UIView *)displayNoResults;
+
 @end

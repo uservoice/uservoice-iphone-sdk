@@ -23,20 +23,22 @@
     self.searchResults = nil;
 }
 
-#pragma mark - Table view data source
-
-- (NSInteger)numberOfSectionsInTableView:(UITableView *)tableView {    
+- (UIView *)displayNoResults {
     if (self.searchResults.count == 0) {
-        UILabel *noResultsLabel = [[UILabel alloc] initWithFrame:CGRectMake(0, 0, tableView.frame.size.width, tableView.frame.size.height)];
+        UILabel *noResultsLabel = [[UILabel alloc] initWithFrame:CGRectMake(0, 0, self.tableView.frame.size.width, self.tableView.frame.size.height)];
         noResultsLabel.text = @"No Results";
         noResultsLabel.textAlignment = NSTextAlignmentCenter;
         [noResultsLabel sizeToFit];
-        tableView.backgroundView = noResultsLabel;
-        tableView.separatorStyle = UITableViewCellSeparatorStyleNone;
-        return 0;
+        return noResultsLabel;
+    } else {
+        return nil;
     }
-    
-    return 1;
+}
+
+#pragma mark - Table view data source
+
+- (NSInteger)numberOfSectionsInTableView:(UITableView *)tableView {    
+    return (self.searchResults.count == 0) ? 0 : 1;
 }
 
 - (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section {
