@@ -236,7 +236,8 @@
 
 - (void)searchBar:(UISearchBar *)searchBar selectedScopeButtonIndexDidChange:(NSInteger)selectedScope {
     _filter = searchBar.selectedScopeButtonIndex;
-    [self updateSearchResultsForSearchController:_searchController];
+    // Make sure that we update the displayed search results if the scope changes
+    [self didUpdateInstantAnswers];
 }
 
 - (void)searchBarCancelButtonClicked:(UISearchBar *)searchBar {
@@ -249,23 +250,20 @@
 #pragma mark ==== UISearchResultsUpdating Methods ====
 
 - (void)updateSearchResultsForSearchController:(UISearchController *)searchController {
+    // Perform search whenever the search text is changed
     _instantAnswerManager.searchText = searchController.searchBar.text;
     [_instantAnswerManager search];
-    
+}
+
+#pragma mark ===== Search handling =====
+
+- (void)didUpdateInstantAnswers {
     if (_searchController.searchResultsController) {
         UVWelcomeSearchResultsController *searchResultsTVC = (UVWelcomeSearchResultsController *)_searchController.searchResultsController;
         searchResultsTVC.searchResults = self.searchResults;
         searchResultsTVC.tableView.backgroundView = nil;
         searchResultsTVC.tableView.separatorStyle = UITableViewCellSeparatorStyleSingleLine;
         [searchResultsTVC.tableView reloadData];
-    }
-}
-
-#pragma mark ===== Search handling =====
-
-- (void)didUpdateInstantAnswers {
-    if (_searchController.active && ![_searchController.searchBar.text isEqualToString:@""]) {
-        [self updateSearchResultsForSearchController:_searchController];
     }
 }
 
