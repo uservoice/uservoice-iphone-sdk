@@ -24,19 +24,6 @@
 
 @implementation UVSuggestionSearchResultsController
 
-- (instancetype)init {
-    self = [super init];
-    if (self) {
-        [self setupPlainTableView];
-        return self;
-    }
-    return nil;
-}
-
-- (void)dealloc {
-    _searchResults = nil;
-}
-
 - (void)dismiss {
     [super dismiss];
 }
@@ -48,7 +35,7 @@
 }
 
 - (void)customizeCellForResult:(UITableViewCell *)cell indexPath:(NSIndexPath *)indexPath {
-    [self customizeCellForSuggestion:[_searchResults objectAtIndex:indexPath.row] cell:cell];
+    [self customizeCellForSuggestion:[self.searchResults objectAtIndex:indexPath.row] cell:cell];
 }
 
 - (void)initCellForSuggestion:(UITableViewCell *)cell indexPath:(NSIndexPath *)indexPath {
@@ -104,29 +91,7 @@
 
 #pragma mark - Table view data source
 
-- (NSInteger)numberOfSectionsInTableView:(UITableView *)tableView {
-    tableView.backgroundView = nil;
-    tableView.separatorStyle = UITableViewCellSeparatorStyleSingleLine;
-    
-    if (_searchResults.count == 0) {
-        UILabel *noResultsLabel = [[UILabel alloc] initWithFrame:CGRectMake(0, 0, tableView.frame.size.width, tableView.frame.size.height)];
-        noResultsLabel.text = @"No Results";
-        noResultsLabel.textAlignment = NSTextAlignmentCenter;
-        [noResultsLabel sizeToFit];
-        tableView.backgroundView = noResultsLabel;
-        tableView.separatorStyle = UITableViewCellSeparatorStyleNone;
-        return 0;
-    }
-    
-    return 1;
-}
-
-- (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section {
-    return _searchResults.count;
-}
-
-
-- (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath {
+- (UITableViewCell *)setupCellForRow:(UITableView *)tableView indexPath:(NSIndexPath *)indexPath {
     NSString *identifier = @"Result";
     NSInteger style = UITableViewCellStyleDefault;
     
@@ -136,20 +101,12 @@
 #pragma mark - Table view delegate
 
 - (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath {
-    [self showSuggestion:[_searchResults objectAtIndex:indexPath.row]];
     [tableView deselectRowAtIndexPath:indexPath animated:YES];
+    [self showSuggestion:[self.searchResults objectAtIndex:indexPath.row]];
 }
 
 - (CGFloat)tableView:(UITableView *)tableView heightForRowAtIndexPath:(NSIndexPath *)indexPath {
     return [self heightForDynamicRowWithReuseIdentifier:@"Result" indexPath:indexPath];
-}
-
-- (CGFloat)tableView:(UITableView *)tableView heightForHeaderInSection:(NSInteger)section {
-    return 0;
-}
-
-- (CGFloat)tableView:(UITableView *)tableView heightForFooterInSection:(NSInteger)section {
-    return 0;
 }
 
 - (void)showSuggestion:(UVSuggestion *)suggestion {
