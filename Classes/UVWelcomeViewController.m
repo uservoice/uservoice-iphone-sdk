@@ -124,24 +124,6 @@
     cell.accessoryType = UITableViewCellAccessoryDisclosureIndicator;
 }
 
-- (void)initCellForArticleResult:(UITableViewCell *)cell indexPath:(NSIndexPath *)indexPath {
-    [_instantAnswerManager initCellForArticle:cell finalCondition:indexPath == nil];
-}
-
-- (void)customizeCellForArticleResult:(UITableViewCell *)cell indexPath:(NSIndexPath *)indexPath {
-    id model = [self.searchResults objectAtIndex:indexPath.row];
-    [_instantAnswerManager customizeCell:cell forArticle:(UVArticle *)model];
-}
-
-- (void)initCellForSuggestionResult:(UITableViewCell *)cell indexPath:(NSIndexPath *)indexPath {
-    [_instantAnswerManager initCellForSuggestion:cell finalCondition:indexPath == nil];
-}
-
-- (void)customizeCellForSuggestionResult:(UITableViewCell *)cell indexPath:(NSIndexPath *)indexPath {
-    id model = [self.searchResults objectAtIndex:indexPath.row];
-    [_instantAnswerManager customizeCell:cell forSuggestion:(UVSuggestion *)model];
-}
-
 #pragma mark ===== UITableViewDataSource Methods =====
 
 - (UITableViewCell *)tableView:(UITableView *)theTableView cellForRowAtIndexPath:(NSIndexPath *)indexPath {
