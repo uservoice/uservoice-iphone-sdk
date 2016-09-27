@@ -30,10 +30,6 @@
 #define UV_SEARCH_TOOLBAR 1000
 #define UV_SEARCH_TOOLBAR_LABEL 1001
 
-#define TITLE 20
-#define SUBSCRIBER_COUNT 21
-#define STATUS 22
-#define STATUS_COLOR 23
 #define LOADING 30
 
 @interface UVSuggestionListViewController()
@@ -79,7 +75,6 @@
     for (UVSuggestion *suggestion in theSuggestions) {
         [ids addObject:[NSNumber numberWithInteger:suggestion.suggestionId]];
     }
-    // DDSearch
     [UVBabayaga track:SEARCH_IDEAS searchText:_searchController.searchBar.text ids:ids];
     
     if (_searchController.active && ![_searchController.searchBar.text isEqualToString:@""]) {
@@ -97,41 +92,6 @@
     if (IOS7) {
         cell.textLabel.textColor = cell.textLabel.tintColor;
     }
-}
-
-- (void)initCellForSuggestion:(UITableViewCell *)cell indexPath:(NSIndexPath *)indexPath {
-    cell.backgroundColor = [UIColor whiteColor];
-    cell.accessoryType = UITableViewCellAccessoryDisclosureIndicator;
-    UIImageView *heart = [UVUtils imageViewWithImageNamed:@"uv_heart.png"];
-    UILabel *subs = [UILabel new];
-    subs.font = [UIFont systemFontOfSize:14];
-    subs.textColor = [UIColor grayColor];
-    subs.tag = SUBSCRIBER_COUNT;
-    UILabel *title = [UILabel new];
-    title.numberOfLines = 0;
-    title.tag = TITLE;
-    title.font = [UIFont systemFontOfSize:17];
-    UILabel *status = [UILabel new];
-    status.font = [UIFont systemFontOfSize:11];
-    status.tag = STATUS;
-    UIView *statusColor = [UIView new];
-    statusColor.tag = STATUS_COLOR;
-    CALayer *layer = [CALayer layer];
-    layer.frame = CGRectMake(0, 0, 9, 9);
-    [statusColor.layer addSublayer:layer];
-    NSArray *constraints = @[
-        @"|-16-[title]-|",
-        @"|-16-[heart(==9)]-3-[subs]-10-[statusColor(==9)]-5-[status]",
-        @"V:|-12-[title]-6-[heart(==9)]",
-        @"V:[title]-6-[statusColor(==9)]",
-        @"V:[title]-4-[status]",
-        @"V:[title]-2-[subs]"
-    ];
-    [self configureView:cell.contentView
-               subviews:NSDictionaryOfVariableBindings(subs, title, heart, statusColor, status)
-            constraints:constraints
-         finalCondition:indexPath == nil
-        finalConstraint:@"V:[heart]-14-|"];
 }
 
 - (void)customizeCellForSuggestion:(UITableViewCell *)cell indexPath:(NSIndexPath *)indexPath {
@@ -154,24 +114,7 @@
     label.text = _loading ? NSLocalizedStringFromTableInBundle(@"Loading...", @"UserVoice", [UserVoice bundle], nil) : NSLocalizedStringFromTableInBundle(@"Load more", @"UserVoice", [UserVoice bundle], nil);
 }
 
-- (void)customizeCellForSuggestion:(UVSuggestion *)suggestion cell:(UITableViewCell *)cell {
-    UILabel *title = (UILabel *)[cell.contentView viewWithTag:TITLE];
-    UILabel *subs = (UILabel *)[cell.contentView viewWithTag:SUBSCRIBER_COUNT];
-    UILabel *status = (UILabel *)[cell.contentView viewWithTag:STATUS];
-    UIView *statusColor = [cell.contentView viewWithTag:STATUS_COLOR];
-    title.text = suggestion.title;
-    if ([UVSession currentSession].clientConfig.displaySuggestionsByRank) {
-        subs.text = suggestion.rankString;
-    } else {
-        subs.text = [NSString stringWithFormat:@"%d", (int)suggestion.subscriberCount];
-    }
-    [(CALayer *)statusColor.layer.sublayers.lastObject setBackgroundColor:suggestion.statusColor.CGColor];
-    status.textColor = suggestion.statusColor;
-    status.text = [suggestion.status uppercaseString];
-}
-
 - (UITableViewCell *)tableView:(UITableView *)theTableView cellForRowAtIndexPath:(NSIndexPath *)indexPath {
-    // DDSearch
     NSString *identifier = (indexPath.section == 0 && [UVSession currentSession].config.showPostIdea) ? @"Add" : (indexPath.row < _forum.suggestions.count) ? @"Suggestion" : @"Load";
 
     return [self createCellForIdentifier:identifier
@@ -182,7 +125,6 @@
 }
 
 - (NSInteger)tableView:(UITableView *)theTableView numberOfRowsInSection:(NSInteger)section {
-    // DDSearch
     if (section == 0 && [UVSession currentSession].config.showPostIdea && theTableView == _tableView) {
         return 1;
     } else {
@@ -191,15 +133,15 @@
 }
 
 - (NSInteger)numberOfSectionsInTableView:(UITableView *)tableView {
-    // DDSearch
     return [UVSession currentSession].config.showPostIdea && tableView == _tableView ? 2 : 1;
 }
 
 #pragma mark ===== UITableViewDelegate Methods =====
 
 - (CGFloat)tableView:(UITableView *)theTableView heightForRowAtIndexPath:(NSIndexPath *)indexPath {
-    // DDSearch
-    if (theTableView == _tableView && indexPath.row < _forum.suggestions.count) {
+    if (indexPath.section == 0 && [UVSession currentSession].config.showPostIdea && theTableView == _tableView) {
+        return 44;
+    } else if (theTableView == _tableView && indexPath.row < _forum.suggestions.count) {
         return [self heightForDynamicRowWithReuseIdentifier:@"Suggestion" indexPath:indexPath];
     } else {
         return 44;
@@ -207,7 +149,6 @@
 }
 
 - (NSString *)tableView:(UITableView *)tableView titleForHeaderInSection:(NSInteger)section {
-    // DDSearch
     if (section == 0 && [UVSession currentSession].config.showPostIdea) {
             return nil;
     } else {
@@ -222,14 +163,12 @@
 
 - (void)composeButtonTapped {
     UVPostIdeaViewController *next = [UVPostIdeaViewController new];
-    // DDSearch
     next.initialText = _searchController.searchBar.text;
     next.delegate = self;
     [self presentModalViewController:next];
 }
 
 - (void)tableView:(UITableView *)theTableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath {
-    // DDSearch
     if (indexPath.section == 0 && [UVSession currentSession].config.showPostIdea) {
         [self composeButtonTapped];
     } else if (indexPath.row < _forum.suggestions.count) {
@@ -244,14 +183,12 @@
 }
 
 - (CGFloat)tableView:(UITableView *)tableView heightForHeaderInSection:(NSInteger)section {
-    // DDSearch
     return 30;
 }
 
 #pragma mark ===== UISearchBarDelegate Methods =====
 
 - (void)searchBarCancelButtonClicked:(UISearchBar *)searchBar {
-    // DDSearch
     _searchController.searchBar.text = @"";
     _searchResults = [NSArray array];
     [_tableView reloadData];
@@ -259,13 +196,13 @@
 
 #pragma mark ==== UISearchResultsUpdating Methods ====
 
-// DDSearch
 - (void)updateSearchResultsForSearchController:(UISearchController *)searchController {
     [UVSuggestion searchWithForum:_forum query:searchController.searchBar.text delegate:self];
     
     if (_searchController.searchResultsController) {
         UVSuggestionSearchResultsController *searchResultsTVC = (UVSuggestionSearchResultsController *)_searchController.searchResultsController;
         searchResultsTVC.searchResults = self.searchResults;
+        searchResultsTVC.tableView.backgroundView = [searchResultsTVC displayNoResults];
         [searchResultsTVC.tableView reloadData];
     }
 }
@@ -277,7 +214,6 @@
     [UVBabayaga track:VIEW_FORUM id:_forum.forumId];
     [self setupGroupedTableView];
 
-    // DDSearch
     self.definesPresentationContext = true;
     self.searchResultsController = [[UVSuggestionSearchResultsController alloc] init];
     _searchController = [[UISearchController alloc] initWithSearchResultsController:self.searchResultsController];
@@ -350,7 +286,6 @@
 }
 
 - (void)dealloc {
-    // DDSearch
     _searchResults = nil;
     if (_searchController) {
         _searchController.searchResultsUpdater = nil;

@@ -124,24 +124,6 @@
     cell.accessoryType = UITableViewCellAccessoryDisclosureIndicator;
 }
 
-- (void)initCellForArticleResult:(UITableViewCell *)cell indexPath:(NSIndexPath *)indexPath {
-    [_instantAnswerManager initCellForArticle:cell finalCondition:indexPath == nil];
-}
-
-- (void)customizeCellForArticleResult:(UITableViewCell *)cell indexPath:(NSIndexPath *)indexPath {
-    id model = [self.searchResults objectAtIndex:indexPath.row];
-    [_instantAnswerManager customizeCell:cell forArticle:(UVArticle *)model];
-}
-
-- (void)initCellForSuggestionResult:(UITableViewCell *)cell indexPath:(NSIndexPath *)indexPath {
-    [_instantAnswerManager initCellForSuggestion:cell finalCondition:indexPath == nil];
-}
-
-- (void)customizeCellForSuggestionResult:(UITableViewCell *)cell indexPath:(NSIndexPath *)indexPath {
-    id model = [self.searchResults objectAtIndex:indexPath.row];
-    [_instantAnswerManager customizeCell:cell forSuggestion:(UVSuggestion *)model];
-}
-
 #pragma mark ===== UITableViewDataSource Methods =====
 
 - (UITableViewCell *)tableView:(UITableView *)theTableView cellForRowAtIndexPath:(NSIndexPath *)indexPath {
@@ -254,12 +236,11 @@
 
 - (void)searchBar:(UISearchBar *)searchBar selectedScopeButtonIndexDidChange:(NSInteger)selectedScope {
     _filter = searchBar.selectedScopeButtonIndex;
-    // DDSearch
-    [self updateSearchResultsForSearchController:_searchController];
+    // Make sure that we update the displayed search results if the scope changes
+    [self didUpdateInstantAnswers];
 }
 
 - (void)searchBarCancelButtonClicked:(UISearchBar *)searchBar {
-    // DDSearch
     _searchController.searchBar.selectedScopeButtonIndex = 0;
     _searchController.searchBar.text = @"";
     _instantAnswerManager.instantAnswers = [NSArray array];
@@ -268,24 +249,20 @@
 
 #pragma mark ==== UISearchResultsUpdating Methods ====
 
-// DDSearch
 - (void)updateSearchResultsForSearchController:(UISearchController *)searchController {
+    // Perform search whenever the search text is changed
     _instantAnswerManager.searchText = searchController.searchBar.text;
     [_instantAnswerManager search];
-    
-    if (_searchController.searchResultsController) {
-        UVWelcomeSearchResultsController *searchResultsTVC = (UVWelcomeSearchResultsController *)_searchController.searchResultsController;
-        searchResultsTVC.searchResults = self.searchResults;
-        [searchResultsTVC.tableView reloadData];
-    }
 }
 
 #pragma mark ===== Search handling =====
 
 - (void)didUpdateInstantAnswers {
-    // DDSearch
-    if (_searchController.active && ![_searchController.searchBar.text isEqualToString:@""]) {
-        [self updateSearchResultsForSearchController:_searchController];
+    if (_searchController.searchResultsController) {
+        UVWelcomeSearchResultsController *searchResultsTVC = (UVWelcomeSearchResultsController *)_searchController.searchResultsController;
+        searchResultsTVC.searchResults = self.searchResults;
+        searchResultsTVC.tableView.backgroundView = [searchResultsTVC displayNoResults];
+        [searchResultsTVC.tableView reloadData];
     }
 }
 
@@ -335,8 +312,6 @@
     [self setupGroupedTableView];
 
     if ([UVSession currentSession].config.showKnowledgeBase) {
-        //
-        // DDSearch
         self.definesPresentationContext = true;
         self.searchResultsController = [[UVWelcomeSearchResultsController alloc] init];
         _searchController = [[UISearchController alloc] initWithSearchResultsController:self.searchResultsController];
@@ -378,8 +353,6 @@
         _instantAnswerManager.delegate = nil;
     }
     
-    //
-    // DDSearch
     if (_searchController) {
         _searchController.searchResultsUpdater = nil;
     }

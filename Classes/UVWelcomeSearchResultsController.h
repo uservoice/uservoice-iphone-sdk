@@ -7,12 +7,11 @@
 //
 
 #import <UIKit/UIKit.h>
-#import "UVBaseViewController.h"
+#import "UVBaseSearchResultsViewController.h"
 #import "UVInstantAnswerManager.h"
 
-@interface UVWelcomeSearchResultsController : UVBaseViewController<UITableViewDelegate, UITableViewDataSource>
+@interface UVWelcomeSearchResultsController : UVBaseSearchResultsViewController
 
 @property (nonatomic, retain) UVInstantAnswerManager *instantAnswerManager;
-@property (nonatomic, retain) NSArray *searchResults;
 
 @end

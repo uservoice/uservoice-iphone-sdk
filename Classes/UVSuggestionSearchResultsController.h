@@ -7,10 +7,8 @@
 //
 
 #import <UIKit/UIKit.h>
-#import "UVBaseViewController.h"
+#import "UVBaseSearchResultsViewController.h"
 
-@interface UVSuggestionSearchResultsController: UVBaseViewController<UITableViewDelegate, UITableViewDataSource>
-
-@property (nonatomic, retain) NSArray *searchResults;
+@interface UVSuggestionSearchResultsController: UVBaseSearchResultsViewController
 
 @end
