@@ -269,16 +269,6 @@
     }
 }
 
-- (void)dismiss {
-    _searchResults = nil;
-    if (_searchController) {
-        _searchController.searchResultsUpdater = nil;
-    }
-    if (self.searchResultsController) {
-        self.searchResultsController = nil;
-    }
-}
-
 - (void)ideaWasCreated:(UVSuggestion *)suggestion {
     _forum.suggestions = nil;
     [self populateSuggestions];
