@@ -155,7 +155,7 @@ static const char encodingTable[] = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopq
 			bytes[length++] = (char)(buffer[2] << 6) | buffer[3];
 	}
 	
-	realloc(bytes, length);
+	bytes = realloc(bytes, length);
 	return [NSData dataWithBytesNoCopy:bytes length:length];
 }
 
