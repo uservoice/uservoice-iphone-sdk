@@ -42,6 +42,18 @@ static NSBundle *userVoiceBundle;
     return userVoiceBundle;
 }
 
++ (BOOL)setLocalizationName:(NSString*)localizationName {
+    NSString* url = [[NSBundle bundleForClass:self]URLForResource:localizationName withExtension:@"lproj" subdirectory:@"UserVoice.bundle"];
+    NSBundle* localizedBundle = [NSBundle bundleWithURL:url];
+    if(localizedBundle != nil) {
+        userVoiceBundle = localizedBundle;
+        return true;
+    } else {
+        return false;
+    }
+}
+
+
 + (UINavigationController *)getNavigationControllerForUserVoiceControllers:(NSArray *)viewControllers {
     [UVSession currentSession].isModal = YES;
     UINavigationController *navigationController = [UVNavigationController new];

@@ -43,6 +43,13 @@
 // Get the UserVoice resource bundle
 + (NSBundle *)bundle;
 
+/**
+ * Set the localization that would be applied to the framework
+ * Return true if langage is set sucessfully
+ * Otherwise return false
+ */
++ (BOOL)setLocalizationName:(NSString*)localizationName;
+
 // Get the current version number of the iOS SDK
 + (NSString *)version;
 
