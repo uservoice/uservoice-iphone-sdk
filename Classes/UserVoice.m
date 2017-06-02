@@ -43,7 +43,7 @@ static NSBundle *userVoiceBundle;
 }
 
 + (BOOL)setLocalizationName:(NSString*)localizationName {
-    NSString* url = [[NSBundle bundleForClass:self]URLForResource:localizationName withExtension:@"lproj" subdirectory:@"UserVoice.bundle"];
+    NSURL* url = [[NSBundle bundleForClass:self]URLForResource:localizationName withExtension:@"lproj" subdirectory:@"UserVoice.bundle"];
     NSBundle* localizedBundle = [NSBundle bundleWithURL:url];
     if(localizedBundle != nil) {
         userVoiceBundle = localizedBundle;
