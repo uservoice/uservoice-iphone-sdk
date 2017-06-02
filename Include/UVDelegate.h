@@ -23,4 +23,9 @@
  */
 - (void)userVoiceRequestsDismissal;
 
+/*
+ * Called after a suggestion is sent
+ */
+- (void)userVoiceDidCreateSuggestion;
+
 @end

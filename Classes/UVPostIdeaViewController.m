@@ -36,7 +36,7 @@
     _instantAnswerManager.articleReturnMessage = NSLocalizedStringFromTableInBundle(@"Yes, I want to post my idea", @"UserVoice", [UserVoice bundle], nil);
     _instantAnswerManager.deflectingType = @"Suggestion";
 
-    self.navigationItem.title = NSLocalizedStringFromTableInBundle(@"Post an idea", @"UserVoice", [UserVoice bundle], nil);
+    self.navigationItem.title = NSLocalizedStringFromTableInBundle(@"Give us feedback", @"UserVoice", [UserVoice bundle], nil);
     self.navigationItem.backBarButtonItem = [[UIBarButtonItem alloc] initWithTitle:NSLocalizedStringFromTableInBundle(@"Back", @"UserVoice", [UserVoice bundle], nil) style:UIBarButtonItemStylePlain target:nil action:nil];
 
     _fieldsView = [UVTextWithFieldsView new];
@@ -271,6 +271,9 @@
         }
     }
     _sending = NO;
+    if ([[UserVoice delegate] respondsToSelector:@selector(userVoiceDidCreateSuggestion)]) {
+        [[UserVoice delegate] userVoiceDidCreateSuggestion];
+    }
 }
 
 - (void)dealloc {
