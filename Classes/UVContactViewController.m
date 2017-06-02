@@ -175,6 +175,9 @@
     next.titleText = NSLocalizedStringFromTableInBundle(@"Message sent!", @"UserVoice", [UserVoice bundle], nil);
     next.text = NSLocalizedStringFromTableInBundle(@"We'll be in touch.", @"UserVoice", [UserVoice bundle], nil);
     [self.navigationController setViewControllers:@[next] animated:YES];
+    if ([[UserVoice delegate] respondsToSelector:@selector(userVoiceDidCreateTicket:)]) {
+        [[UserVoice delegate] userVoiceDidCreateTicket:ticket];
+    }
 }
 
 - (void)didReceiveError:(NSError *)error {

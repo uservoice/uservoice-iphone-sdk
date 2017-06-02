@@ -8,6 +8,9 @@
 
 #import <Foundation/Foundation.h>
 
+@class UVSuggestion;
+@class UVTicket;
+
 @protocol UVDelegate <NSObject>
 @optional
 
@@ -26,6 +29,11 @@
 /*
  * Called after a suggestion is sent
  */
-- (void)userVoiceDidCreateSuggestion;
+- (void)userVoiceDidCreateSuggestion:(UVSuggestion *)theSuggestion;
+
+/*
+ * Called after a ticket is sent
+ */
+- (void)userVoiceDidCreateTicket:(UVTicket *)theSuggestion;
 
 @end

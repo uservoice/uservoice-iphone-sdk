@@ -271,8 +271,8 @@
         }
     }
     _sending = NO;
-    if ([[UserVoice delegate] respondsToSelector:@selector(userVoiceDidCreateSuggestion)]) {
-        [[UserVoice delegate] userVoiceDidCreateSuggestion];
+    if ([[UserVoice delegate] respondsToSelector:@selector(userVoiceDidCreateSuggestion:)]) {
+        [[UserVoice delegate] userVoiceDidCreateSuggestion:theSuggestion];
     }
 }
 
