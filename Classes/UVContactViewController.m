@@ -38,7 +38,7 @@
     _instantAnswerManager.articleReturnMessage = NSLocalizedStringFromTableInBundle(@"Yes, go to my message", @"UserVoice", [UserVoice bundle], nil);
     _instantAnswerManager.deflectingType = @"Ticket";
 
-    self.navigationItem.title = NSLocalizedStringFromTableInBundle(@"Send us a message", @"UserVoice", [UserVoice bundle], nil);
+    self.navigationItem.title = NSLocalizedStringFromTableInBundle(@"Give us feedback", @"UserVoice", [UserVoice bundle], nil);
     self.navigationItem.backBarButtonItem = [[UIBarButtonItem alloc] initWithTitle:NSLocalizedStringFromTableInBundle(@"Back", @"UserVoice", [UserVoice bundle], nil) style:UIBarButtonItemStylePlain target:nil action:nil];
 
     // using a fields view with no fields extra still gives us better scroll handling
