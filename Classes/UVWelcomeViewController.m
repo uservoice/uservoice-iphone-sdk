@@ -322,9 +322,9 @@
         if ([UVSession currentSession].config.showForum ) {
             _searchController.searchBar.scopeButtonTitles = @[NSLocalizedStringFromTableInBundle(@"All", @"UserVoice", [UserVoice bundle], nil), NSLocalizedStringFromTableInBundle(@"Articles", @"UserVoice", [UserVoice bundle], nil), NSLocalizedStringFromTableInBundle(@"Ideas", @"UserVoice", [UserVoice bundle], nil)];
         }
-        
-        if (FORMSHEET) {
-            _searchController.hidesNavigationBarDuringPresentation = NO;
+
+        if (FORMSHEET || ![UVStyleSheet instance].searchBarHideNavigation) {
+            _searchController.hidesNavigationBarDuringPresentation = false;
         }
         
         _tableView.tableHeaderView = _searchController.searchBar;
