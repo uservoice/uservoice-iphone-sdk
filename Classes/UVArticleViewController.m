@@ -105,7 +105,9 @@
         }
     } else {
         if (buttonIndex == 0) {
-            [self presentModalViewController:[UVContactViewController new]];
+            dispatch_async(dispatch_get_main_queue(), ^ {
+                [self presentModalViewController:[UVContactViewController new]];
+            });
         }
     }
 }

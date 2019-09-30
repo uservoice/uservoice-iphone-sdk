@@ -27,7 +27,8 @@
 
 - (void)restConnection:(NSURLConnection *)connection didReturnResource:(id)resource object:(id)object {
     UVRequestContext *requestContext = (UVRequestContext *)object;
-    if (requestContext.statusCode >= 400) {
+    // Add 401 authentification filter to diplay UserVoice, even if user isn't logged and some features are private (like a private forum)
+    if (requestContext.statusCode >= 400 && requestContext.statusCode != 401) {
         NSDictionary *userInfo = nil;
 
         if ([resource respondsToSelector:@selector(objectForKey:)]) {
