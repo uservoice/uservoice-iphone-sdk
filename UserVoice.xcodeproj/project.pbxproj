@@ -20,6 +20,7 @@
 		413DC6761D88DA8B00F6426F /* UVSuggestionSearchResultsController.m in Sources */ = {isa = PBXBuildFile; fileRef = 413DC6731D88DA8B00F6426F /* UVSuggestionSearchResultsController.m */; };
 		413DC6771D88DA8B00F6426F /* UVSuggestionSearchResultsController.m in Sources */ = {isa = PBXBuildFile; fileRef = 413DC6731D88DA8B00F6426F /* UVSuggestionSearchResultsController.m */; };
 		6474C33614BB8D5D00F6A2F0 /* UserVoice.h in Headers */ = {isa = PBXBuildFile; fileRef = 6474C33714BB8D5D00F6A2F0 /* UserVoice.h */; };
+		79F134061FB0503400C72536 /* UVBaseSearchResultsViewController.h in Headers */ = {isa = PBXBuildFile; fileRef = 4121CA811D9898A400D2156F /* UVBaseSearchResultsViewController.h */; };
 		80B5291E13A16A2F008709D2 /* UVCustomField.h in Headers */ = {isa = PBXBuildFile; fileRef = 80B5291C13A16A2F008709D2 /* UVCustomField.h */; };
 		80B5291F13A16A2F008709D2 /* UVCustomField.m in Sources */ = {isa = PBXBuildFile; fileRef = 80B5291D13A16A2F008709D2 /* UVCustomField.m */; };
 		AACBBE4A0F95108600F1A2B1 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = AACBBE490F95108600F1A2B1 /* Foundation.framework */; };
@@ -956,6 +957,7 @@
 				D3683A5E1C77476E0036064E /* UVRequestToken.h in Headers */,
 				D3683A5F1C77476E0036064E /* UVUser.h in Headers */,
 				D3683A601C77476E0036064E /* UVHelpTopic.h in Headers */,
+				79F134061FB0503400C72536 /* UVBaseSearchResultsViewController.h in Headers */,
 				D3683A611C77476E0036064E /* UVCallback.h in Headers */,
 				D3683A621C77476E0036064E /* UVImageView.h in Headers */,
 				D3683A631C77476E0036064E /* UVTextView.h in Headers */,
