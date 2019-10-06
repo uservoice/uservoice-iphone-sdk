@@ -220,7 +220,7 @@
     _searchController.searchResultsUpdater = self;
     _searchController.searchBar.delegate = self;
     _searchController.searchBar.placeholder = NSLocalizedStringFromTableInBundle(@"Search forum", @"UserVoice", [UserVoice bundle], nil);
-    if (FORMSHEET) {
+    if (FORMSHEET || ![UVStyleSheet instance].searchBarHideNavigation) {
         _searchController.hidesNavigationBarDuringPresentation = false;
     }
     
