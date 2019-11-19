@@ -4,11 +4,11 @@ DIST=dist/UserVoiceSDK-3.2.12
 
 echo "==== Building for iOS devices ===="
 echo ""
-xcodebuild
+xcodebuild OTHER_CFLAGS="-fembed-bitcode"
 
 echo "==== Building for iOS simulator ===="
 echo ""
-xcodebuild -sdk iphonesimulator
+xcodebuild OTHER_CFLAGS="-fembed-bitcode" -sdk iphonesimulator
 
 mkdir -p $DIST
 
