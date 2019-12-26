@@ -8,6 +8,9 @@
 
 #import <Foundation/Foundation.h>
 
+@class UVSuggestion;
+@class UVTicket;
+
 @protocol UVDelegate <NSObject>
 @optional
 
@@ -22,5 +25,15 @@
  * +[UserVoice getUserVoiceContactUsFormForModalDisplay].
  */
 - (void)userVoiceRequestsDismissal;
+
+/*
+ * Called after a suggestion is sent
+ */
+- (void)userVoiceDidCreateSuggestion:(UVSuggestion *)theSuggestion;
+
+/*
+ * Called after a ticket is sent
+ */
+- (void)userVoiceDidCreateTicket:(UVTicket *)theSuggestion;
 
 @end
