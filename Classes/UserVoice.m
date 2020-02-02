@@ -161,5 +161,12 @@ static NSBundle *userVoiceBundle;
     return @"3.2.12";
 }
 
++ (void)logoutUser{
+    [[UVSession currentSession] clear];
+    NSUserDefaults *prefs = [NSUserDefaults standardUserDefaults];
+    [prefs setObject:@"" forKey:@"uv-user-email"];
+    [prefs setObject:@"" forKey:@"uv-user-name"];
+    [prefs synchronize];
+}
 
 @end
