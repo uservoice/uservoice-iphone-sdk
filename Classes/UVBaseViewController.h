@@ -61,7 +61,7 @@
 // specialized behavior.
 - (void)didReceiveError:(NSError *)error;
 
-- (void)requireUserSignedIn:(UVCallback *)callback;
+- (void)requireUserSignedIn:(UVCallback *)callback ifCanceledDo:(UVCallback *)cancelCallBack;
 - (void)requireUserAuthenticated:(NSString *)email name:(NSString *)name callback:(UVCallback *)callback;
 
 // Keyboard handling

@@ -439,10 +439,9 @@
     }
 }
 
-- (void)requireUserSignedIn:(UVCallback *)callback {
-    [_signinManager signInWithCallback:callback];
+- (void)requireUserSignedIn:(UVCallback *)callback ifCanceledDo:(UVCallback *)cancelCallBack {
+    [_signinManager signInWithCallback:callback cancelCallBack:cancelCallBack];
 }
-
 - (void)requireUserAuthenticated:(NSString *)email name:(NSString *)name callback:(UVCallback *)callback {
     [_signinManager signInWithEmail:email name:name callback:callback];
 }
